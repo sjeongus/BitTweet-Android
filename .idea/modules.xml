@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/OwaranaiTwitter.iml" filepath="$PROJECT_DIR$/OwaranaiTwitter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/owaranai/owaranai.iml" filepath="$PROJECT_DIR$/owaranai/owaranai.iml" />
+    </modules>
+  </component>
+</project>
+
