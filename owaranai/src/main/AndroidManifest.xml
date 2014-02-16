@@ -18,12 +18,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="oauth" android:host="t4jsample"/>
-            </intent-filter>
         </activity>
         <activity
             android:name="com.golden.owaranai.TweetsDetailActivity"
@@ -32,6 +26,16 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.golden.owaranai.TweetsListActivity" />
+        </activity>
+        <activity
+            android:name="com.golden.owaranai.twitter.TwitterLoginActivity"
+            android:label="Log In to Twitter" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="oauth" android:host="t4jsample"/>
+            </intent-filter>
         </activity>
     </application>
 

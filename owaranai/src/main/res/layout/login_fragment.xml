@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:id="@+id/loginbutton"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
