@@ -2,3 +2,5 @@
 /local.properties
 /.idea/workspace.xml
 .DS_Store
+
+owaranai/src/main/java/com/golden/owaranai/twitter/SecretKeys.java

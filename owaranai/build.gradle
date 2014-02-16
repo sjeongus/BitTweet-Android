@@ -28,5 +28,5 @@ dependencies {
     compile 'com.nhaarman.listviewanimations:library:2.5.2'
     compile 'com.nineoldandroids:library:2.4.0+'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
-    compile 'org.twitter4j:twitter4j-core:2.2.6'
+    compile 'org.twitter4j:twitter4j-core:3.0.5'
 }
