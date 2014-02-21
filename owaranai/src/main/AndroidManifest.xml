@@ -29,6 +29,7 @@
         </activity>
         <activity
             android:name="com.golden.owaranai.twitter.TwitterLoginActivity"
+            android:launchMode="singleInstance"
             android:label="Log In to Twitter" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

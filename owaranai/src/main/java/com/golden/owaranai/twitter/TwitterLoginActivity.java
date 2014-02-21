@@ -207,6 +207,7 @@ public class TwitterLoginActivity extends FragmentActivity {
                 authUrl = requestToken.getAuthenticationURL();
             } catch (TwitterException e) {
                 e.printStackTrace();
+                System.out.print("Could not get authURL");
             }
             return authUrl;
         }
@@ -223,9 +224,11 @@ public class TwitterLoginActivity extends FragmentActivity {
     private class HandleAuthTask extends AsyncTask<Void, Void, Void> {
 
         private AccessToken accessToken = null;
+        private Uri mUri;
 
         public HandleAuthTask(Uri uri) {
             accessToken = null;
+            mUri = uri;
         }
 
         @Override
@@ -234,10 +237,10 @@ public class TwitterLoginActivity extends FragmentActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            Uri uri = getIntent().getData();
-            if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
+            //Uri uri = getIntent().getData();
+            if (mUri != null && mUri.toString().startsWith(TWITTER_CALLBACK_URL)) {
                 // oAuth verifier
-                String verifier = uri
+                String verifier = mUri
                         .getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
 
                 try {
@@ -246,15 +249,21 @@ public class TwitterLoginActivity extends FragmentActivity {
                             requestToken, verifier);
                 } catch (TwitterException e) {
                     e.printStackTrace();
+                    System.out.print("Could not get access token");
                 }
                 return null;
             }
+            if (mUri == null)
+                System.out.println("Uri is null");
+            else
+                System.out.println(mUri.toString());
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
             if (accessToken == null) {
+                System.out.println("Token is null");
                 return;
             }
 
@@ -279,6 +288,7 @@ public class TwitterLoginActivity extends FragmentActivity {
             e.commit(); // save changes
 
             Log.e("Twitter OAuth Token", "> " + accessToken.getToken());
+            System.out.println("Twitter OAuth Token" + "> " + accessToken.getToken());
 
             Toast.makeText(context, "Logged In", Toast.LENGTH_SHORT).show();
 
