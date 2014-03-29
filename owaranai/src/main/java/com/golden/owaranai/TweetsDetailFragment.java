@@ -5,9 +5,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.golden.owaranai.twitter.HomeTimelineContent;
 
 /**
  * A fragment representing a single Tweets detail screen.
