@@ -50,7 +50,9 @@ public class TwitterLoginActivity extends FragmentActivity {
 
     private Context context;
 
+    // SharedPreferences to store app local data
     private static SharedPreferences mSharedPreferences;
+
     private ConnectionDetector cd;
     AlertDialogManager alert = new AlertDialogManager();
 
@@ -82,8 +84,9 @@ public class TwitterLoginActivity extends FragmentActivity {
             return;
         }
         loginButton = (Button) findViewById(R.id.loginbutton);
-        mSharedPreferences = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-        //getActionBar().hide();
+        // Create a new SharedPreferences called MyTwitter
+        mSharedPreferences = getApplicationContext().getSharedPreferences("MyTwitter", MODE_PRIVATE);
+        // When user clicks login button, should open up a webview that allows them to log in
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,8 +109,7 @@ public class TwitterLoginActivity extends FragmentActivity {
         super.onNewIntent(intent);
 
         Uri uri = intent.getData();
-        if (uri != null &&
-                uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
+        if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
             new HandleAuthTask(uri).execute();
         }
     }
@@ -116,6 +118,7 @@ public class TwitterLoginActivity extends FragmentActivity {
         new RequestAuthTask().execute();
     }
 
+    // AsyncTask that allows user to sign in to obtain API token
     private class RequestAuthTask extends AsyncTask<Void, String, String> {
 
         @Override
@@ -126,6 +129,7 @@ public class TwitterLoginActivity extends FragmentActivity {
         protected String doInBackground(Void... args) {
             String authUrl = "";
             try {
+                // Get the request token using the callback URL
                 requestToken = twitter.getOAuthRequestToken(TWITTER_CALLBACK_URL);
                 authUrl = requestToken.getAuthenticationURL();
             } catch (TwitterException e) {
@@ -137,6 +141,7 @@ public class TwitterLoginActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            // If successful and the authURL was obtained, then start a web view that allows user to sign in.
             if (!result.equals(""))
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(result)));
             else
@@ -144,6 +149,7 @@ public class TwitterLoginActivity extends FragmentActivity {
         }
     }
 
+    // AsyncTask that obtains the API access key and secret, and stores into SharedPreferences
     private class HandleAuthTask extends AsyncTask<Void, Void, Void> {
 
         private AccessToken accessToken = null;

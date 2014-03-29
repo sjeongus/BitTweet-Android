@@ -13,6 +13,8 @@ import twitter4j.conf.ConfigurationBuilder;
 /**
  * Created by soomin on 3/1/14.
  */
+
+// Class may not be necessary
 public class MyTwitterFactory {
     private static final String TAG = "RoidRage/ResourceLoader";
 

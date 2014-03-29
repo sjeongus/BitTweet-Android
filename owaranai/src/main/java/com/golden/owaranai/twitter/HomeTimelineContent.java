@@ -15,29 +15,22 @@ import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
-/**
- * Helper class for providing sample content for user interfaces created by
- * Android template wizards.
- * <p>
- * TODO: Replace all uses of this class before publishing your app.
- */
+// Retrieve the home timeline of the user
 public class HomeTimelineContent implements TimelineContent {
 
-    /**
-     * Usage: java twitter4j.examples.timeline.GetHomeTimeline
-     *
-     */
     public static List<StatusItem> statuses = new ArrayList<StatusItem>();
     public static Map<String, StatusItem> status_map = new HashMap<String, StatusItem>();
 
     static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
     static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
 
+    // Function to add an item to the List and the Map
     public void addItem(StatusItem status) {
         statuses.add(status);
         status_map.put(status.id, status);
     }
 
+    // Function that retrieves the user's timeline
     public void getTimeline(SharedPreferences mSharedPreferences) {
         try {
             String oauthkey = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "No user");
@@ -59,6 +52,7 @@ public class HomeTimelineContent implements TimelineContent {
         }
     }
 
+    // AsyncTask that executes getTimeline
     public final class getTimelineTask extends AsyncTask<SharedPreferences, Void, Void> {
         public getTimelineTask() {}
 
