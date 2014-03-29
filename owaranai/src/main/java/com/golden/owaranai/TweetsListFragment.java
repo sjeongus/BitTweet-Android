@@ -2,6 +2,7 @@ package com.golden.owaranai;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -10,6 +11,9 @@ import android.widget.ListView;
 
 import com.golden.owaranai.twitter.HomeTimelineContent;
 import com.golden.owaranai.twitter.StatusItem;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static com.golden.owaranai.twitter.HomeTimelineContent.statuses;
 
@@ -70,16 +74,59 @@ public class TweetsListFragment extends ListFragment {
     public TweetsListFragment() {
     }
 
+    // AsyncTask that executes getTimeline
+    public class TimelineTask extends AsyncTask<SharedPreferences, Void, Void> {
+        public TimelineTask() {}
+
+        @Override
+        protected void onPreExecute() {
+            // before the network request begins, show a progress indicator
+            //showProgressDialog("Fetching timeline...");
+        }
+
+        @Override
+        protected Void doInBackground(SharedPreferences... mPreferences) {
+            try {
+                System.out.println("Getting timeline now!");
+                HomeTimelineContent.getTimeline(mPreferences[0]);
+                System.out.println("Got the timeline!");
+            } catch (Exception e) {
+                System.out.println("Error in fetching home timeline.");
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            // after the network request completes, hide the progress indicator
+            //dismissProgressDialog();
+            //showResult(tweets);
+            System.out.println("Retrieved timeline! Printing...");
+            for (int i = 0; i < statuses.size(); i++)
+                System.out.println(statuses.get(i).status.getText());
+        }
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<StatusItem>(
+        Activity activity = getActivity();
+        //View view = getView();
+        TimelineAdapter adapter = new TimelineAdapter(activity);
+        new TimelineTask().execute();
+        adapter.setStatuses(statuses);
+        //ListView timeline = (ListView) view.findViewById(R.id.tweets_list);
+        TweetsListFragment timeline2 = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
+        timeline2.setListAdapter(adapter);
+
+        /*setListAdapter(new ArrayAdapter<StatusItem>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                statuses));
+                statuses));*/
     }
 
     @Override
