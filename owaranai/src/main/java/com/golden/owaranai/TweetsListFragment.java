@@ -105,6 +105,11 @@ public class TweetsListFragment extends ListFragment {
             System.out.println("Retrieved timeline! Printing...");
             for (int i = 0; i < statuses.size(); i++)
                 System.out.println(statuses.get(i).status.getText());
+            Activity activity = getActivity();
+            TimelineAdapter adapter = new TimelineAdapter(activity);
+            adapter.setStatuses(statuses);
+            TweetsListFragment timeline2 = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
+            timeline2.setListAdapter(adapter);
         }
 
     }
@@ -115,13 +120,13 @@ public class TweetsListFragment extends ListFragment {
 
         Activity activity = getActivity();
         //View view = getView();
-        TimelineAdapter adapter = new TimelineAdapter(activity);
+        //TimelineAdapter adapter = new TimelineAdapter(activity);
         SharedPreferences mSharedPreferences = activity.getSharedPreferences("MyTwitter", 0);
         new TimelineTask().execute(mSharedPreferences);
-        adapter.setStatuses(statuses);
+        //adapter.setStatuses(statuses);
         //ListView timeline = (ListView) view.findViewById(R.id.tweets_list);
-        TweetsListFragment timeline2 = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
-        timeline2.setListAdapter(adapter);
+        //TweetsListFragment timeline2 = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
+        //timeline2.setListAdapter(adapter);
 
         /*setListAdapter(new ArrayAdapter<StatusItem>(
                 getActivity(),

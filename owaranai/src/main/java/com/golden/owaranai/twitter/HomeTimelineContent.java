@@ -43,7 +43,7 @@ public class HomeTimelineContent implements TimelineContent {
             List<Status> temp = twitter.getHomeTimeline();
             System.out.println("Got up to here!");
             for (int i = 0; i < temp.size(); i++) {
-                System.out.println(temp.get(i).getText());
+                //System.out.println(temp.get(i).getText());
                 addItem(new StatusItem(temp.get(i)));
             }
         } catch (TwitterException te) {

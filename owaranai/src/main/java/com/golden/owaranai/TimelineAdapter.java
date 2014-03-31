@@ -69,8 +69,8 @@ public class TimelineAdapter extends BaseAdapter {
 
             // Set all the references to the layouts in the row
             tweet.setText(((Status)mStatuses.get(position).status).getText());
-            userName.setText(((Status)mStatuses.get(position).status).getUser().toString());
-            displayName.setText(((Status)mStatuses.get(position).status).getUser().getScreenName());
+            displayName.setText(((Status)mStatuses.get(position).status).getUser().getName());
+            userName.setText("@" + ((Status)mStatuses.get(position).status).getUser().getScreenName());
             time.setText(((Status)mStatuses.get(position).status).getCreatedAt().toString());
         }
 
@@ -79,5 +79,6 @@ public class TimelineAdapter extends BaseAdapter {
 
     public void setStatuses(List<StatusItem> data) {
         mStatuses = data;
+        System.out.println("Set the list of statuses to adapter.");
     }
 }
