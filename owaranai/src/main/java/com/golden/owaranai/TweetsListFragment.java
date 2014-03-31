@@ -116,7 +116,8 @@ public class TweetsListFragment extends ListFragment {
         Activity activity = getActivity();
         //View view = getView();
         TimelineAdapter adapter = new TimelineAdapter(activity);
-        new TimelineTask().execute();
+        SharedPreferences mSharedPreferences = activity.getSharedPreferences("MyTwitter", 0);
+        new TimelineTask().execute(mSharedPreferences);
         adapter.setStatuses(statuses);
         //ListView timeline = (ListView) view.findViewById(R.id.tweets_list);
         TweetsListFragment timeline2 = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
