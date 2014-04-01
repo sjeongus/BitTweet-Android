@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="wrap_content">
 
-    <ImageButton
+    <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@+id/avatar"

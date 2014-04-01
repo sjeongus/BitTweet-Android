@@ -21,12 +21,10 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    compile('de.keyboardsurfer.android.widget:crouton:1.8.3') {
-        // exclusion is not neccessary, but generally a good idea.
-        exclude group: 'com.google.android', module: 'support-v4'
-    }
+    compile 'de.keyboardsurfer.android.widget:crouton:1.8.3'
     compile 'com.nhaarman.listviewanimations:library:2.5.2'
     compile 'com.nineoldandroids:library:2.4.0+'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
     compile 'org.twitter4j:twitter4j-core:3.0.5'
+    compile files('libs/circularimageview.jar')
 }

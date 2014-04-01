@@ -1,8 +1,26 @@
 package com.golden.owaranai;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+
+import com.golden.owaranai.twitter.HomeTimelineContent;
+import com.golden.owaranai.twitter.SecretKeys;
+import com.golden.owaranai.twitter.TwitterLoginActivity;
+
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.User;
+import twitter4j.conf.ConfigurationBuilder;
+
+import static com.golden.owaranai.twitter.HomeTimelineContent.statuses;
 
 
 /**
@@ -29,10 +47,27 @@ public class TweetsListActivity extends FragmentActivity
      * device.
      */
     private boolean mTwoPane;
+    private static SharedPreferences mSharedPreferences;
+
+    static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
+    static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
+    static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
+
+    /**
+     * Check user already logged in your application using twitter Login flag is
+     * fetched from Shared Preferences
+     * */
+    public boolean isTwitterLoggedInAlready() {
+        // return twitter login status from Shared Preferences
+        return mSharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSharedPreferences = getApplicationContext().getSharedPreferences("MyTwitter", MODE_PRIVATE);
+        if (!isTwitterLoggedInAlready())
+            startActivity(new Intent(getApplicationContext(), TwitterLoginActivity.class));
         setContentView(R.layout.activity_tweets_list);
 
         if (findViewById(R.id.tweets_detail_container) != null) {
@@ -77,5 +112,66 @@ public class TweetsListActivity extends FragmentActivity
             detailIntent.putExtra(TweetsDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.tweet_list_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_tweet:
+                new TweetTask().execute();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    // AsyncTask that executes getTimeline
+    public class TweetTask extends AsyncTask<Void, Void, Void> {
+
+        private User user;
+        private String status;
+        private Twitter twitter;
+
+        public TweetTask() {}
+
+        @Override
+        protected void onPreExecute() {
+            // before the network request begins, show a progress indicator
+            //showProgressDialog("Fetching timeline...");
+            String oauthkey = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "No user");
+            String oauthsecret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "No secret");
+            ConfigurationBuilder confbuild = new ConfigurationBuilder();
+            confbuild.setOAuthAccessToken(oauthkey).setOAuthAccessTokenSecret(oauthsecret).setOAuthConsumerKey(SecretKeys.getCONSUMER_KEY()).setOAuthConsumerSecret(SecretKeys.getCONSUMER_SECRET());
+            twitter = new TwitterFactory(confbuild.build()).getInstance();
+            User user = null;
+        }
+
+        @Override
+        protected Void doInBackground(Void... args) {
+            try {
+                user = twitter.verifyCredentials();
+                GoHome ngh = new GoHome();
+                status = ngh.getStatus(user.getScreenName());
+                twitter.updateStatus(status);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+        }
+
     }
 }

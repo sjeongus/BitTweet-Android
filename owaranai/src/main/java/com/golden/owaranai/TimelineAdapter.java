@@ -2,7 +2,10 @@ package com.golden.owaranai;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.golden.owaranai.twitter.StatusItem;
-import com.golden.owaranai.twitter.TimelineContent;
 
+import java.io.InputStream;
 import java.util.List;
 
-import twitter4j.ResponseList;
 import twitter4j.Status;
 
 /**
@@ -68,6 +70,7 @@ public class TimelineAdapter extends BaseAdapter {
             TextView tweet = (TextView) vi.findViewById(R.id.tweet);
 
             // Set all the references to the layouts in the row
+            new DownloadImageTask(avatarImage).execute(((Status) mStatuses.get(position).status).getUser().getProfileImageURL());
             tweet.setText(((Status)mStatuses.get(position).status).getText());
             displayName.setText(((Status)mStatuses.get(position).status).getUser().getName());
             userName.setText("@" + ((Status)mStatuses.get(position).status).getUser().getScreenName());
@@ -78,7 +81,33 @@ public class TimelineAdapter extends BaseAdapter {
     }
 
     public void setStatuses(List<StatusItem> data) {
-        mStatuses = data;
+        for (int i = 0; i < data.size(); i++)
+            mStatuses.add(data.get(i));
         System.out.println("Set the list of statuses to adapter.");
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 }

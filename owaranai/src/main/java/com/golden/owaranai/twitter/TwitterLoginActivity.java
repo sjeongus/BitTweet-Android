@@ -59,7 +59,8 @@ public class TwitterLoginActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_fragment);
+        //setContentView(R.layout.login_fragment);
+        setContentView(R.layout.april_fools);
 
         context = getApplicationContext();
         getActionBar().hide();
@@ -90,18 +91,9 @@ public class TwitterLoginActivity extends FragmentActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginUser(view);
+                loginUser();
             }
         });
-    }
-
-    /**
-     * Check user already logged in your application using twitter Login flag is
-     * fetched from Shared Preferences
-     * */
-    private boolean isTwitterLoggedInAlready() {
-        // return twitter login status from Shared Preferences
-        return mSharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
     }
 
     @Override
@@ -114,7 +106,7 @@ public class TwitterLoginActivity extends FragmentActivity {
         }
     }
 
-    public void loginUser(View view) {
+    public void loginUser() {
         new RequestAuthTask().execute();
     }
 

@@ -6,14 +6,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.golden.owaranai.twitter.HomeTimelineContent;
-import com.golden.owaranai.twitter.StatusItem;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import static com.golden.owaranai.twitter.HomeTimelineContent.statuses;
 
@@ -76,6 +71,7 @@ public class TweetsListFragment extends ListFragment {
 
     // AsyncTask that executes getTimeline
     public class TimelineTask extends AsyncTask<SharedPreferences, Void, Void> {
+
         public TimelineTask() {}
 
         @Override
@@ -108,8 +104,8 @@ public class TweetsListFragment extends ListFragment {
             Activity activity = getActivity();
             TimelineAdapter adapter = new TimelineAdapter(activity);
             adapter.setStatuses(statuses);
-            TweetsListFragment timeline2 = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
-            timeline2.setListAdapter(adapter);
+            TweetsListFragment timeline = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
+            timeline.setListAdapter(adapter);
         }
 
     }

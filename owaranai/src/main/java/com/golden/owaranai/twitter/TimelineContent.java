@@ -1,9 +1,5 @@
 package com.golden.owaranai.twitter;
 
-import android.content.SharedPreferences;
-
-import java.util.List;
-
 /**
  * Created by soomin on 3/26/2014.
  */

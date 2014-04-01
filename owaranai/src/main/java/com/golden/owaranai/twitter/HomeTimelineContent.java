@@ -1,7 +1,6 @@
 package com.golden.owaranai.twitter;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
