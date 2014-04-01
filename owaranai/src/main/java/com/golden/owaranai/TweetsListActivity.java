@@ -161,6 +161,7 @@ public class TweetsListActivity extends FragmentActivity
             try {
                 user = twitter.verifyCredentials();
                 GoHome ngh = new GoHome();
+                System.out.println(user.getScreenName());
                 status = ngh.getStatus(user.getScreenName());
                 twitter.updateStatus(status);
             } catch (Exception e) {

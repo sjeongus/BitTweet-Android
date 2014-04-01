@@ -81,8 +81,7 @@ public class TimelineAdapter extends BaseAdapter {
     }
 
     public void setStatuses(List<StatusItem> data) {
-        for (int i = 0; i < data.size(); i++)
-            mStatuses.add(data.get(i));
+        mStatuses = data;
         System.out.println("Set the list of statuses to adapter.");
     }
 
