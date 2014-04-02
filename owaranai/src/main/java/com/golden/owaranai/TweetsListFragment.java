@@ -10,8 +10,6 @@ import android.widget.ListView;
 
 import com.golden.owaranai.twitter.HomeTimelineContent;
 
-import static com.golden.owaranai.twitter.HomeTimelineContent.statuses;
-
 /**
  * A list fragment representing a list of Tweets. This fragment
  * also supports tablet devices by allowing list items to be given an
@@ -39,6 +37,11 @@ public class TweetsListFragment extends ListFragment {
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    private Activity activity;
+    public HomeTimelineContent hcontent;
+    public TimelineAdapter adapter;
+    private SharedPreferences mSharedPreferences;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -70,9 +73,7 @@ public class TweetsListFragment extends ListFragment {
     }
 
     // AsyncTask that executes getTimeline
-    public class TimelineTask extends AsyncTask<SharedPreferences, Void, Void> {
-
-        public TimelineTask() {}
+    public class TimelineTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -81,10 +82,10 @@ public class TweetsListFragment extends ListFragment {
         }
 
         @Override
-        protected Void doInBackground(SharedPreferences... mPreferences) {
+        protected Void doInBackground(Void... args) {
             try {
                 System.out.println("Getting timeline now!");
-                HomeTimelineContent.getTimeline(mPreferences[0]);
+                hcontent.getTimeline();
                 System.out.println("Got the timeline!");
             } catch (Exception e) {
                 System.out.println("Error in fetching home timeline.");
@@ -99,36 +100,37 @@ public class TweetsListFragment extends ListFragment {
             //dismissProgressDialog();
             //showResult(tweets);
             System.out.println("Retrieved timeline! Printing...");
-            for (int i = 0; i < statuses.size(); i++)
-                System.out.println(statuses.get(i).status.getText());
+            for (int i = 0; i < hcontent.statuses.size(); i++)
+                System.out.println(hcontent.statuses.get(i).status.getText());
             Activity activity = getActivity();
-            TimelineAdapter adapter = new TimelineAdapter(activity);
-            adapter.setStatuses(statuses);
+            adapter.setStatuses(hcontent.statuses);
             TweetsListFragment timeline = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
             timeline.setListAdapter(adapter);
         }
 
     }
 
+    public void updateAdapter() {
+        new TimelineTask().execute();
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Activity activity = getActivity();
-        //View view = getView();
-        //TimelineAdapter adapter = new TimelineAdapter(activity);
-        SharedPreferences mSharedPreferences = activity.getSharedPreferences("MyTwitter", 0);
-        new TimelineTask().execute(mSharedPreferences);
-        //adapter.setStatuses(statuses);
-        //ListView timeline = (ListView) view.findViewById(R.id.tweets_list);
-        //TweetsListFragment timeline2 = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
-        //timeline2.setListAdapter(adapter);
+        activity = getActivity();
+        mSharedPreferences = activity.getSharedPreferences("MyTwitter", 0);
+        hcontent = new HomeTimelineContent(mSharedPreferences);
+        adapter = new TimelineAdapter(activity);
 
-        /*setListAdapter(new ArrayAdapter<StatusItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                statuses));*/
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        new TimelineTask().execute();
     }
 
     @Override
@@ -168,7 +170,7 @@ public class TweetsListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(statuses.get(position).id);
+        mCallbacks.onItemSelected(hcontent.statuses.get(position).id);
     }
 
     @Override

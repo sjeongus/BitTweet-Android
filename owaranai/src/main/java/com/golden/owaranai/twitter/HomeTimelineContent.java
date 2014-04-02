@@ -17,20 +17,28 @@ import twitter4j.conf.ConfigurationBuilder;
 // Retrieve the home timeline of the user
 public class HomeTimelineContent implements TimelineContent {
 
-    public static List<StatusItem> statuses = new ArrayList<StatusItem>();
-    public static Map<String, StatusItem> status_map = new HashMap<String, StatusItem>();
+    public List<StatusItem> statuses = new ArrayList<StatusItem>();
+    public Map<String, StatusItem> status_map = new HashMap<String, StatusItem>();
 
     static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
     static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
 
+    private SharedPreferences mSharedPreferences;
+    private Twitter twitter;
+    private User user;
+
+    public HomeTimelineContent(SharedPreferences preferences) {
+        mSharedPreferences = preferences;
+    }
+
     // Function to add an item to the List and the Map
-    public static void addItem(StatusItem status) {
+    public void addItem(StatusItem status) {
         statuses.add(status);
         status_map.put(status.id, status);
     }
 
     // Function that retrieves the user's timeline
-    public static void getTimeline(SharedPreferences mSharedPreferences) {
+    public void getTimeline() {
         try {
             String oauthkey = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "No user");
             String oauthsecret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "No secret");

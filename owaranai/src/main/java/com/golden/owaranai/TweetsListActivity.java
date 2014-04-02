@@ -1,6 +1,7 @@
 package com.golden.owaranai;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -10,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.golden.owaranai.twitter.HomeTimelineContent;
 import com.golden.owaranai.twitter.SecretKeys;
 import com.golden.owaranai.twitter.TwitterLoginActivity;
 
@@ -19,9 +19,6 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
-
-import static com.golden.owaranai.twitter.HomeTimelineContent.statuses;
-
 
 /**
  * An activity representing a list of Tweets. This activity
@@ -130,6 +127,10 @@ public class TweetsListActivity extends FragmentActivity
             case R.id.action_tweet:
                 new TweetTask().execute();
                 return true;
+            case R.id.action_refresh:
+                TweetsListFragment fragment = ((TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.tweets_list));
+                fragment.updateAdapter();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -142,7 +143,8 @@ public class TweetsListActivity extends FragmentActivity
         private String status;
         private Twitter twitter;
 
-        public TweetTask() {}
+        public TweetTask() {
+        }
 
         @Override
         protected void onPreExecute() {
@@ -160,9 +162,8 @@ public class TweetsListActivity extends FragmentActivity
         protected Void doInBackground(Void... args) {
             try {
                 user = twitter.verifyCredentials();
-                GoHome ngh = new GoHome();
-                System.out.println(user.getScreenName());
-                status = ngh.getStatus(user.getScreenName());
+                System.out.println("Hello my name is " + user.getScreenName());
+                status = GoHome.getStatus(user.getScreenName());
                 twitter.updateStatus(status);
             } catch (Exception e) {
                 e.printStackTrace();
