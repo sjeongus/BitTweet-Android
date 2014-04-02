@@ -211,6 +211,7 @@ public class TwitterLoginActivity extends FragmentActivity {
             Toast.makeText(context, "Logged In", Toast.LENGTH_SHORT).show();
 
             startActivity(new Intent(context, TweetsListActivity.class));
+            finish();
         }
     }
 }

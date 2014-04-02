@@ -63,8 +63,10 @@ public class TweetsListActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSharedPreferences = getApplicationContext().getSharedPreferences("MyTwitter", MODE_PRIVATE);
-        if (!isTwitterLoggedInAlready())
+        if (!isTwitterLoggedInAlready()) {
             startActivity(new Intent(getApplicationContext(), TwitterLoginActivity.class));
+            finish();
+        }
         setContentView(R.layout.activity_tweets_list);
 
         if (findViewById(R.id.tweets_detail_container) != null) {
