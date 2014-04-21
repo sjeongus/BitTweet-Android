@@ -2,6 +2,7 @@ package com.golden.owaranai;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -14,10 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.golden.owaranai.twitter.StatusItem;
+import com.golden.owaranai.twitter.TimelineContent;
 
 import java.io.InputStream;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 
 /**
@@ -63,14 +67,14 @@ public class TimelineAdapter extends BaseAdapter {
 
         if (mStatuses != null) {
             // Get all the references to the layouts in the row
-            ImageView avatarImage = (ImageView) vi.findViewById(R.id.avatar);
+            CircleImageView avatarImage = (CircleImageView) vi.findViewById(R.id.avatar);
             TextView userName = (TextView) vi.findViewById(R.id.username);
             TextView displayName = (TextView) vi.findViewById(R.id.displayname);
             TextView time = (TextView) vi.findViewById(R.id.time);
             TextView tweet = (TextView) vi.findViewById(R.id.tweet);
 
             // Set all the references to the layouts in the row
-            new DownloadImageTask(avatarImage).execute(((Status) mStatuses.get(position).status).getUser().getProfileImageURL());
+            new DownloadImageTask(avatarImage).execute(((Status) mStatuses.get(position).status).getUser().getBiggerProfileImageURL());
             tweet.setText(((Status)mStatuses.get(position).status).getText());
             displayName.setText(((Status)mStatuses.get(position).status).getUser().getName());
             userName.setText("@" + ((Status)mStatuses.get(position).status).getUser().getScreenName());
