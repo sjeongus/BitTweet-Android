@@ -1,7 +1,12 @@
 package com.golden.owaranai.twitter;
 
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,12 +56,20 @@ public class HomeTimelineContent implements TimelineContent {
             System.out.println("Got up to here!");
             for (int i = 0; i < temp.size(); i++) {
                 //System.out.println(temp.get(i).getText());
-                addItem(new StatusItem(temp.get(i)));
+                StatusItem nItem = new StatusItem(temp.get(i));
+                String profileUrl = temp.get(i).getUser().getBiggerProfileImageURL();
+                InputStream in = new java.net.URL(profileUrl).openStream();
+                nItem.profilePic = BitmapFactory.decodeStream(in);
+                addItem(nItem);
             }
         } catch (TwitterException te) {
             te.printStackTrace();
             System.out.println("Failed to get timeline: " + te.getMessage());
             System.exit(-1);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
