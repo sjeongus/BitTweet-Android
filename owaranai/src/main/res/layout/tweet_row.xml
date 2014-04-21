@@ -13,7 +13,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="5dp"
-        app:border_width="0dp" />
+        app:border_width="0dp"
+        app:border_color="#00000000"/>
 
     <TextView
         android:layout_width="wrap_content"

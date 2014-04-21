@@ -74,7 +74,8 @@ public class TimelineAdapter extends BaseAdapter {
             TextView tweet = (TextView) vi.findViewById(R.id.tweet);
 
             // Set all the references to the layouts in the row
-            new DownloadImageTask(avatarImage).execute(((Status) mStatuses.get(position).status).getUser().getBiggerProfileImageURL());
+            //new DownloadImageTask(avatarImage).execute(((Status) mStatuses.get(position).status).getUser().getBiggerProfileImageURL());
+            avatarImage.setImageBitmap(mStatuses.get(position).profilePic);
             tweet.setText(((Status)mStatuses.get(position).status).getText());
             displayName.setText(((Status)mStatuses.get(position).status).getUser().getName());
             userName.setText("@" + ((Status)mStatuses.get(position).status).getUser().getScreenName());
@@ -89,7 +90,7 @@ public class TimelineAdapter extends BaseAdapter {
         System.out.println("Set the list of statuses to adapter.");
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
@@ -112,5 +113,5 @@ public class TimelineAdapter extends BaseAdapter {
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
-    }
+    }*/
 }
