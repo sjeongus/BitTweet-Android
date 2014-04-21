@@ -1,7 +1,5 @@
 package com.golden.owaranai;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -10,12 +8,9 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import com.golden.owaranai.twitter.SecretKeys;
 import com.golden.owaranai.twitter.TwitterLoginActivity;
-
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
@@ -155,7 +150,7 @@ public class TweetsListActivity extends FragmentActivity
             String oauthkey = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "No user");
             String oauthsecret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "No secret");
             ConfigurationBuilder confbuild = new ConfigurationBuilder();
-            confbuild.setOAuthAccessToken(oauthkey).setOAuthAccessTokenSecret(oauthsecret).setOAuthConsumerKey(SecretKeys.getCONSUMER_KEY()).setOAuthConsumerSecret(SecretKeys.getCONSUMER_SECRET());
+            confbuild.setOAuthAccessToken(oauthkey).setOAuthAccessTokenSecret(oauthsecret).setOAuthConsumerKey(SecretKeys.CONSUMER_KEY).setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
             twitter = new TwitterFactory(confbuild.build()).getInstance();
             User user = null;
         }
@@ -170,6 +165,7 @@ public class TweetsListActivity extends FragmentActivity
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             return null;
         }
 

@@ -1,18 +1,13 @@
 package com.golden.owaranai.twitter;
 
 import android.content.SharedPreferences;
+import twitter4j.*;
+import twitter4j.conf.ConfigurationBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.User;
-import twitter4j.conf.ConfigurationBuilder;
 
 // Retrieve the home timeline of the user
 public class HomeTimelineContent implements TimelineContent {
@@ -44,7 +39,7 @@ public class HomeTimelineContent implements TimelineContent {
             String oauthsecret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "No secret");
             ConfigurationBuilder confbuild = new ConfigurationBuilder();
             confbuild.setOAuthAccessToken(oauthkey).setOAuthAccessTokenSecret(oauthsecret)
-                    .setOAuthConsumerKey(SecretKeys.getCONSUMER_KEY()).setOAuthConsumerSecret(SecretKeys.getCONSUMER_SECRET());
+                    .setOAuthConsumerKey(SecretKeys.CONSUMER_KEY).setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
             Twitter twitter = new TwitterFactory(confbuild.build()).getInstance();
             User user = twitter.verifyCredentials();
             List<Status> temp = twitter.getHomeTimeline();

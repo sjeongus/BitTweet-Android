@@ -2,13 +2,12 @@ package com.golden.owaranai.twitter;
 
 import android.content.Context;
 import android.util.Log;
-
-import java.io.File;
-
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
+
+import java.io.File;
 
 /**
  * Created by soomin on 3/1/14.
@@ -30,8 +29,8 @@ public class MyTwitterFactory {
         installHttpResponseCache();
 
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.setOAuthConsumerKey(SecretKeys.getCONSUMER_KEY());
-        configurationBuilder.setOAuthConsumerSecret(SecretKeys.getCONSUMER_SECRET());
+        configurationBuilder.setOAuthConsumerKey(SecretKeys.CONSUMER_KEY);
+        configurationBuilder.setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
         configurationBuilder.setUseSSL(true);
         Configuration configuration = configurationBuilder.build();
         mTwitter = new TwitterFactory(configuration).getInstance();

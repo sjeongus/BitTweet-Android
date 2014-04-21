@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\Users\soomin\Documents\GitHub\BitTweet-Android" />
-            <option value="C:\Users\soomin\Documents\GitHub\BitTweet-Android\owaranai" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/owaranai" />
           </set>
         </option>
       </GradleProjectSettings>
