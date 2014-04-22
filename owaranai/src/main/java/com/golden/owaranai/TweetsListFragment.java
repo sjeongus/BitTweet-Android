@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
      * activated item position. Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private static final String TAG = "TweetsListFragment";
 
     /**
      * The fragment's current callback object, which is notified of list item
@@ -35,8 +37,8 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     private Activity activity;
-    public HomeTimelineContent homeTimelineContent;
-    public TimelineAdapter adapter;
+    private HomeTimelineContent homeTimelineContent;
+    private TimelineAdapter adapter;
     private SharedPreferences sharedPreferences;
 
     private PullToRefreshLayout pullToRefreshLayout;
@@ -49,7 +51,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        callbacks.onItemSelected(homeTimelineContent.statuses.get(position).id);
+        callbacks.onItemSelected(homeTimelineContent.getStatusItemAt(position).id);
     }
 
     /**
@@ -76,12 +78,12 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
      */
     public TweetsListFragment() {}
 
-    // AsyncTask that executes getTimeline
+    // AsyncTask that executes update
     public class TimelineTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... args) {
             try {
-                homeTimelineContent.getTimeline();
+                homeTimelineContent.update();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -91,7 +93,9 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         @Override
         protected void onPostExecute(Void result) {
-            adapter.setStatuses(homeTimelineContent.statuses);
+            Log.e(TAG, "Before update: " + homeTimelineContent.getStatusItems().size());
+            adapter.setStatuses(homeTimelineContent.getStatusItems());
+            Log.e(TAG, "After update: " + homeTimelineContent.getStatusItems().size());
             adapter.notifyDataSetChanged();
             pullToRefreshLayout.setRefreshComplete();
         }
@@ -106,8 +110,9 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
+        ApplicationController controller = (ApplicationController) activity.getApplication();
         sharedPreferences = activity.getSharedPreferences("MyTwitter", 0);
-        homeTimelineContent = new HomeTimelineContent(sharedPreferences);
+        homeTimelineContent = controller.homeTimelineContent;
         adapter = new TimelineAdapter(activity);
     }
 
@@ -167,6 +172,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
         if (mActivatedPosition != ListView.INVALID_POSITION) {
             // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);

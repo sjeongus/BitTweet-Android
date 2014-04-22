@@ -16,24 +16,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
-/**
- * An activity representing a list of Tweets. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link TweetsDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- * <p>
- * The activity makes heavy use of fragments. The list of items is a
- * {@link TweetsListFragment} and the item details
- * (if present) is a {@link TweetsDetailFragment}.
- * <p>
- * This activity also implements the required
- * {@link TweetsListFragment.Callbacks} interface
- * to listen for item selections.
- */
-public class TweetsListActivity extends FragmentActivity
-        implements TweetsListFragment.Callbacks {
+public class TweetsListActivity extends FragmentActivity implements TweetsListFragment.Callbacks {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -50,7 +33,6 @@ public class TweetsListActivity extends FragmentActivity
      * fetched from Shared Preferences
      * */
     public boolean isTwitterLoggedInAlready() {
-        // return twitter login status from Shared Preferences
         return mSharedPreferences.getBoolean(TwitterLoginActivity.PREF_KEY_TWITTER_LOGIN, false);
     }
 
