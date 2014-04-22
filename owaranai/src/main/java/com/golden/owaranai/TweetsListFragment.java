@@ -4,22 +4,18 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.golden.owaranai.twitter.HomeTimelineContent;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
-/**
- * A list fragment representing a list of Tweets. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link TweetsDetailFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
- */
-public class TweetsListFragment extends ListFragment {
+public class TweetsListFragment extends Fragment implements OnRefreshListener, AdapterView.OnItemClickListener {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -31,7 +27,7 @@ public class TweetsListFragment extends ListFragment {
      * The fragment's current callback object, which is notified of list item
      * clicks.
      */
-    private Callbacks mCallbacks = sDummyCallbacks;
+    private Callbacks callbacks = dummyCallbacks;
 
     /**
      * The current activated item position. Only used on tablets.
@@ -39,9 +35,22 @@ public class TweetsListFragment extends ListFragment {
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     private Activity activity;
-    public HomeTimelineContent hcontent;
+    public HomeTimelineContent homeTimelineContent;
     public TimelineAdapter adapter;
-    private SharedPreferences mSharedPreferences;
+    private SharedPreferences sharedPreferences;
+
+    private PullToRefreshLayout pullToRefreshLayout;
+    private ListView listView;
+
+    @Override
+    public void onRefreshStarted(View view) {
+        updateAdapter();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        callbacks.onItemSelected(homeTimelineContent.statuses.get(position).id);
+    }
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -49,9 +58,6 @@ public class TweetsListFragment extends ListFragment {
      * selections.
      */
     public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
         public void onItemSelected(String id);
     }
 
@@ -59,60 +65,40 @@ public class TweetsListFragment extends ListFragment {
      * A dummy implementation of the {@link Callbacks} interface that does
      * nothing. Used only when this fragment is not attached to an activity.
      */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
+    private static Callbacks dummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
-        }
+        public void onItemSelected(String id) {}
     };
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public TweetsListFragment() {
-    }
+    public TweetsListFragment() {}
 
     // AsyncTask that executes getTimeline
     public class TimelineTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            // before the network request begins, show a progress indicator
-            //showProgressDialog("Fetching timeline...");
-        }
-
         @Override
         protected Void doInBackground(Void... args) {
             try {
-                System.out.println("Getting timeline now!");
-                hcontent.getTimeline();
-                System.out.println("Got the timeline!");
+                homeTimelineContent.getTimeline();
             } catch (Exception e) {
-                System.out.println("Error in fetching home timeline.");
                 e.printStackTrace();
             }
+
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
-            // after the network request completes, hide the progress indicator
-            //dismissProgressDialog();
-            //showResult(tweets);
-            System.out.println("Retrieved timeline! Printing...");
-            for (int i = 0; i < hcontent.statuses.size(); i++)
-                System.out.println(hcontent.statuses.get(i).status.getText());
-            Activity activity = getActivity();
-            adapter.setStatuses(hcontent.statuses);
-            TweetsListFragment timeline = ((TweetsListFragment) getFragmentManager().findFragmentById(R.id.tweets_list));
-            timeline.setListAdapter(adapter);
+            adapter.setStatuses(homeTimelineContent.statuses);
+            adapter.notifyDataSetChanged();
+            pullToRefreshLayout.setRefreshComplete();
         }
-
     }
 
     public void updateAdapter() {
         new TimelineTask().execute();
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -120,17 +106,32 @@ public class TweetsListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        mSharedPreferences = activity.getSharedPreferences("MyTwitter", 0);
-        hcontent = new HomeTimelineContent(mSharedPreferences);
+        sharedPreferences = activity.getSharedPreferences("MyTwitter", 0);
+        homeTimelineContent = new HomeTimelineContent(sharedPreferences);
         adapter = new TimelineAdapter(activity);
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        updateAdapter();
+    }
 
-        new TimelineTask().execute();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_tweets_list, container, false);
+
+        pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
+        listView = (ListView) view.findViewById(android.R.id.list);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+
+        ActionBarPullToRefresh.from(activity)
+                .allChildrenArePullable()
+                .listener(this)
+                .setup(pullToRefreshLayout);
+
+        return view;
     }
 
     @Override
@@ -138,8 +139,7 @@ public class TweetsListFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
     }
@@ -153,7 +153,7 @@ public class TweetsListFragment extends ListFragment {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
 
-        mCallbacks = (Callbacks) activity;
+        callbacks = (Callbacks) activity;
     }
 
     @Override
@@ -161,16 +161,7 @@ public class TweetsListFragment extends ListFragment {
         super.onDetach();
 
         // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
-    }
-
-    @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(hcontent.statuses.get(position).id);
+        callbacks = dummyCallbacks;
     }
 
     @Override
@@ -189,16 +180,16 @@ public class TweetsListFragment extends ListFragment {
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
+        listView.setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
     }
 
     private void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
+            listView.setItemChecked(mActivatedPosition, false);
         } else {
-            getListView().setItemChecked(position, true);
+            listView.setItemChecked(position, true);
         }
 
         mActivatedPosition = position;

@@ -25,9 +25,9 @@ public class TwitterLoginActivity extends FragmentActivity {
 
     // Preference Constants
     static String PREFERENCE_NAME = "twitter_oauth";
-    static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
-    static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-    static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
+    public static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
+    public static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
+    public static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
     static final String TWITTER_CALLBACK_URL = "oauth://t4jsample";
 
     // Twitter oauth urls

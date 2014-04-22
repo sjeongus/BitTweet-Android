@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,11 +40,10 @@ public class TweetsListActivity extends FragmentActivity
      * device.
      */
     private boolean mTwoPane;
-    private static SharedPreferences mSharedPreferences;
 
-    static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
-    static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
-    static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
+    private SharedPreferences mSharedPreferences;
+
+    private static final String TAG = "TweetsListActivity";
 
     /**
      * Check user already logged in your application using twitter Login flag is
@@ -51,17 +51,20 @@ public class TweetsListActivity extends FragmentActivity
      * */
     public boolean isTwitterLoggedInAlready() {
         // return twitter login status from Shared Preferences
-        return mSharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
+        return mSharedPreferences.getBoolean(TwitterLoginActivity.PREF_KEY_TWITTER_LOGIN, false);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSharedPreferences = getApplicationContext().getSharedPreferences("MyTwitter", MODE_PRIVATE);
+
+        mSharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
+
         if (!isTwitterLoggedInAlready()) {
             startActivity(new Intent(getApplicationContext(), TwitterLoginActivity.class));
-            finish();
+            return;
         }
+
         setContentView(R.layout.activity_tweets_list);
 
         if (findViewById(R.id.tweets_detail_container) != null) {
@@ -98,7 +101,6 @@ public class TweetsListActivity extends FragmentActivity
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.tweets_detail_container, fragment)
                     .commit();
-
         } else {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
@@ -118,48 +120,42 @@ public class TweetsListActivity extends FragmentActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_tweet:
                 new TweetTask().execute();
-                return true;
-            case R.id.action_refresh:
-                TweetsListFragment fragment = ((TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.tweets_list));
-                fragment.updateAdapter();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    // AsyncTask that executes getTimeline
+    // AsyncTask that tweets a random tweet on user's behalf?
     public class TweetTask extends AsyncTask<Void, Void, Void> {
-
         private User user;
         private String status;
         private Twitter twitter;
 
-        public TweetTask() {
-        }
-
         @Override
         protected void onPreExecute() {
-            // before the network request begins, show a progress indicator
-            //showProgressDialog("Fetching timeline...");
-            String oauthkey = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "No user");
-            String oauthsecret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "No secret");
-            ConfigurationBuilder confbuild = new ConfigurationBuilder();
-            confbuild.setOAuthAccessToken(oauthkey).setOAuthAccessTokenSecret(oauthsecret).setOAuthConsumerKey(SecretKeys.CONSUMER_KEY).setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
-            twitter = new TwitterFactory(confbuild.build()).getInstance();
-            User user = null;
+            String oauthKey = mSharedPreferences.getString(TwitterLoginActivity.PREF_KEY_OAUTH_TOKEN, "No user");
+            String oauthSecret = mSharedPreferences.getString(TwitterLoginActivity.PREF_KEY_OAUTH_SECRET, "No secret");
+            ConfigurationBuilder confBuild = new ConfigurationBuilder();
+
+            confBuild.setOAuthAccessToken(oauthKey)
+                    .setOAuthAccessTokenSecret(oauthSecret)
+                    .setOAuthConsumerKey(SecretKeys.CONSUMER_KEY)
+                    .setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
+
+            twitter = new TwitterFactory(confBuild.build()).getInstance();
+            user = null;
         }
 
         @Override
         protected Void doInBackground(Void... args) {
             try {
                 user = twitter.verifyCredentials();
-                System.out.println("Hello my name is " + user.getScreenName());
+                Log.e(TAG, "Hello my name is " + user.getScreenName());
                 status = GoHome.getStatus(user.getScreenName());
                 twitter.updateStatus(status);
             } catch (Exception e) {
@@ -168,10 +164,5 @@ public class TweetsListActivity extends FragmentActivity
 
             return null;
         }
-
-        @Override
-        protected void onPostExecute(Void result) {
-        }
-
     }
 }

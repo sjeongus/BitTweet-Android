@@ -1,96 +1,90 @@
 package com.golden.owaranai;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.golden.owaranai.twitter.StatusItem;
-import com.golden.owaranai.twitter.TimelineContent;
-
-import java.io.InputStream;
-import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-import twitter4j.ResponseList;
 import twitter4j.Status;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by soomin on 3/23/2014.
  */
 public class TimelineAdapter extends BaseAdapter {
+    private static final String TAG = "TimelineAdapter";
+    private final Context context;
+    private List<StatusItem> statusItems;
 
-    private Activity activity;
-
-    private List<StatusItem> mStatuses;
-
-    private static LayoutInflater inflater = null;
-
-    public TimelineAdapter(Activity a) {
-        activity = a;
-        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public TimelineAdapter(Context context) {
+        this.context = context;
+        this.statusItems = new ArrayList<StatusItem>();
     }
     @Override
     public int getCount() {
-        int count = 0;
-        if (mStatuses != null) {
-            count = mStatuses.size();
-        }
-        return count;
+        return statusItems.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return position;
+        return statusItems.get(position);
     }
 
     @Override
-    public long getItemId(int position) {
-        return position;
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
-        if (convertView == null) {
-            vi = inflater.inflate(R.layout.tweet_row, null);
+        View rowView;
+
+        // Reuse old view if it's present. But remember: Always set all of the view elements, because otherwise
+        // the old state will be preserved (basically, don't rely on TextViews &co having the state you last set them to)
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.tweets_list_item, parent, false);
+        } else {
+            rowView = convertView;
         }
 
-        if (mStatuses != null) {
-            // Get all the references to the layouts in the row
-            CircleImageView avatarImage = (CircleImageView) vi.findViewById(R.id.avatar);
-            TextView userName = (TextView) vi.findViewById(R.id.username);
-            TextView displayName = (TextView) vi.findViewById(R.id.displayname);
-            TextView time = (TextView) vi.findViewById(R.id.time);
-            TextView tweet = (TextView) vi.findViewById(R.id.tweet);
+        StatusItem item = (StatusItem) getItem(position);
+        Status status = item.status;
 
-            // Set all the references to the layouts in the row
-            //new DownloadImageTask(avatarImage).execute(((Status) mStatuses.get(position).status).getUser().getBiggerProfileImageURL());
-            avatarImage.setImageBitmap(mStatuses.get(position).profilePic);
-            tweet.setText(((Status)mStatuses.get(position).status).getText());
-            displayName.setText(((Status)mStatuses.get(position).status).getUser().getName());
-            userName.setText("@" + ((Status)mStatuses.get(position).status).getUser().getScreenName());
-            time.setText(((Status)mStatuses.get(position).status).getCreatedAt().toString());
-        }
+        CircleImageView avatarImage = (CircleImageView) rowView.findViewById(R.id.avatar);
+        TextView userName = (TextView) rowView.findViewById(R.id.username);
+        TextView displayName = (TextView) rowView.findViewById(R.id.displayname);
+        TextView time = (TextView) rowView.findViewById(R.id.time);
+        TextView tweet = (TextView) rowView.findViewById(R.id.tweet);
 
-        return vi;
+        avatarImage.setImageBitmap(item.profilePic);
+        tweet.setText(status.getText());
+        displayName.setText(status.getUser().getName());
+        userName.setText("@" + status.getUser().getScreenName());
+        time.setText(status.getCreatedAt().toString());
+
+        // Fetch avatar or load from cache
+        new DownloadImageTask(avatarImage).execute(status.getUser().getBiggerProfileImageURL());
+
+        return rowView;
     }
 
     public void setStatuses(List<StatusItem> data) {
-        mStatuses = data;
-        System.out.println("Set the list of statuses to adapter.");
+        statusItems = data;
     }
 
-    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
@@ -98,20 +92,31 @@ public class TimelineAdapter extends BaseAdapter {
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
+            String urlDisplay = urls[0];
+            Bitmap avatar = null;
+            InputStream in = null;
+
             try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+                in = new java.net.URL(urlDisplay).openStream();
+                avatar = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
                 e.printStackTrace();
+            } finally {
+                // Clean up
+                try {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException e) {
+                    // Do nothing
+                }
             }
-            return mIcon11;
+
+            return avatar;
         }
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
-    }*/
+    }
 }
