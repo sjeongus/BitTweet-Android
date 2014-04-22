@@ -75,7 +75,7 @@ public class TimelineAdapter extends BaseAdapter {
         time.setText(status.getCreatedAt().toString());
 
         // Fetch avatar or load from cache
-        new DownloadImageTask(avatarImage).execute(status.getUser().getBiggerProfileImageURL());
+        //new DownloadImageTask(avatarImage).execute(status.getUser().getBiggerProfileImageURL());
 
         return rowView;
     }
@@ -84,7 +84,7 @@ public class TimelineAdapter extends BaseAdapter {
         statusItems = data;
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
@@ -118,5 +118,5 @@ public class TimelineAdapter extends BaseAdapter {
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
-    }
+    }*/
 }
