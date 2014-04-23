@@ -1,5 +1,18 @@
-.gradle
-/local.properties
-/.idea/workspace.xml
 .DS_Store
+
+# Built files
 *.apk
+
+# Android Studio
+.idea/
+.gradle
+/*/local.properties
+#.idea/workspace.xml
+*.iml
+*.iws
+*.ipr
+*.~
+*.swp
+
+# Local configuration files
+local.properties
