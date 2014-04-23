@@ -51,7 +51,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        callbacks.onItemSelected(homeTimelineContent.getStatusItemAt(position).id);
+        callbacks.onItemSelected(homeTimelineContent.getStatusItemAt(position).getId());
     }
 
     /**

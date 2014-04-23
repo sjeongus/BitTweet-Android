@@ -1,14 +1,9 @@
 package com.golden.owaranai.twitter;
 
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
-
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,11 +28,16 @@ public class HomeTimelineContent implements TimelineContent {
 
     // Function to add an item to the List and the Map
     private void addItem(StatusItem status) {
+        if(statusMap.containsKey(status.getId())) {
+            // Don't add more than once
+            return;
+        }
+
         // Prepend to list
         statuses.add(0, status);
 
         // Store reference in hash map
-        statusMap.put(status.id, status);
+        statusMap.put(status.getId(), status);
     }
 
     @Override
@@ -77,21 +77,9 @@ public class HomeTimelineContent implements TimelineContent {
             // We will iterate this from end to start, prepending each item
             // That way we will preserve descending order even on further calls
             for (int i = temp.size() - 1; i > -1; i--) {
-                StatusItem nItem = new StatusItem(temp.get(i));
-
-                // Set the profile image in the StatusItem. If already in cache, load that instead.
-                // Previously profile images loaded each time because we tried to load every time list item was created.
-                String profileUrl = temp.get(i).getUser().getBiggerProfileImageURL();
-                InputStream in = new java.net.URL(profileUrl).openStream();
-                nItem.profilePic = BitmapFactory.decodeStream(in);
-                addItem(nItem);
-                //addItem(new StatusItem(temp.get(i)));
+                addItem(new StatusItem(temp.get(i)));
             }
         } catch (TwitterException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }

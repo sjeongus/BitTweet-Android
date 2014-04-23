@@ -60,7 +60,7 @@ public class TimelineAdapter extends BaseAdapter {
         }
 
         StatusItem item = (StatusItem) getItem(position);
-        Status status = item.status;
+        Status status = item.getStatus();
 
         CircleImageView avatarImage = (CircleImageView) rowView.findViewById(R.id.avatar);
         TextView userName = (TextView) rowView.findViewById(R.id.username);
@@ -68,14 +68,18 @@ public class TimelineAdapter extends BaseAdapter {
         TextView time = (TextView) rowView.findViewById(R.id.time);
         TextView tweet = (TextView) rowView.findViewById(R.id.tweet);
 
-        avatarImage.setImageBitmap(item.profilePic);
+        avatarImage.setImageBitmap(item.getProfilePic());
         tweet.setText(status.getText());
         displayName.setText(status.getUser().getName());
         userName.setText("@" + status.getUser().getScreenName());
         time.setText(status.getCreatedAt().toString());
 
         // Fetch avatar or load from cache
-        //new DownloadImageTask(avatarImage).execute(status.getUser().getBiggerProfileImageURL());
+        if(item.getProfilePic() != null) {
+            avatarImage.setImageBitmap(item.getProfilePic());
+        } else {
+            new DownloadImageTask(item, avatarImage).execute(status.getUser().getBiggerProfileImageURL());
+        }
 
         return rowView;
     }
@@ -84,10 +88,12 @@ public class TimelineAdapter extends BaseAdapter {
         statusItems = data;
     }
 
-    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
+        StatusItem item;
 
-        public DownloadImageTask(ImageView bmImage) {
+        public DownloadImageTask(StatusItem item, ImageView bmImage) {
+            this.item = item;
             this.bmImage = bmImage;
         }
 
@@ -116,7 +122,8 @@ public class TimelineAdapter extends BaseAdapter {
         }
 
         protected void onPostExecute(Bitmap result) {
+            item.setProfilePic(result);
             bmImage.setImageBitmap(result);
         }
-    }*/
+    }
 }
