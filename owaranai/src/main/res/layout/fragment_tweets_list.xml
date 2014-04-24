@@ -11,4 +11,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+    <Button
+            android:id="@+id/btn_load_more"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Load more"/>
 </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>

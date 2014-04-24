@@ -9,6 +9,6 @@ public class ApplicationController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        homeTimelineContent = new HomeTimelineContent(getSharedPreferences("MyTwitter", 0));
+        homeTimelineContent = new HomeTimelineContent(this);
     }
 }

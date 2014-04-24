@@ -5,13 +5,13 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
-import com.golden.owaranai.twitter.HomeTimelineContent;
+import com.golden.owaranai.twitter.TimelineContent;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
@@ -37,12 +37,13 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     private Activity activity;
-    private HomeTimelineContent homeTimelineContent;
+    private TimelineContent homeTimelineContent;
     private TimelineAdapter adapter;
     private SharedPreferences sharedPreferences;
 
     private PullToRefreshLayout pullToRefreshLayout;
     private ListView listView;
+    private Button loadMoreBtn;
 
     @Override
     public void onRefreshStarted(View view) {
@@ -93,11 +94,28 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         @Override
         protected void onPostExecute(Void result) {
-            Log.e(TAG, "Before update: " + homeTimelineContent.getStatusItems().size());
             adapter.setStatuses(homeTimelineContent.getStatusItems());
-            Log.e(TAG, "After update: " + homeTimelineContent.getStatusItems().size());
             adapter.notifyDataSetChanged();
             pullToRefreshLayout.setRefreshComplete();
+        }
+    }
+
+    private class LoadMoreTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                homeTimelineContent.loadMore();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            adapter.setStatuses(homeTimelineContent.getStatusItems());
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -128,8 +146,11 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         listView = (ListView) view.findViewById(android.R.id.list);
+        loadMoreBtn = (Button) view.findViewById(R.id.btn_load_more);
+
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
+        loadMoreBtn.setOnClickListener(new LoadMoreListener());
 
         ActionBarPullToRefresh.from(activity)
                 .allChildrenArePullable()
@@ -199,5 +220,12 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         }
 
         mActivatedPosition = position;
+    }
+
+    private class LoadMoreListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            new LoadMoreTask().execute();
+        }
     }
 }

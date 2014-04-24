@@ -12,4 +12,5 @@ public interface TimelineContent {
     public StatusItem getStatusItemAt(int position);
     public List<StatusItem> getStatusItems();
     public void update();
+    public void loadMore();
 }
