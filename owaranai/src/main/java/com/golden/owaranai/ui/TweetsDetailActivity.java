@@ -1,4 +1,4 @@
-package com.golden.owaranai;
+package com.golden.owaranai.ui;
 
 import android.app.ActionBar;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import com.golden.owaranai.R;
+import com.golden.owaranai.ui.fragments.TweetsDetailFragment;
 
 public class TweetsDetailActivity extends FragmentActivity {
     @Override

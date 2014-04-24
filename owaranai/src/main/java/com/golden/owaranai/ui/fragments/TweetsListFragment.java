@@ -1,4 +1,4 @@
-package com.golden.owaranai;
+package com.golden.owaranai.ui.fragments;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -11,7 +11,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import com.golden.owaranai.twitter.TimelineContent;
+import com.golden.owaranai.ApplicationController;
+import com.golden.owaranai.R;
+import com.golden.owaranai.internal.TimelineContent;
+import com.golden.owaranai.ui.adapters.TimelineAdapter;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
@@ -146,8 +149,10 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         listView = (ListView) view.findViewById(android.R.id.list);
-        loadMoreBtn = (Button) view.findViewById(R.id.btn_load_more);
+        loadMoreBtn = (Button) new Button(getActivity());
 
+        loadMoreBtn.setText("Load more");
+        listView.addFooterView(loadMoreBtn);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         loadMoreBtn.setOnClickListener(new LoadMoreListener());

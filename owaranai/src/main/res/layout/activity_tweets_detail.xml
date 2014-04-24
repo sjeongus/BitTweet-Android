@@ -3,5 +3,5 @@
     android:id="@+id/tweets_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.golden.owaranai.TweetsDetailActivity"
+    tools:context="com.golden.owaranai.ui.TweetsDetailActivity"
     tools:ignore="MergeRootFrame" />

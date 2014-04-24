@@ -1,4 +1,4 @@
-package com.golden.owaranai.twitter;
+package com.golden.owaranai.internal;
 
 import java.util.List;
 

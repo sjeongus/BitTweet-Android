@@ -1,8 +1,9 @@
-package com.golden.owaranai.twitter;
+package com.golden.owaranai.internal;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import com.golden.owaranai.ui.TwitterLoginActivity;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;

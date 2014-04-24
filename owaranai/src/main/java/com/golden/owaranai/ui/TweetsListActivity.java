@@ -1,4 +1,4 @@
-package com.golden.owaranai;
+package com.golden.owaranai.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,8 +9,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import com.golden.owaranai.twitter.SecretKeys;
-import com.golden.owaranai.twitter.TwitterLoginActivity;
+import com.golden.owaranai.GoHome;
+import com.golden.owaranai.R;
+import com.golden.owaranai.internal.SecretKeys;
+import com.golden.owaranai.ui.fragments.TweetsDetailFragment;
+import com.golden.owaranai.ui.fragments.TweetsListFragment;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.User;

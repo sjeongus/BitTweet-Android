@@ -8,7 +8,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="com.golden.owaranai.TweetsListActivity">
+    tools:context="com.golden.owaranai.ui.TweetsListActivity">
 
     <!--
     This layout is a two-pane layout for the Tweets
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/tweets_list"
-        android:name="com.golden.owaranai.TweetsListFragment"
+        android:name="com.golden.owaranai.ui.fragments.TweetsListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

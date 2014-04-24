@@ -1,4 +1,4 @@
-package com.golden.owaranai;
+package com.golden.owaranai.ui.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.golden.owaranai.twitter.StatusItem;
+import com.golden.owaranai.R;
+import com.golden.owaranai.internal.StatusItem;
 import de.hdodenhof.circleimageview.CircleImageView;
 import twitter4j.Status;
 
@@ -79,6 +80,10 @@ public class TimelineAdapter extends BaseAdapter {
             avatarImage.setImageBitmap(item.getProfilePic());
         } else {
             new DownloadImageTask(item, avatarImage).execute(status.getUser().getBiggerProfileImageURL());
+        }
+
+        if(status.isRetweet()) {
+            // TODO: Color left border green
         }
 
         return rowView;

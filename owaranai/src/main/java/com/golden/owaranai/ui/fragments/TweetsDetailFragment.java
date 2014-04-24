@@ -1,4 +1,4 @@
-package com.golden.owaranai;
+package com.golden.owaranai.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.golden.owaranai.twitter.StatusItem;
+import com.golden.owaranai.ApplicationController;
+import com.golden.owaranai.R;
+import com.golden.owaranai.internal.StatusItem;
 
 public class TweetsDetailFragment extends Fragment {
     /**

@@ -1,4 +1,4 @@
-package com.golden.owaranai.twitter;
+package com.golden.owaranai.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +12,9 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
 import com.golden.owaranai.R;
-import com.golden.owaranai.TweetsListActivity;
+import com.golden.owaranai.internal.ConnectionDetector;
+import com.golden.owaranai.internal.MyTwitterFactory;
+import com.golden.owaranai.internal.SecretKeys;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;

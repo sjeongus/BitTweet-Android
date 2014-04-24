@@ -1,4 +1,4 @@
-package com.golden.owaranai.twitter;
+package com.golden.owaranai.internal;
 
 public class SecretKeys {
     public static final String CONSUMER_KEY = "FYoFTG1AMDh9SG1bLowPAQ";
