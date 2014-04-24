@@ -1,6 +1,7 @@
 package com.golden.owaranai.ui.fragments;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import com.golden.owaranai.R;
+import com.golden.owaranai.internal.DiskLruImageCache;
 import com.golden.owaranai.internal.TimelineContent;
 import com.golden.owaranai.ui.adapters.TimelineAdapter;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
@@ -33,6 +35,9 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private ListView listView;
     private Button loadMoreBtn;
     private boolean activateOnItemClick;
+
+    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
+    private static final String DISK_CACHE_SUBDIR = "bittweet_thumbnails";
 
     @Override
     public void onRefreshStarted(View view) {
@@ -104,7 +109,8 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        adapter = new TimelineAdapter(activity);
+        DiskLruImageCache mDiskCache = new DiskLruImageCache(activity, DISK_CACHE_SUBDIR, DISK_CACHE_SIZE, Bitmap.CompressFormat.JPEG, 70);
+        adapter = new TimelineAdapter(activity, mDiskCache);
     }
 
     @Override

@@ -33,13 +33,11 @@ public class TimelineAdapter extends BaseAdapter {
     private List<StatusItem> statusItems;
 
     private DiskLruImageCache mDiskCache;
-    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
-    private static final String DISK_CACHE_SUBDIR = "bittweet_thumbnails";
 
-    public TimelineAdapter(Context context) {
+    public TimelineAdapter(Context context, DiskLruImageCache diskcache) {
         this.context = context;
         this.statusItems = new ArrayList<StatusItem>();
-        this.mDiskCache = new DiskLruImageCache(context, DISK_CACHE_SUBDIR, DISK_CACHE_SIZE, Bitmap.CompressFormat.JPEG, 70);
+        this.mDiskCache = diskcache;
     }
     @Override
     public int getCount() {
@@ -119,11 +117,12 @@ public class TimelineAdapter extends BaseAdapter {
             InputStream in = null;
 
             try {
-                //avatar = mDiskCache.getBitmap(username);
-                //if (avatar == null) {
+                //if (mDiskCache != null)
+                //    avatar = mDiskCache.getBitmap(username);
+                if (avatar == null) {
                     in = new java.net.URL(urlDisplay).openStream();
                     avatar = BitmapFactory.decodeStream(in);
-                //}
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -136,7 +135,8 @@ public class TimelineAdapter extends BaseAdapter {
                     // Do nothing
                 }
             }
-            //mDiskCache.put(username, avatar);
+            //if (mDiskCache != null)
+            //    mDiskCache.put(username, avatar);
             return avatar;
         }
 
