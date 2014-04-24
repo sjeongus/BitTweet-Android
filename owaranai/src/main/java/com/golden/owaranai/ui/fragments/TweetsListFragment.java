@@ -1,7 +1,6 @@
 package com.golden.owaranai.ui.fragments;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import com.golden.owaranai.ApplicationController;
 import com.golden.owaranai.R;
 import com.golden.owaranai.internal.TimelineContent;
 import com.golden.owaranai.ui.adapters.TimelineAdapter;
@@ -20,29 +18,15 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class TweetsListFragment extends Fragment implements OnRefreshListener, AdapterView.OnItemClickListener {
-
-    /**
-     * The serialization (saved instance state) Bundle key representing the
-     * activated item position. Only used on tablets.
-     */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private static final String TAG = "TweetsListFragment";
 
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
     private Callbacks callbacks = dummyCallbacks;
-
-    /**
-     * The current activated item position. Only used on tablets.
-     */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
+    private int activatedPosition = ListView.INVALID_POSITION;
 
     private Activity activity;
-    private TimelineContent homeTimelineContent;
+    private TimelineContent timelineContent;
     private TimelineAdapter adapter;
-    private SharedPreferences sharedPreferences;
 
     private PullToRefreshLayout pullToRefreshLayout;
     private ListView listView;
@@ -55,31 +39,18 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        callbacks.onItemSelected(homeTimelineContent.getStatusItemAt(position).getId());
+        callbacks.onItemSelected(timelineContent.getStatusItemAt(position).getId());
     }
 
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
     public interface Callbacks {
         public void onItemSelected(String id);
     }
 
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
     private static Callbacks dummyCallbacks = new Callbacks() {
         @Override
         public void onItemSelected(String id) {}
     };
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public TweetsListFragment() {}
 
     // AsyncTask that executes update
@@ -87,7 +58,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         @Override
         protected Void doInBackground(Void... args) {
             try {
-                homeTimelineContent.update();
+                timelineContent.update();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -97,7 +68,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         @Override
         protected void onPostExecute(Void result) {
-            adapter.setStatuses(homeTimelineContent.getStatusItems());
+            adapter.setStatuses(timelineContent.getStatusItems());
             adapter.notifyDataSetChanged();
             pullToRefreshLayout.setRefreshComplete();
         }
@@ -107,7 +78,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                homeTimelineContent.loadMore();
+                timelineContent.loadMore();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -117,7 +88,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            adapter.setStatuses(homeTimelineContent.getStatusItems());
+            adapter.setStatuses(timelineContent.getStatusItems());
             adapter.notifyDataSetChanged();
         }
     }
@@ -131,9 +102,6 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        ApplicationController controller = (ApplicationController) activity.getApplication();
-        sharedPreferences = activity.getSharedPreferences("MyTwitter", 0);
-        homeTimelineContent = controller.homeTimelineContent;
         adapter = new TimelineAdapter(activity);
     }
 
@@ -149,13 +117,19 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         listView = (ListView) view.findViewById(android.R.id.list);
-        loadMoreBtn = (Button) new Button(getActivity());
+        loadMoreBtn = new Button(getActivity());
 
         loadMoreBtn.setText("Load more");
         listView.addFooterView(loadMoreBtn);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
-        loadMoreBtn.setOnClickListener(new LoadMoreListener());
+
+        loadMoreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new LoadMoreTask().execute();
+            }
+        });
 
         ActionBarPullToRefresh.from(activity)
                 .allChildrenArePullable()
@@ -199,38 +173,27 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
+        if (activatedPosition != ListView.INVALID_POSITION) {
             // Serialize and persist the activated item position.
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+            outState.putInt(STATE_ACTIVATED_POSITION, activatedPosition);
         }
     }
 
-    /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
-     */
     public void setActivateOnItemClick(boolean activateOnItemClick) {
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
-        listView.setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
+        listView.setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
     }
 
     private void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
-            listView.setItemChecked(mActivatedPosition, false);
+            listView.setItemChecked(activatedPosition, false);
         } else {
             listView.setItemChecked(position, true);
         }
 
-        mActivatedPosition = position;
+        activatedPosition = position;
     }
 
-    private class LoadMoreListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            new LoadMoreTask().execute();
-        }
+    protected void setTimelineContent(TimelineContent content) {
+        this.timelineContent = content;
     }
 }

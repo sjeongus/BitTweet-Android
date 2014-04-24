@@ -65,8 +65,6 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                     .findFragmentById(R.id.tweets_list))
                     .setActivateOnItemClick(true);
         }
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     /**

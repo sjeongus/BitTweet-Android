@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="retweet_accent"></color>
-    <color name="reply_accent"></color>
+    <color name="retweet_accent">#0f0</color>
+    <color name="reply_accent">#00f</color>
 </resources>
