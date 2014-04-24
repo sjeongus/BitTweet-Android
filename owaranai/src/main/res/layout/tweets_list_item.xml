@@ -1,73 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="8dp"
-                android:orientation="horizontal">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent" android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@+id/avatar"
-        android:layout_gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
         app:border_width="0dp"
-        android:layout_marginRight="12dp"
         app:border_color="#00000000"/>
 
-    <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/username"
+        android:layout_toRightOf="@+id/avatar"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="8dp"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
 
-        <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginBottom="8dp"
-                android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/displayname"
+        android:layout_toRightOf="@+id/username"
+        android:layout_marginTop="10dp"
+        android:textSize="12sp" />
 
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Username"
-                    android:id="@+id/username"
-                    android:textSize="13sp"
-                    android:singleLine="true"
-                    android:layout_marginRight="8dp"
-                    android:textStyle="bold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/time"
+        android:layout_toRightOf="@+id/avatar"
+        android:layout_below="@+id/tweet"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="9sp"
+        android:textColor="#666"/>
 
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Full Name"
-                    android:singleLine="true"
-                    android:id="@+id/displayname"
-                    android:textSize="12sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Tweet!"
+        android:id="@+id/tweet"
+        android:layout_toRightOf="@+id/avatar"
+        android:layout_below="@id/username"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="10dp"
+        android:textSize="12sp"
+        android:autoLink="web"
+        android:linksClickable="false" />
 
-        </LinearLayout>
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Quick red fox jumps over the lazy dog"
-                android:id="@+id/tweet"
-                android:autoLink="web"
-                android:linksClickable="false"
-                android:layout_marginBottom="8dp"
-                android:textSize="13sp" />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#999"
-                android:text="12 hours agot"
-                android:id="@+id/time"
-                android:textSize="9sp" />
-
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
