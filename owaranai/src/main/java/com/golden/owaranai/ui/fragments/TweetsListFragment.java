@@ -19,6 +19,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 public class TweetsListFragment extends Fragment implements OnRefreshListener, AdapterView.OnItemClickListener {
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private static final String STATE_SCROLL = "scroll_position";
     private static final String TAG = "TweetsListFragment";
 
     private Callbacks callbacks = dummyCallbacks;
@@ -31,6 +32,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private PullToRefreshLayout pullToRefreshLayout;
     private ListView listView;
     private Button loadMoreBtn;
+    private boolean activateOnItemClick;
 
     @Override
     public void onRefreshStarted(View view) {
@@ -123,6 +125,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         listView.addFooterView(loadMoreBtn);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
+        listView.setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
 
         loadMoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +149,11 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+        }
+
+        // Restore scroll in list
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SCROLL)) {
+            listView.scrollTo(0, savedInstanceState.getInt(STATE_SCROLL));
         }
     }
 
@@ -177,10 +185,12 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
             // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, activatedPosition);
         }
+
+        outState.putInt(STATE_SCROLL, listView.getScrollY());
     }
 
     public void setActivateOnItemClick(boolean activateOnItemClick) {
-        listView.setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
+        this.activateOnItemClick = activateOnItemClick;
     }
 
     private void setActivatedPosition(int position) {

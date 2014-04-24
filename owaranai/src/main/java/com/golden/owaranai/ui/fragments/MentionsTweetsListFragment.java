@@ -7,6 +7,6 @@ public class MentionsTweetsListFragment extends TweetsListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTimelineContent(((ApplicationController) getActivity().getApplication()).mentionsTimelineContent);
+        setTimelineContent(((ApplicationController) getActivity().getApplication()).getMentionsTimelineContent());
     }
 }

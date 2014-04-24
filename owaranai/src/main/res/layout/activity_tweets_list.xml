@@ -1,8 +1,4 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tweets_list"
-    android:name="com.golden.owaranai.ui.fragments.HomeTweetsListFragment"
-    android:layout_width="fill_parent"
-    android:layout_height="match_parent"
-    tools:context="com.golden.owaranai.ui.TweetsListActivity"
-    tools:layout="@layout/activity_tweets_list" />
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_height="match_parent"
+             android:id="@+id/tweets_list_container"
+             android:layout_width="match_parent" />

@@ -7,9 +7,9 @@ import com.golden.owaranai.internal.MentionsTimelineContent;
 import com.golden.owaranai.internal.TimelineContent;
 
 public class ApplicationController extends Application {
-    public TimelineContent homeTimelineContent;
-    public TimelineContent mentionsTimelineContent;
-    public TimelineContent dmTimelineContent;
+    private TimelineContent homeTimelineContent;
+    private TimelineContent mentionsTimelineContent;
+    private TimelineContent dmTimelineContent;
 
     @Override
     public void onCreate() {
@@ -18,5 +18,17 @@ public class ApplicationController extends Application {
         homeTimelineContent = new HomeTimelineContent(this);
         mentionsTimelineContent = new MentionsTimelineContent(this);
         dmTimelineContent = new DmTimelineContent(this);
+    }
+
+    public TimelineContent getHomeTimelineContent() {
+        return homeTimelineContent;
+    }
+
+    public TimelineContent getMentionsTimelineContent() {
+        return mentionsTimelineContent;
+    }
+
+    public TimelineContent getDmTimelineContent() {
+        return dmTimelineContent;
     }
 }

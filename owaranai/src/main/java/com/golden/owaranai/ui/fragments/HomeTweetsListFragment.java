@@ -7,6 +7,6 @@ public class HomeTweetsListFragment extends TweetsListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTimelineContent(((ApplicationController) getActivity().getApplication()).homeTimelineContent);
+        setTimelineContent(((ApplicationController) getActivity().getApplication()).getHomeTimelineContent());
     }
 }

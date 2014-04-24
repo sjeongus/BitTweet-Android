@@ -34,16 +34,18 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Text"
+                    android:text="Username"
                     android:id="@+id/username"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
+                    android:singleLine="true"
                     android:layout_marginRight="8dp"
                     android:textStyle="bold"/>
 
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Text"
+                    android:text="Full Name"
+                    android:singleLine="true"
                     android:id="@+id/displayname"
                     android:textSize="12sp" />
 
@@ -52,16 +54,18 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Text"
+                android:text="Quick red fox jumps over the lazy dog"
                 android:id="@+id/tweet"
+                android:autoLink="web"
+                android:linksClickable="false"
                 android:layout_marginBottom="8dp"
-                android:textSize="12sp" />
+                android:textSize="13sp" />
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#555"
-                android:text="New Text"
+                android:textColor="#999"
+                android:text="12 hours agot"
                 android:id="@+id/time"
                 android:textSize="9sp" />
 
