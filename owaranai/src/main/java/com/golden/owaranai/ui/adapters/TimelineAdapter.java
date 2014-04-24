@@ -11,10 +11,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.golden.owaranai.R;
+import com.golden.owaranai.internal.DiskLruImageCache;
 import com.golden.owaranai.internal.StatusItem;
+import com.jakewharton.disklrucache.DiskLruCache;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import twitter4j.Status;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,9 +32,14 @@ public class TimelineAdapter extends BaseAdapter {
     private final Context context;
     private List<StatusItem> statusItems;
 
+    private DiskLruImageCache mDiskCache;
+    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
+    private static final String DISK_CACHE_SUBDIR = "bittweet_thumbnails";
+
     public TimelineAdapter(Context context) {
         this.context = context;
         this.statusItems = new ArrayList<StatusItem>();
+        this.mDiskCache = new DiskLruImageCache(context, DISK_CACHE_SUBDIR, DISK_CACHE_SIZE, Bitmap.CompressFormat.JPEG, 70);
     }
     @Override
     public int getCount() {
@@ -79,7 +88,7 @@ public class TimelineAdapter extends BaseAdapter {
         if(item.getProfilePic() != null) {
             avatarImage.setImageBitmap(item.getProfilePic());
         } else {
-            new DownloadImageTask(item, avatarImage).execute(status.getUser().getBiggerProfileImageURL());
+            new DownloadImageTask(item, avatarImage, status.getUser().getScreenName()).execute(status.getUser().getBiggerProfileImageURL());
         }
 
         if(status.isRetweet()) {
@@ -96,10 +105,12 @@ public class TimelineAdapter extends BaseAdapter {
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
         StatusItem item;
+        String username;
 
-        public DownloadImageTask(StatusItem item, ImageView bmImage) {
+        public DownloadImageTask(StatusItem item, ImageView bmImage, String username) {
             this.item = item;
             this.bmImage = bmImage;
+            this.username = username;
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -108,8 +119,11 @@ public class TimelineAdapter extends BaseAdapter {
             InputStream in = null;
 
             try {
-                in = new java.net.URL(urlDisplay).openStream();
-                avatar = BitmapFactory.decodeStream(in);
+                //avatar = mDiskCache.getBitmap(username);
+                //if (avatar == null) {
+                    in = new java.net.URL(urlDisplay).openStream();
+                    avatar = BitmapFactory.decodeStream(in);
+                //}
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -122,7 +136,7 @@ public class TimelineAdapter extends BaseAdapter {
                     // Do nothing
                 }
             }
-
+            //mDiskCache.put(username, avatar);
             return avatar;
         }
 
