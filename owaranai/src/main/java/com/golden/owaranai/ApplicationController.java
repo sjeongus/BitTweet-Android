@@ -1,7 +1,10 @@
 package com.golden.owaranai;
 
 import android.app.Application;
-import com.golden.owaranai.internal.*;
+import com.golden.owaranai.internal.HomeTimelineContent;
+import com.golden.owaranai.internal.MentionsTimelineContent;
+import com.golden.owaranai.internal.StatusItem;
+import com.golden.owaranai.internal.TimelineContent;
 
 import java.util.HashMap;
 
@@ -18,7 +21,6 @@ public class ApplicationController extends Application {
         statusMap = new HashMap<String, StatusItem>();
         homeTimelineContent = new HomeTimelineContent(this, statusMap);
         mentionsTimelineContent = new MentionsTimelineContent(this, statusMap);
-        dmTimelineContent = new DmTimelineContent(this);
     }
 
     public TimelineContent getHomeTimelineContent() {

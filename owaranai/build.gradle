@@ -10,24 +10,31 @@ android {
         versionCode 1
         versionName "0.2beta"
     }
+
     buildTypes {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+    }
 }
 
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
     compile('de.keyboardsurfer.android.widget:crouton:1.8.3') {
         // exclusion is not neccessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
     }
+
     compile 'com.nhaarman.listviewanimations:library:2.5.2'
     compile 'com.nineoldandroids:library:2.4.0+'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
-    compile 'org.twitter4j:twitter4j-core:3.0.5'
+    compile 'org.twitter4j:twitter4j-stream:4.0.1'
     compile 'com.squareup.picasso:picasso:2.2.0'
 }

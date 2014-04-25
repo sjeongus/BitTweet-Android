@@ -1,7 +1,6 @@
 package com.golden.owaranai.ui.fragments;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import com.golden.owaranai.R;
+import com.golden.owaranai.internal.GeneralTimelineContent;
 import com.golden.owaranai.internal.TimelineContent;
 import com.golden.owaranai.ui.adapters.TimelineAdapter;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
@@ -159,6 +159,9 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SCROLL)) {
             listView.scrollTo(0, savedInstanceState.getInt(STATE_SCROLL));
         }
+
+        // Streaming
+        ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
     }
 
     @Override
@@ -179,6 +182,9 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         // Reset the active callbacks interface to the dummy implementation.
         callbacks = dummyCallbacks;
+
+        // Detach streaming
+        ((GeneralTimelineContent) timelineContent).detachStream();
     }
 
     @Override

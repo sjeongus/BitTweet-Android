@@ -6,6 +6,9 @@ import android.util.Log;
 import com.golden.owaranai.ui.TwitterLoginActivity;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
+import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.File;
@@ -20,6 +23,7 @@ public class MyTwitterFactory {
 
     private Context context;
     private Twitter twitter;
+    private TwitterStream twitterStream;
 
     private MyTwitterFactory(Context context) {
         this.context = context;
@@ -42,9 +46,11 @@ public class MyTwitterFactory {
 
         configurationBuilder.setOAuthConsumerKey(SecretKeys.CONSUMER_KEY);
         configurationBuilder.setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
-        configurationBuilder.setUseSSL(true);
 
-        twitter = new TwitterFactory(configurationBuilder.build()).getInstance();
+        Configuration conf = configurationBuilder.build();
+
+        twitter = new TwitterFactory(conf).getInstance();
+        twitterStream = new TwitterStreamFactory(conf).getInstance();
     }
 
     public static MyTwitterFactory getInstance(Context context) {
@@ -73,5 +79,9 @@ public class MyTwitterFactory {
 
     public Twitter getTwitter() {
         return twitter;
+    }
+
+    public TwitterStream getTwitterStream() {
+        return twitterStream;
     }
 }
