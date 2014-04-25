@@ -2,7 +2,6 @@ package com.golden.owaranai.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -13,15 +12,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.golden.owaranai.GoHome;
 import com.golden.owaranai.R;
-import com.golden.owaranai.internal.DiskLruImageCache;
 import com.golden.owaranai.internal.MyTwitterFactory;
 import com.golden.owaranai.ui.fragments.HomeTweetsListFragment;
 import com.golden.owaranai.ui.fragments.MentionsTweetsListFragment;
 import com.golden.owaranai.ui.fragments.TweetsDetailFragment;
 import com.golden.owaranai.ui.fragments.TweetsListFragment;
-import com.jakewharton.disklrucache.DiskLruCache;
-
-import java.io.File;
 
 import twitter4j.Twitter;
 import twitter4j.User;

@@ -1,26 +1,18 @@
 package com.golden.owaranai.ui.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.golden.owaranai.R;
-import com.golden.owaranai.internal.DiskLruImageCache;
 import com.golden.owaranai.internal.StatusItem;
-import com.jakewharton.disklrucache.DiskLruCache;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import twitter4j.Status;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +24,9 @@ public class TimelineAdapter extends BaseAdapter {
     private final Context context;
     private List<StatusItem> statusItems;
 
-    private DiskLruImageCache mDiskCache;
-
-    public TimelineAdapter(Context context, DiskLruImageCache diskcache) {
+    public TimelineAdapter(Context context) {
         this.context = context;
         this.statusItems = new ArrayList<StatusItem>();
-        this.mDiskCache = diskcache;
     }
     @Override
     public int getCount() {
@@ -76,18 +65,15 @@ public class TimelineAdapter extends BaseAdapter {
         TextView time = (TextView) rowView.findViewById(R.id.time);
         TextView tweet = (TextView) rowView.findViewById(R.id.tweet);
 
-        avatarImage.setImageBitmap(item.getProfilePic());
         tweet.setText(status.getText());
         displayName.setText(status.getUser().getName());
         userName.setText("@" + status.getUser().getScreenName());
         time.setText(status.getCreatedAt().toString());
 
-        // Fetch avatar or load from cache
-        if(item.getProfilePic() != null) {
-            avatarImage.setImageBitmap(item.getProfilePic());
-        } else {
-            new DownloadImageTask(item, avatarImage, status.getUser().getScreenName()).execute(status.getUser().getBiggerProfileImageURL());
-        }
+        // Use Picasso to retrieve and set profile images. Get from cache if already exists.
+        Picasso nAvatar = Picasso.with(context);
+        nAvatar.setDebugging(true);
+        nAvatar.load(status.getUser().getBiggerProfileImageURL()).into(avatarImage);
 
         if(status.isRetweet()) {
             // TODO: Color left border green
@@ -98,51 +84,5 @@ public class TimelineAdapter extends BaseAdapter {
 
     public void setStatuses(List<StatusItem> data) {
         statusItems = data;
-    }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-        StatusItem item;
-        String username;
-
-        public DownloadImageTask(StatusItem item, ImageView bmImage, String username) {
-            this.item = item;
-            this.bmImage = bmImage;
-            this.username = username;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
-            Bitmap avatar = null;
-            InputStream in = null;
-
-            try {
-                //if (mDiskCache != null)
-                //    avatar = mDiskCache.getBitmap(username);
-                if (avatar == null) {
-                    in = new java.net.URL(urlDisplay).openStream();
-                    avatar = BitmapFactory.decodeStream(in);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                // Clean up
-                try {
-                    if (in != null) {
-                        in.close();
-                    }
-                } catch (IOException e) {
-                    // Do nothing
-                }
-            }
-            //if (mDiskCache != null)
-            //    mDiskCache.put(username, avatar);
-            return avatar;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            item.setProfilePic(result);
-            bmImage.setImageBitmap(result);
-        }
     }
 }

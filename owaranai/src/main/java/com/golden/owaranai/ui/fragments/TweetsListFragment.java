@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import com.golden.owaranai.R;
-import com.golden.owaranai.internal.DiskLruImageCache;
 import com.golden.owaranai.internal.TimelineContent;
 import com.golden.owaranai.ui.adapters.TimelineAdapter;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
@@ -109,8 +108,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         super.onCreate(savedInstanceState);
 
         activity = getActivity();
-        DiskLruImageCache mDiskCache = new DiskLruImageCache(activity, DISK_CACHE_SUBDIR, DISK_CACHE_SIZE, Bitmap.CompressFormat.JPEG, 70);
-        adapter = new TimelineAdapter(activity, mDiskCache);
+        adapter = new TimelineAdapter(activity);
     }
 
     @Override

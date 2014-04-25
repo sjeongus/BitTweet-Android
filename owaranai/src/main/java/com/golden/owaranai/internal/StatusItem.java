@@ -9,12 +9,10 @@ import twitter4j.Status;
 public class StatusItem {
     private String id;
     private Status status;
-    private Bitmap profilePic;
 
     public StatusItem(Status status) {
         this.id = String.valueOf(status.getId());
         this.status = status;
-        this.profilePic = null;
     }
 
     public String getId() {
@@ -23,13 +21,5 @@ public class StatusItem {
 
     public Status getStatus() {
         return status;
-    }
-
-    public Bitmap getProfilePic() {
-        return profilePic;
-    }
-
-    public void setProfilePic(Bitmap profilePic) {
-        this.profilePic = profilePic;
     }
 }
