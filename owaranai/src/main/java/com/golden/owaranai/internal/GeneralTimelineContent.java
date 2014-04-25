@@ -1,7 +1,8 @@
 package com.golden.owaranai.internal;
 
 import android.content.Context;
-import android.os.Handler;
+import android.widget.BaseAdapter;
+import com.golden.owaranai.ApplicationController;
 import com.golden.owaranai.ui.adapters.TimelineAdapter;
 import twitter4j.*;
 
@@ -10,19 +11,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class GeneralTimelineContent implements TimelineContent {
+public abstract class GeneralTimelineContent implements TimelineContent, TwitterStreamConsumer {
     private Context context;
     private Map<String, StatusItem> globalStatusMap;
     private Map<String, StatusItem> statusMap;
     private List<StatusItem> statuses;
+    private BaseAdapter adapter;
 
     private Twitter twitter;
     private User user;
-    private TwitterStream stream;
 
     protected static final int PER_PAGE = 40;
     private int morePage;
-    private UserStreamListener streamListener;
 
     public GeneralTimelineContent(Context context, Map<String, StatusItem> globalStatusMap) {
         this.context = context;
@@ -143,158 +143,18 @@ public abstract class GeneralTimelineContent implements TimelineContent {
     }
 
     public void attachStreamToAdapter(final TimelineAdapter adapter) {
-        stream = MyTwitterFactory.getInstance(context).getTwitterStream();
-        final Handler handler = new Handler();
-        adapter.setStatuses(statuses);
-
-        streamListener = new UserStreamListener() {
-            @Override
-            public void onDeletionNotice(long l, long l2) {
-
-            }
-
-            @Override
-            public void onFriendList(long[] longs) {
-
-            }
-
-            @Override
-            public void onFavorite(User user, User user2, Status status) {
-
-            }
-
-            @Override
-            public void onUnfavorite(User user, User user2, Status status) {
-
-            }
-
-            @Override
-            public void onFollow(User user, User user2) {
-
-            }
-
-            @Override
-            public void onUnfollow(User user, User user2) {
-
-            }
-
-            @Override
-            public void onDirectMessage(DirectMessage directMessage) {
-
-            }
-
-            @Override
-            public void onUserListMemberAddition(User user, User user2, UserList userList) {
-
-            }
-
-            @Override
-            public void onUserListMemberDeletion(User user, User user2, UserList userList) {
-
-            }
-
-            @Override
-            public void onUserListSubscription(User user, User user2, UserList userList) {
-
-            }
-
-            @Override
-            public void onUserListUnsubscription(User user, User user2, UserList userList) {
-
-            }
-
-            @Override
-            public void onUserListCreation(User user, UserList userList) {
-
-            }
-
-            @Override
-            public void onUserListUpdate(User user, UserList userList) {
-
-            }
-
-            @Override
-            public void onUserListDeletion(User user, UserList userList) {
-
-            }
-
-            @Override
-            public void onUserProfileUpdate(User user) {
-
-            }
-
-            @Override
-            public void onBlock(User user, User user2) {
-
-            }
-
-            @Override
-            public void onUnblock(User user, User user2) {
-
-            }
-
-            @Override
-            public void onStatus(Status status) {
-                addItem(new StatusItem(status, user.getId()), true);
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
-
-            @Override
-            public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
-                String statusId = String.valueOf(statusDeletionNotice.getStatusId());
-                StatusItem statusToDelete = statusMap.get(statusId);
-
-                statuses.remove(statusToDelete);
-                statusMap.remove(statusId);
-                globalStatusMap.remove(statusId);
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
-
-            @Override
-            public void onTrackLimitationNotice(int i) {
-
-            }
-
-            @Override
-            public void onScrubGeo(long l, long l2) {
-
-            }
-
-            @Override
-            public void onStallWarning(StallWarning stallWarning) {
-
-            }
-
-            @Override
-            public void onException(Exception e) {
-                e.printStackTrace();
-            }
-        };
-
-        stream.addListener(streamListener);
-        stream.user();
+        this.adapter = adapter;
+        TwitterStreamRouter router = ((ApplicationController) context).getTwitterStreamRouter();
+        router.registerConsumer(this);
     }
 
     public void detachStream() {
-        if(stream == null) {
-            return;
-        }
+        TwitterStreamRouter router = ((ApplicationController) context).getTwitterStreamRouter();
+        router.unregisterConsumer(this);
+        this.adapter = null;
+    }
 
-        stream.removeListener(streamListener);
-        stream.shutdown();
-        stream.cleanUp();
-        stream = null;
+    protected BaseAdapter getAdapter() {
+        return adapter;
     }
 }

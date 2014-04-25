@@ -1,4 +1,4 @@
-package com.golden.owaranai.internal;
+package com.golden.owaranai.ui.util;
 
 import android.app.AlertDialog;
 import android.content.Context;

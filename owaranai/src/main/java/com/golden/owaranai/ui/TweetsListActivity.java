@@ -54,6 +54,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
         setContentView(R.layout.activity_tweets_list);
         initializeDrawer();
+        getActionBar().setSubtitle(R.string.home_timeline);
         loadHomeTimeline();
 
         if (findViewById(R.id.tweets_detail_container) != null) {
@@ -81,9 +82,11 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                 switch (i) {
                     case 0:
                         loadHomeTimeline();
+                        getActionBar().setSubtitle(R.string.home_timeline);
                         break;
                     case 1:
                         loadMentionsTimeline();
+                        getActionBar().setSubtitle(R.string.mentions_timeline);
                         break;
                 }
             }
@@ -144,12 +147,6 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         switch (item.getItemId()) {
             case R.id.action_tweet:
                 new TweetTask().execute();
-                return true;
-            case R.id.action_home:
-                loadHomeTimeline();
-                return true;
-            case R.id.action_mentions:
-                loadMentionsTimeline();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

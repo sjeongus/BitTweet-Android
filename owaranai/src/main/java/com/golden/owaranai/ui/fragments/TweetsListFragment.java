@@ -14,6 +14,7 @@ import com.golden.owaranai.R;
 import com.golden.owaranai.internal.GeneralTimelineContent;
 import com.golden.owaranai.internal.TimelineContent;
 import com.golden.owaranai.ui.adapters.TimelineAdapter;
+import com.golden.owaranai.ui.util.ConnectionDetector;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
@@ -114,8 +115,10 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         updateAdapter();
 
-        // Streaming
-        ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
+        if(ConnectionDetector.isOnWifi(getActivity())) {
+            // Streaming
+            ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
+        }
     }
 
     @Override

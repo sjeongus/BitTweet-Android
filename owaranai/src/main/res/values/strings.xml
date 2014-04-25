@@ -6,5 +6,7 @@
     <string name="retweeted_by">Retweeted by @%1$s</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
+    <string name="home_timeline">Home timeline</string>
+    <string name="mentions_timeline">\@Mentions</string>
 
 </resources>

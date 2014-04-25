@@ -5,14 +5,4 @@
             android:id="@+id/action_tweet"
             android:title="Tweet"
             android:showAsAction="ifRoom" />
-
-    <item
-            android:id="@+id/action_home"
-            android:title="Home"
-            android:showAsAction="ifRoom"/>
-
-    <item
-            android:id="@+id/action_mentions"
-            android:title="Mentions"
-            android:showAsAction="ifRoom"/>
 </menu>

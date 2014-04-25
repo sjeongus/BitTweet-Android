@@ -3,6 +3,7 @@ package com.golden.owaranai.internal;
 import android.content.Context;
 import twitter4j.Paging;
 import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
 import twitter4j.TwitterException;
 
 import java.util.List;
@@ -28,5 +29,29 @@ public class MentionsTimelineContent extends GeneralTimelineContent {
     @Override
     protected List<Status> getMore(Paging paging) throws TwitterException {
         return getTwitter().getMentionsTimeline(paging);
+    }
+
+    @Override
+    public boolean wantsStatus(Status status) {
+        return status.getInReplyToUserId() == getUser().getId();
+    }
+
+    @Override
+    public void onStatus(Status status) {
+        addItem(new StatusItem(status, getUser().getId()), true);
+        getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public void onStatusDelete(StatusDeletionNotice statusDeletionNotice) {
+        String statusId = String.valueOf(statusDeletionNotice.getStatusId());
+        StatusItem status = getGlobalStatusMap().get(statusId);
+
+        getStatuses().remove(status);
+
+        getStatusMap().remove(statusId);
+        getGlobalStatusMap().remove(statusId);
+
+        getAdapter().notifyDataSetChanged();
     }
 }

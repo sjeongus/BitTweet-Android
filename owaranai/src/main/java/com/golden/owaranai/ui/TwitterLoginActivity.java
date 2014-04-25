@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
 import com.golden.owaranai.R;
-import com.golden.owaranai.internal.ConnectionDetector;
 import com.golden.owaranai.internal.MyTwitterFactory;
 import com.golden.owaranai.internal.SecretKeys;
 import twitter4j.Twitter;
@@ -50,7 +49,6 @@ public class TwitterLoginActivity extends FragmentActivity {
 
     // Misc
     private SharedPreferences sharedPreferences;
-    private ConnectionDetector connectionDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +56,6 @@ public class TwitterLoginActivity extends FragmentActivity {
         setContentView(R.layout.activity_login);
 
         twitter = MyTwitterFactory.getInstance(this).getTwitter();
-        connectionDetector = new ConnectionDetector(this);
         loginButton = (Button) findViewById(R.id.button_login);
         webView = (WebView) findViewById(R.id.webview);
         sharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
