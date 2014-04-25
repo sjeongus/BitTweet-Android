@@ -2,14 +2,21 @@ package com.golden.owaranai.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import com.golden.owaranai.GoHome;
 import com.golden.owaranai.R;
 import com.golden.owaranai.internal.MyTwitterFactory;
@@ -17,7 +24,6 @@ import com.golden.owaranai.ui.fragments.HomeTweetsListFragment;
 import com.golden.owaranai.ui.fragments.MentionsTweetsListFragment;
 import com.golden.owaranai.ui.fragments.TweetsDetailFragment;
 import com.golden.owaranai.ui.fragments.TweetsListFragment;
-
 import twitter4j.Twitter;
 import twitter4j.User;
 
@@ -28,6 +34,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
     private FragmentManager fragmentManager;
 
     private static final String TAG = "TweetsListActivity";
+    private ActionBarDrawerToggle drawerToggle;
 
     public boolean isTwitterLoggedInAlready() {
         return sharedPreferences.getBoolean(TwitterLoginActivity.PREF_KEY_TWITTER_LOGIN, false);
@@ -46,6 +53,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         }
 
         setContentView(R.layout.activity_tweets_list);
+        initializeDrawer();
         loadHomeTimeline();
 
         if (findViewById(R.id.tweets_detail_container) != null) {
@@ -58,6 +66,46 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                     .setActivateOnItemClick(true);
         }
     }
+
+    private void initializeDrawer() {
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ListView drawerList = (ListView) findViewById(R.id.left_drawer);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close);
+
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.navigation_item, new String[] { "Home", "Mentions" }));
+
+        drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i) {
+                    case 0:
+                        loadHomeTimeline();
+                        break;
+                    case 1:
+                        loadMentionsTimeline();
+                        break;
+                }
+            }
+        });
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
 
     @Override
     public void onItemSelected(String id) {
@@ -88,6 +136,10 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_tweet:
@@ -109,6 +161,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
         fragmentManager.beginTransaction()
                 .replace(R.id.tweets_list_container, mentionsTweetsListFragment)
+                .addToBackStack("ToMentions")
                 .commit();
     }
 

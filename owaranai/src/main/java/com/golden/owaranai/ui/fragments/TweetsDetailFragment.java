@@ -33,7 +33,7 @@ public class TweetsDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            statusItem = ((ApplicationController) getActivity().getApplication()).getHomeTimelineContent().getStatusItem(getArguments().getString(ARG_ITEM_ID));
+            statusItem = ((ApplicationController) getActivity().getApplication()).getStatus(getArguments().getString(ARG_ITEM_ID));
         }
     }
 
