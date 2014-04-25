@@ -1,6 +1,7 @@
 package com.golden.owaranai.ui.fragments;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,6 +34,9 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private ListView listView;
     private Button loadMoreBtn;
     private boolean activateOnItemClick;
+
+    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
+    private static final String DISK_CACHE_SUBDIR = "bittweet_thumbnails";
 
     @Override
     public void onRefreshStarted(View view) {

@@ -17,6 +17,7 @@ import com.golden.owaranai.ui.fragments.HomeTweetsListFragment;
 import com.golden.owaranai.ui.fragments.MentionsTweetsListFragment;
 import com.golden.owaranai.ui.fragments.TweetsDetailFragment;
 import com.golden.owaranai.ui.fragments.TweetsListFragment;
+
 import twitter4j.Twitter;
 import twitter4j.User;
 
