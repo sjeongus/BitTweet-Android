@@ -85,7 +85,7 @@ public class HomeTimelineContent implements TimelineContent {
             // We will iterate this from end to start, prepending each item
             // That way we will preserve descending order even on further calls
             for (int i = temp.size() - 1; i > -1; i--) {
-                addItem(new StatusItem(temp.get(i)));
+                addItem(new StatusItem(temp.get(i), user.getId()));
             }
         } catch (TwitterException e) {
             e.printStackTrace();
@@ -108,7 +108,7 @@ public class HomeTimelineContent implements TimelineContent {
 
             // We need to append it to the end of our statuses array
             for(Status aTemp : temp) {
-                addItem(new StatusItem(aTemp), false);
+                addItem(new StatusItem(aTemp, user.getId()), false);
             }
         } catch (TwitterException e) {
             e.printStackTrace();

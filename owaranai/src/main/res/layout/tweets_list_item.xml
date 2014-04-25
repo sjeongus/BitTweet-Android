@@ -1,65 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent" android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:orientation="horizontal"
+              android:baselineAligned="false"
+              android:layout_height="wrap_content">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/avatar"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="5dp"
-        app:border_width="0dp"
-        app:border_color="#00000000"/>
+    <FrameLayout
+            android:id="@+id/accent_container"
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:background="@color/retweet_accent"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/username"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="8dp"
-        android:textSize="12sp"
-        android:textStyle="bold"/>
+    <RelativeLayout
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/displayname"
-        android:layout_toRightOf="@+id/username"
-        android:layout_marginTop="10dp"
-        android:textSize="12sp" />
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/avatar"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="5dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/time"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_below="@+id/tweet"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="10dp"
-        android:textSize="9sp"
-        android:textColor="#666"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:id="@+id/username"
+            android:layout_toRightOf="@+id/avatar"
+            android:layout_marginRight="8dp"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test Tweet!"
-        android:id="@+id/tweet"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_below="@id/username"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="10dp"
-        android:textSize="12sp"
-        android:autoLink="web"
-        android:linksClickable="false" />
+        <TextView
+                android:id="@+id/retweeted_by"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#666"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/username"
+                android:layout_alignStart="@id/username"
+                android:visibility="gone"
+                android:textSize="9sp"
+                android:text="Retweeted by Person"/>
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Full Name"
+            android:id="@+id/displayname"
+            android:layout_toRightOf="@+id/username"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12 hours ago"
+            android:id="@+id/time"
+            android:layout_toRightOf="@+id/avatar"
+            android:layout_below="@+id/tweet"
+            android:layout_marginTop="5dp"
+            android:textSize="9sp"
+            android:textColor="#666"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quick red fox jumps over the lazy dog"
+            android:id="@+id/tweet"
+            android:layout_toRightOf="@+id/avatar"
+            android:layout_below="@id/retweeted_by"
+            android:layout_marginTop="5dp"
+            android:textSize="12sp"
+            android:autoLink="web"
+            android:linksClickable="false" />
+
+    </RelativeLayout>
+</LinearLayout>

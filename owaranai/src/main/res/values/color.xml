@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="retweet_accent">#0f0</color>
-    <color name="reply_accent">#00f</color>
+    <color name="retweet_accent">#39b54a</color>
+    <color name="reply_accent">#66a2fc</color>
+    <color name="favourite_accent">#ffc600</color>
+    <color name="reply_background">#e8f3ff</color>
 </resources>

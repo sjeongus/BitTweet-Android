@@ -3,5 +3,6 @@
 
     <string name="app_name">BitTweet</string>
     <string name="title_tweets_detail">Tweets Detail</string>
+    <string name="retweeted_by">Retweeted by @%1$s</string>
 
 </resources>

@@ -29,6 +29,11 @@ public class MentionsTimelineContent implements TimelineContent {
 
     // Function to add an item to the List and the Map
     private void addItem(StatusItem status, boolean prepend) {
+        if(status.getStatus().getUser().getId() == user.getId()) {
+            // Ignore own mentions
+            return;
+        }
+
         if(statusMap.containsKey(status.getId())) {
             // Don't add more than once
             return;
@@ -84,7 +89,7 @@ public class MentionsTimelineContent implements TimelineContent {
             // We will iterate this from end to start, prepending each item
             // That way we will preserve descending order even on further calls
             for (int i = temp.size() - 1; i > -1; i--) {
-                addItem(new StatusItem(temp.get(i)));
+                addItem(new StatusItem(temp.get(i), user.getId()));
             }
         } catch (TwitterException e) {
             e.printStackTrace();
@@ -108,7 +113,7 @@ public class MentionsTimelineContent implements TimelineContent {
 
             // We need to append it to the end of our statuses array
             for(Status aTemp : temp) {
-                addItem(new StatusItem(aTemp), false);
+                addItem(new StatusItem(aTemp, user.getId()), false);
             }
         } catch (TwitterException e) {
             e.printStackTrace();
