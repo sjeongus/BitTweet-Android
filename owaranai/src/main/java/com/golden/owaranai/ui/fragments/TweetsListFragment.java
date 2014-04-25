@@ -35,9 +35,6 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private Button loadMoreBtn;
     private boolean activateOnItemClick;
 
-    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
-    private static final String DISK_CACHE_SUBDIR = "bittweet_thumbnails";
-
     @Override
     public void onRefreshStarted(View view) {
         updateAdapter();
@@ -114,7 +111,11 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     @Override
     public void onStart() {
         super.onStart();
+
         updateAdapter();
+
+        // Streaming
+        ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
     }
 
     @Override
@@ -159,9 +160,6 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SCROLL)) {
             listView.scrollTo(0, savedInstanceState.getInt(STATE_SCROLL));
         }
-
-        // Streaming
-        ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
     }
 
     @Override
@@ -177,14 +175,19 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+
+        // Detach streaming
+        ((GeneralTimelineContent) timelineContent).detachStream();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
 
         // Reset the active callbacks interface to the dummy implementation.
         callbacks = dummyCallbacks;
-
-        // Detach streaming
-        ((GeneralTimelineContent) timelineContent).detachStream();
     }
 
     @Override

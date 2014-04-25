@@ -22,6 +22,7 @@ public abstract class GeneralTimelineContent implements TimelineContent {
 
     protected static final int PER_PAGE = 40;
     private int morePage;
+    private UserStreamListener streamListener;
 
     public GeneralTimelineContent(Context context, Map<String, StatusItem> globalStatusMap) {
         this.context = context;
@@ -146,7 +147,7 @@ public abstract class GeneralTimelineContent implements TimelineContent {
         final Handler handler = new Handler();
         adapter.setStatuses(statuses);
 
-        final UserStreamListener listener = new UserStreamListener() {
+        streamListener = new UserStreamListener() {
             @Override
             public void onDeletionNotice(long l, long l2) {
 
@@ -282,7 +283,7 @@ public abstract class GeneralTimelineContent implements TimelineContent {
             }
         };
 
-        stream.addListener(listener);
+        stream.addListener(streamListener);
         stream.user();
     }
 
@@ -291,6 +292,7 @@ public abstract class GeneralTimelineContent implements TimelineContent {
             return;
         }
 
+        stream.removeListener(streamListener);
         stream.shutdown();
         stream.cleanUp();
         stream = null;
