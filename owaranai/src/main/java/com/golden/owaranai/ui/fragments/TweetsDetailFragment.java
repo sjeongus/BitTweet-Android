@@ -43,7 +43,7 @@ public class TweetsDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_tweets_detail, container, false);
 
         if (statusItem != null) {
-            ((TextView) rootView.findViewById(R.id.tweets_detail)).setText(TweetFormatter.formatStatusText(statusItem.getStatus()));
+            ((TextView) rootView.findViewById(R.id.tweets_detail)).setText(TweetFormatter.formatStatusText(getActivity(), statusItem.getStatus()));
         }
 
         return rootView;

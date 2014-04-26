@@ -13,6 +13,7 @@ import com.golden.owaranai.internal.StatusItem;
 import com.golden.owaranai.ui.util.RoundedTransformation;
 import com.golden.owaranai.ui.util.TweetFormatter;
 import com.squareup.picasso.Picasso;
+import twitter4j.MediaEntity;
 import twitter4j.Status;
 
 import java.text.DateFormat;
@@ -81,12 +82,16 @@ public class TimelineAdapter extends BaseAdapter {
         TextView tweet = (TextView) rowView.findViewById(R.id.tweet);
         View accent = rowView.findViewById(R.id.accent_container);
         TextView rtBy = (TextView) rowView.findViewById(R.id.retweeted_by);
+        ImageView mediaExpansion = (ImageView) rowView.findViewById(R.id.media_expansion);
 
         tweet.setMovementMethod(LinkMovementMethod.getInstance());
-        tweet.setText(TweetFormatter.formatStatusText(status));
+        tweet.setText(TweetFormatter.formatStatusText(context, status));
         displayName.setText(status.getUser().getName());
         userName.setText("@" + status.getUser().getScreenName());
         time.setText(dateFormat.format(status.getCreatedAt()));
+
+        // This re-enables listItem click events, because otherwise the clickable spans in the tweet TextView
+        // hog all of the focus all the time.
         ((ViewGroup) rowView).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
         // Use Picasso to retrieve and set profile images. Get from cache if already exists.
@@ -94,6 +99,21 @@ public class TimelineAdapter extends BaseAdapter {
                 .load(status.getUser().getBiggerProfileImageURL())
                 .transform(new RoundedTransformation(50, 0))
                 .into(avatarImage);
+
+        // Load media
+        MediaEntity[] mediaEntities = status.getMediaEntities();
+
+        if(mediaEntities.length > 0) {
+            MediaEntity displayedMedia = mediaEntities[0];
+
+            Picasso.with(context)
+                    .load(displayedMedia.getMediaURL())
+                    .into(mediaExpansion);
+
+            mediaExpansion.setVisibility(View.VISIBLE);
+        } else {
+            mediaExpansion.setVisibility(View.GONE);
+        }
 
         if(isRT) {
             rtBy.setVisibility(View.VISIBLE);
