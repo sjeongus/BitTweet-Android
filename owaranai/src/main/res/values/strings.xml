@@ -8,5 +8,16 @@
     <string name="drawer_close">Close drawer</string>
     <string name="home_timeline">Home timeline</string>
     <string name="mentions_timeline">\@Mentions</string>
+    <string name="title_activity_tweet">Tweet</string>
+    
+    <string-array name="nav_drawer_items">
+        <item>Home</item>
+        <item>Mentions</item>
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_launcher</item>
+    </array>
 
 </resources>

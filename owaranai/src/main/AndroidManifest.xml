@@ -7,44 +7,43 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name="com.golden.owaranai.ApplicationController"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:name=".ApplicationController"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme" >
         <activity
-            android:name=".ui.TweetsListActivity"
+            android:name="com.golden.owaranai.ui.TweetsListActivity"
             android:label="@string/app_name" >
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".ui.TweetsDetailActivity"
+            android:name="com.golden.owaranai.ui.TweetsDetailActivity"
             android:label="@string/title_tweets_detail"
-            android:parentActivityName=".ui.TweetsListActivity" >
-
+            android:parentActivityName="com.golden.owaranai.ui.TweetsListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.golden.owaranai.TweetsListActivity" />
         </activity>
-
         <activity
-            android:name=".ui.TwitterLoginActivity"
-            android:launchMode="singleInstance"
-            android:label="Log In to Twitter" >
-
+            android:name="com.golden.owaranai.ui.TwitterLoginActivity"
+            android:label="Log In to Twitter"
+            android:launchMode="singleInstance" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="oauth" android:host="t4jsample"/>
+
+                <data
+                    android:host="t4jsample"
+                    android:scheme="oauth" />
             </intent-filter>
         </activity>
-
     </application>
+
 </manifest>

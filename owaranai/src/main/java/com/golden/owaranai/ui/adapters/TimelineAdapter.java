@@ -1,6 +1,7 @@
 package com.golden.owaranai.ui.adapters;
 
 import android.content.Context;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.golden.owaranai.R;
 import com.golden.owaranai.internal.StatusItem;
 import com.golden.owaranai.ui.util.RoundedTransformation;
+import com.golden.owaranai.ui.util.TweetFormatter;
 import com.squareup.picasso.Picasso;
 import twitter4j.Status;
 
@@ -80,7 +82,8 @@ public class TimelineAdapter extends BaseAdapter {
         View accent = rowView.findViewById(R.id.accent_container);
         TextView rtBy = (TextView) rowView.findViewById(R.id.retweeted_by);
 
-        tweet.setText(status.getText());
+        tweet.setMovementMethod(LinkMovementMethod.getInstance());
+        tweet.setText(TweetFormatter.formatStatusText(status));
         displayName.setText(status.getUser().getName());
         userName.setText("@" + status.getUser().getScreenName());
         time.setText(dateFormat.format(status.getCreatedAt()));

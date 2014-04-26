@@ -158,11 +158,6 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
-
-        // Restore scroll in list
-        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SCROLL)) {
-            listView.scrollTo(0, savedInstanceState.getInt(STATE_SCROLL));
-        }
     }
 
     @Override
@@ -201,8 +196,6 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
             // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, activatedPosition);
         }
-
-        outState.putInt(STATE_SCROLL, listView.getScrollY());
     }
 
     public void setActivateOnItemClick(boolean activateOnItemClick) {

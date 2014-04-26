@@ -4,30 +4,31 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import com.golden.owaranai.GoHome;
+import android.widget.SimpleAdapter;
 import com.golden.owaranai.R;
-import com.golden.owaranai.internal.MyTwitterFactory;
 import com.golden.owaranai.internal.PostStatus;
 import com.golden.owaranai.ui.fragments.HomeTweetsListFragment;
 import com.golden.owaranai.ui.fragments.MentionsTweetsListFragment;
 import com.golden.owaranai.ui.fragments.TweetsDetailFragment;
 import com.golden.owaranai.ui.fragments.TweetsListFragment;
-import twitter4j.Twitter;
-import twitter4j.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TweetsListActivity extends FragmentActivity implements TweetsListFragment.Callbacks {
     private boolean isTwoPane;
@@ -37,6 +38,8 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
     private static final String TAG = "TweetsListActivity";
     private ActionBarDrawerToggle drawerToggle;
+    private DrawerLayout drawerLayout;
+    private ListView drawerList;
 
     public boolean isTwitterLoggedInAlready() {
         return sharedPreferences.getBoolean(TwitterLoginActivity.PREF_KEY_TWITTER_LOGIN, false);
@@ -56,27 +59,48 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
         setContentView(R.layout.activity_tweets_list);
         initializeDrawer();
-        getActionBar().setSubtitle(R.string.home_timeline);
-        loadHomeTimeline();
 
         if (findViewById(R.id.tweets_detail_container) != null) {
             isTwoPane = true;
-
-            // In two-pane mode, list items should be given the
-            // 'activated' state when touched.
-            ((TweetsListFragment) fragmentManager
-                    .findFragmentById(R.id.tweets_list_container))
-                    .setActivateOnItemClick(true);
         }
+
+        loadHomeTimeline();
     }
 
     private void initializeDrawer() {
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ListView drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerList = (ListView) findViewById(R.id.left_drawer);
+
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
 
         drawerLayout.setDrawerListener(drawerToggle);
-        drawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.navigation_item, new String[] { "Home", "Mentions" }));
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        String[] items = getResources().getStringArray(R.array.nav_drawer_items);
+        TypedArray icons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
+        List<Map<String, String>> navItems = new ArrayList<Map<String, String>>();
+        Map<String, String> navItemTemp;
+
+        for(int i = 0; i < items.length; i++) {
+            navItemTemp = new HashMap<String, String>();
+            navItemTemp.put("icon", String.valueOf(icons.getResourceId(i, -1)));
+            navItemTemp.put("text", items[i]);
+            navItems.add(navItemTemp);
+        }
+
+        drawerList.setAdapter(new SimpleAdapter(this, navItems, R.layout.navigation_item, new String[] { "icon", "text" }, new int[] { R.id.nav_icon, R.id.nav_text }));
 
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -84,18 +108,19 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                 switch (i) {
                     case 0:
                         loadHomeTimeline();
-                        getActionBar().setSubtitle(R.string.home_timeline);
                         break;
                     case 1:
                         loadMentionsTimeline();
-                        getActionBar().setSubtitle(R.string.mentions_timeline);
                         break;
                 }
+
+                drawerLayout.closeDrawer(drawerList);
             }
         });
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+        icons.recycle();
     }
 
     @Override
@@ -149,32 +174,53 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         switch (item.getItemId()) {
             case R.id.action_tweet:
                 // Opens dialog box to post a new tweet
-                showDialog();
+                showTweetDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    void showDialog() {
-        DialogFragment tstatus = PostStatus.newInstance();
-        tstatus.show(getFragmentManager(), "dialog");
+    private void showTweetDialog() {
+        DialogFragment tStatus = PostStatus.newInstance();
+        tStatus.show(getFragmentManager(), "dialog");
     }
 
     private void loadMentionsTimeline() {
-        MentionsTweetsListFragment mentionsTweetsListFragment = new MentionsTweetsListFragment();
+        MentionsTweetsListFragment fragment = null;
+
+        try {
+            fragment = MentionsTweetsListFragment.class.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
         fragmentManager.beginTransaction()
-                .replace(R.id.tweets_list_container, mentionsTweetsListFragment)
+                .replace(R.id.tweets_list_container, fragment)
                 .addToBackStack("ToMentions")
                 .commit();
+
+
+        fragment.setActivateOnItemClick(isTwoPane);
+        getActionBar().setSubtitle(R.string.mentions_timeline);
     }
 
     private void loadHomeTimeline() {
-        HomeTweetsListFragment homeTweetsListFragment = new HomeTweetsListFragment();
+        HomeTweetsListFragment fragment = null;
+
+        try {
+            fragment = HomeTweetsListFragment.class.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
         fragmentManager.beginTransaction()
-                .replace(R.id.tweets_list_container, homeTweetsListFragment)
+                .replace(R.id.tweets_list_container, fragment)
                 .commit();
+
+        fragment.setActivateOnItemClick(isTwoPane);
+        getActionBar().setSubtitle(R.string.home_timeline);
     }
 }
