@@ -20,6 +20,7 @@ import android.widget.ListView;
 import com.golden.owaranai.GoHome;
 import com.golden.owaranai.R;
 import com.golden.owaranai.internal.MyTwitterFactory;
+import com.golden.owaranai.internal.PostStatus;
 import com.golden.owaranai.ui.fragments.HomeTweetsListFragment;
 import com.golden.owaranai.ui.fragments.MentionsTweetsListFragment;
 import com.golden.owaranai.ui.fragments.TweetsDetailFragment;
@@ -146,7 +147,8 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_tweet:
-                new TweetTask().execute();
+                //new TweetTask().execute();
+                new PostStatus(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -168,32 +170,5 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         fragmentManager.beginTransaction()
                 .replace(R.id.tweets_list_container, homeTweetsListFragment)
                 .commit();
-    }
-
-    // AsyncTask that tweets a random tweet on user's behalf?
-    public class TweetTask extends AsyncTask<Void, Void, Void> {
-        private User user;
-        private String status;
-        private Twitter twitter;
-
-        @Override
-        protected void onPreExecute() {
-            twitter = MyTwitterFactory.getInstance(TweetsListActivity.this).getTwitter();
-            user = null;
-        }
-
-        @Override
-        protected Void doInBackground(Void... args) {
-            try {
-                user = twitter.verifyCredentials();
-                Log.e(TAG, "Hello my name is " + user.getScreenName());
-                status = GoHome.getStatus(user.getScreenName());
-                twitter.updateStatus(status);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
     }
 }
