@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#fff"
+    android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Compose Tweet"
+        android:textSize="20sp"
+        android:layout_marginBottom="10dp"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="140"
+        android:textSize="20sp"/>
+
+    <EditText
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@+id/title"
+        android:hint="Enter your tweet here"
+        android:autoText="true"
+        android:autoLink="web"
+        android:linksClickable="false"
+        android:gravity="top|left"
+        android:inputType="textLongMessage|textCapSentences|textMultiLine" />
+
+</RelativeLayout>

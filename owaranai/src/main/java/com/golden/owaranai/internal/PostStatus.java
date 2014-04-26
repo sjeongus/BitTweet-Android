@@ -1,17 +1,25 @@
 package com.golden.owaranai.internal;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.golden.owaranai.ApplicationController;
 import com.golden.owaranai.GoHome;
+import com.golden.owaranai.R;
 
 import twitter4j.Twitter;
 import twitter4j.User;
@@ -20,21 +28,44 @@ import twitter4j.User;
  * Created by soomin on 4/25/2014.
  */
 // Class for posting a new tweet
-public class PostStatus {
+public class PostStatus extends DialogFragment {
 
     private Context mContext;
     private String tweet_text = "";
 
-    public PostStatus(Context context) {
-        mContext = context;
+    public static PostStatus newInstance() {
+        PostStatus stat = new PostStatus();
+        Bundle args = new Bundle();
+        return stat;
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        mContext = getActivity();
         // Build a dialog box
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("Compose Tweet");
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialog = inflater.inflate(R.layout.dialog_poststatus, null);
 
-        final EditText tweet = new EditText(context);
-        tweet.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-            | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        builder.setView(tweet);
+        builder.setView(dialog);
+        final EditText tweet = (EditText) dialog.findViewById(R.id.text);
+        final TextView counter = (TextView) dialog.findViewById(R.id.count);
+
+        TextWatcher textWatch = new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int len = s.length();
+                int remain = 140 - s.length();
+                counter.setText(String.valueOf(remain));
+            }
+
+            public void afterTextChanged(Editable s) {
+            }
+        };
+
+        tweet.addTextChangedListener(textWatch);
 
         builder.setPositiveButton("Tweet", new DialogInterface.OnClickListener() {
             @Override
@@ -50,7 +81,7 @@ public class PostStatus {
             }
         });
 
-        builder.show();
+        return builder.create();
     }
 
     // AsyncTask that tweets a random tweet on user's behalf?

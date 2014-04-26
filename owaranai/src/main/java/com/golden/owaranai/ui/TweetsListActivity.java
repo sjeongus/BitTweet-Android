@@ -1,5 +1,6 @@
 package com.golden.owaranai.ui;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -148,11 +149,16 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         switch (item.getItemId()) {
             case R.id.action_tweet:
                 // Opens dialog box to post a new tweet
-                new PostStatus(this);
+                showDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    void showDialog() {
+        DialogFragment tstatus = PostStatus.newInstance();
+        tstatus.show(getFragmentManager(), "dialog");
     }
 
     private void loadMentionsTimeline() {
