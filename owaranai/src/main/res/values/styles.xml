@@ -1,8 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
+    <style name="Theme.BitTweet" parent="android:Theme.Holo.Light">
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Theme.BitTweet.DrawerListView">
+        <item name="android:layout_width">240dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:choiceMode">singleChoice</item>
+        <item name="android:dividerHeight">1px</item>
+        <item name="android:divider">@android:color/darker_gray</item>
+        <item name="android:background">@android:color/background_light</item>
+    </style>
 </resources>

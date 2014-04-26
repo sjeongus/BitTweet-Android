@@ -35,6 +35,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private ListView listView;
     private Button loadMoreBtn;
     private boolean activateOnItemClick;
+    private int lastUsedScrollY = 0;
 
     @Override
     public void onRefreshStarted(View view) {
@@ -82,11 +83,9 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
             adapter.notifyDataSetChanged();
             pullToRefreshLayout.setRefreshComplete();
 
-            if(firstRun) {
-                if(ConnectionDetector.isOnWifi(getActivity())) {
-                    // Streaming
-                    ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
-                }
+            if(firstRun && !isDetached() && ConnectionDetector.isOnWifi(getActivity())) {
+                // Streaming
+                ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
             }
         }
     }
@@ -121,7 +120,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
         activity = getActivity();
         adapter = new TimelineAdapter(activity);
     }
@@ -139,6 +138,11 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         pullToRefreshLayout = (PullToRefreshLayout) view.findViewById(R.id.ptr_layout);
         listView = (ListView) view.findViewById(android.R.id.list);
         loadMoreBtn = new Button(getActivity());
+
+        // After the inheriting class defined its timelineContent instance, we should connect our adapter
+        // to its existing statusItems List object, in case it already contains tweets. This happens before
+        // we restore savedState, so *then* we are able to return to the saved scroll position.
+        adapter.setStatuses(timelineContent.getStatusItems());
 
         loadMoreBtn.setText("Load more");
         listView.addFooterView(loadMoreBtn);
@@ -169,6 +173,10 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SCROLL)) {
+            listView.scrollTo(0, savedInstanceState.getInt(STATE_SCROLL));
+        }
     }
 
     @Override
@@ -184,19 +192,17 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-
-        // Detach streaming
-        ((GeneralTimelineContent) timelineContent).detachStream();
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
 
         // Reset the active callbacks interface to the dummy implementation.
         callbacks = dummyCallbacks;
+
+        // Detach streaming
+        ((GeneralTimelineContent) timelineContent).detachStream();
+
+        // Save scroll position while we still can
+        lastUsedScrollY = listView.getScrollY();
     }
 
     @Override
@@ -207,6 +213,8 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
             // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, activatedPosition);
         }
+
+        outState.putInt(STATE_SCROLL, lastUsedScrollY);
     }
 
     public void setActivateOnItemClick(boolean activateOnItemClick) {

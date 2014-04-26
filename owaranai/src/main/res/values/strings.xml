@@ -16,8 +16,8 @@
     </string-array>
 
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_launcher</item>
-        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_nav_timeline</item>
+        <item>@drawable/ic_nav_mentions</item>
     </array>
 
 </resources>

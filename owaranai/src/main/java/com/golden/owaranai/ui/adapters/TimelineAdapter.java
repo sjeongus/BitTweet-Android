@@ -87,6 +87,7 @@ public class TimelineAdapter extends BaseAdapter {
         displayName.setText(status.getUser().getName());
         userName.setText("@" + status.getUser().getScreenName());
         time.setText(dateFormat.format(status.getCreatedAt()));
+        ((ViewGroup) rowView).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
         // Use Picasso to retrieve and set profile images. Get from cache if already exists.
         Picasso.with(context)

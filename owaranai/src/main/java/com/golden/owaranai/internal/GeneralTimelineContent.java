@@ -151,7 +151,6 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
     public void detachStream() {
         TwitterStreamRouter router = ((ApplicationController) context).getTwitterStreamRouter();
         router.unregisterConsumer(this);
-        this.adapter = null;
     }
 
     protected BaseAdapter getAdapter() {
