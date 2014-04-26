@@ -147,7 +147,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_tweet:
-                //new TweetTask().execute();
+                // Opens dialog box to post a new tweet
                 new PostStatus(this);
                 return true;
             default:

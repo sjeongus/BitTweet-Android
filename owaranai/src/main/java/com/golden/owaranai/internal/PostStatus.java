@@ -19,6 +19,7 @@ import twitter4j.User;
 /**
  * Created by soomin on 4/25/2014.
  */
+// Class for posting a new tweet
 public class PostStatus {
 
     private Context mContext;
@@ -26,6 +27,7 @@ public class PostStatus {
 
     public PostStatus(Context context) {
         mContext = context;
+        // Build a dialog box
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("Compose Tweet");
 
