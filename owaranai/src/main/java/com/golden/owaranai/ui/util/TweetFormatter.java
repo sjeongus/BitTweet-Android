@@ -5,27 +5,33 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.view.View;
-import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.URLEntity;
+import twitter4j.UserMentionEntity;
 
 public class TweetFormatter {
     public static SpannableString formatStatusText(Status status) {
         SpannableStringBuilder builder = new SpannableStringBuilder();
-        String tweetText = status.getText();
-        URLEntity[] urlEntities = status.getURLEntities();
-        MediaEntity[] mediaEntities = status.getMediaEntities();
 
-        builder.append(tweetText);
+        builder.append(status.getText());
 
         // Make normal URLs and media URLs clickable
-        linkify(builder, urlEntities);
-        linkify(builder, mediaEntities);
+        linkify(builder, status.getURLEntities());
+        linkify(builder, status.getMediaEntities());
 
         // Make user names clickable
-        // TODO
+        linkifyUsers(builder, status.getUserMentionEntities());
 
         return SpannableString.valueOf(builder);
+    }
+
+    private static void linkifyUsers(SpannableStringBuilder builder, UserMentionEntity[] userMentionEntities) {
+        ClickableSpan linkTemp;
+
+        for(UserMentionEntity mention : userMentionEntities) {
+            linkTemp = new UserSpan(mention.getScreenName());
+            builder.setSpan(linkTemp, mention.getStart(), mention.getEnd(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
     }
 
     private static void linkify(SpannableStringBuilder builder, URLEntity[] urlEntities) {
@@ -48,6 +54,19 @@ public class TweetFormatter {
         @Override
         public void onClick(View view) {
             System.out.println("Clicked " + url);
+        }
+    }
+
+    private static class UserSpan extends ClickableSpan {
+        private String username;
+
+        public UserSpan(String username) {
+            this.username = username;
+        }
+
+        @Override
+        public void onClick(View view) {
+            System.out.println("Clicked on @" + username);
         }
     }
 }

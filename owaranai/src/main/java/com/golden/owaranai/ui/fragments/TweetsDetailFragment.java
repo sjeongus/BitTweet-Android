@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.golden.owaranai.ApplicationController;
 import com.golden.owaranai.R;
 import com.golden.owaranai.internal.StatusItem;
+import com.golden.owaranai.ui.util.TweetFormatter;
 
 public class TweetsDetailFragment extends Fragment {
     /**
@@ -42,7 +43,7 @@ public class TweetsDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_tweets_detail, container, false);
 
         if (statusItem != null) {
-            ((TextView) rootView.findViewById(R.id.tweets_detail)).setText(statusItem.getStatus().getText());
+            ((TextView) rootView.findViewById(R.id.tweets_detail)).setText(TweetFormatter.formatStatusText(statusItem.getStatus()));
         }
 
         return rootView;

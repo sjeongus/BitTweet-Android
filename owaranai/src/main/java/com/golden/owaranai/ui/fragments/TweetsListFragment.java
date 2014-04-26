@@ -59,6 +59,12 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
     // AsyncTask that executes update
     public class TimelineTask extends AsyncTask<Void, Void, Void> {
+        private final boolean firstRun;
+
+        public TimelineTask(boolean firstRun) {
+            this.firstRun = firstRun;
+        }
+
         @Override
         protected Void doInBackground(Void... args) {
             try {
@@ -75,6 +81,13 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
             adapter.setStatuses(timelineContent.getStatusItems());
             adapter.notifyDataSetChanged();
             pullToRefreshLayout.setRefreshComplete();
+
+            if(firstRun) {
+                if(ConnectionDetector.isOnWifi(getActivity())) {
+                    // Streaming
+                    ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
+                }
+            }
         }
     }
 
@@ -97,8 +110,12 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         }
     }
 
+    public void updateAdapter(boolean firstRun) {
+        new TimelineTask(firstRun).execute();
+    }
+
     public void updateAdapter() {
-        new TimelineTask().execute();
+        updateAdapter(false);
     }
 
     @Override
@@ -112,13 +129,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     @Override
     public void onStart() {
         super.onStart();
-
-        updateAdapter();
-
-        if(ConnectionDetector.isOnWifi(getActivity())) {
-            // Streaming
-            ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
-        }
+        updateAdapter(true);
     }
 
     @Override
