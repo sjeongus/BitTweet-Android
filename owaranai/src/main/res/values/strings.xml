@@ -9,7 +9,8 @@
     <string name="home_timeline">Home timeline</string>
     <string name="mentions_timeline">\@Mentions</string>
     <string name="title_activity_tweet">Tweet</string>
-    
+    <string name="media_expansion_desc">Attached media</string>
+
     <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Mentions</item>

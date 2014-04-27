@@ -108,6 +108,9 @@ public class TimelineAdapter extends BaseAdapter {
 
             Picasso.with(context)
                     .load(displayedMedia.getMediaURL())
+                    .resizeDimen(R.dimen.media_expansion_size, R.dimen.media_expansion_size)
+                    .centerCrop()
+                    .transform(new RoundedTransformation(20, 0))
                     .into(mediaExpansion);
 
             mediaExpansion.setVisibility(View.VISIBLE);

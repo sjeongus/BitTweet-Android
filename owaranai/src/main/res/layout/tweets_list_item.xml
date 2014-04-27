@@ -80,9 +80,11 @@
 
         <ImageView
                 android:id="@+id/media_expansion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_launcher"
+                android:contentDescription="@string/media_expansion_desc"
                 android:scaleType="centerCrop"
-                android:layout_marginTop="8dp"/>
+                android:layout_width="@dimen/media_expansion_size"
+                android:layout_height="@dimen/media_expansion_size"/>
     </LinearLayout>
 </LinearLayout>
