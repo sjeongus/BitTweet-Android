@@ -44,6 +44,10 @@
                     android:scheme="oauth" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.golden.owaranai.ui.NewTweetActivity"
+            android:label="@string/title_activity_new_tweet" >
+        </activity>
     </application>
 
 </manifest>
