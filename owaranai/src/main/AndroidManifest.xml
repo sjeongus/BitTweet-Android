@@ -48,6 +48,7 @@
             android:name="com.golden.owaranai.ui.NewTweetActivity"
             android:label="@string/title_activity_new_tweet" >
         </activity>
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="2ddc1636bd01706058f9c8213c58250afe71f717"/>
     </application>
 
 </manifest>
