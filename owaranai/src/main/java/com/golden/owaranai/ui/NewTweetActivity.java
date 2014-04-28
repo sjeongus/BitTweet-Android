@@ -1,18 +1,20 @@
 package com.golden.owaranai.ui;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.golden.owaranai.ApplicationController;
 import com.golden.owaranai.R;
+import com.golden.owaranai.internal.MyTwitterFactory;
 import com.golden.owaranai.internal.StatusItem;
+import twitter4j.Twitter;
+import twitter4j.User;
 
 public class NewTweetActivity extends Activity {
     public static final String ARG_REPLY_TO_ID = "reply_to";
@@ -23,7 +25,9 @@ public class NewTweetActivity extends Activity {
 
     private EditText viewTweetEdit;
     private TextView viewCharCounter;
-    private View viewOriginalStatus;
+    private TextView viewReplyText;
+    private Button viewBtnPost;
+    private Button viewBtnCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,25 +46,37 @@ public class NewTweetActivity extends Activity {
 
         viewTweetEdit = (EditText) findViewById(R.id.text);
         viewCharCounter = (TextView) findViewById(R.id.count);
+        viewReplyText = (TextView) findViewById(R.id.reply_text);
+        viewBtnPost = (Button) findViewById(R.id.btn_post_tweet);
+        viewBtnCancel = (Button) findViewById(R.id.btn_cancel_tweet);
+
         viewTweetEdit.addTextChangedListener(new TweetTextWatcher());
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.new_tweet_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+        viewBtnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendTweet();
+            }
+        });
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_tweet:
-                // TODO
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        viewBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        if(inReplyToStatus != null) {
+            viewReplyText.setText("Reply to: " + inReplyToStatus.getStatus().getText());
+            viewReplyText.setVisibility(View.VISIBLE);
+        } else {
+            viewReplyText.setVisibility(View.GONE);
         }
+    }
+
+    private void sendTweet() {
+        String text = viewTweetEdit.getText().toString();
+        new TweetTask().execute(text);
     }
 
     private class TweetTextWatcher implements TextWatcher {
@@ -78,6 +94,35 @@ public class NewTweetActivity extends Activity {
         @Override
         public void afterTextChanged(Editable editable) {
 
+        }
+    }
+
+    private class TweetTask extends AsyncTask<String, Void, Void> {
+        private User user;
+        private Twitter twitter;
+
+        @Override
+        protected void onPreExecute() {
+            twitter = MyTwitterFactory.getInstance(NewTweetActivity.this).getTwitter();
+            user = null;
+        }
+
+        @Override
+        protected Void doInBackground(String... args) {
+            String status = args[0];
+            try {
+                user = twitter.verifyCredentials();
+                twitter.updateStatus(status);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            finish();
         }
     }
 }

@@ -176,8 +176,8 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_tweet:
-                // Opens dialog box to post a new tweet
-                showTweetDialog();
+                Intent newTweet = new Intent(this, NewTweetActivity.class);
+                startActivity(newTweet);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -201,7 +201,6 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
         fragmentManager.beginTransaction()
                 .replace(R.id.tweets_list_container, fragment)
-                .addToBackStack("ToMentions")
                 .commit();
 
 
