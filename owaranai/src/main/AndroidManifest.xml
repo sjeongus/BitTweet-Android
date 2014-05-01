@@ -47,12 +47,21 @@
         <activity
             android:name="com.golden.owaranai.ui.NewTweetActivity"
             android:label="@string/title_activity_new_tweet"
-            android:parentActivityName=".ui.TweetsListActivity">
+            android:parentActivityName="com.golden.owaranai.ui.TweetsListActivity" >
             <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.golden.owaranai.TweetsListActivity" />
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.golden.owaranai.TweetsListActivity" />
         </activity>
-        <meta-data android:name="com.crashlytics.ApiKey" android:value="2ddc1636bd01706058f9c8213c58250afe71f717"/>
+
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="2ddc1636bd01706058f9c8213c58250afe71f717" />
+
+        <service
+            android:name="com.golden.owaranai.services.TweetService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

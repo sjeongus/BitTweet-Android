@@ -2,12 +2,14 @@ package com.golden.owaranai.ui.adapters;
 
 import android.content.Context;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.fortysevendeg.swipelistview.SwipeListView;
 import com.golden.owaranai.R;
 import com.golden.owaranai.internal.StatusItem;
 import com.golden.owaranai.ui.util.RoundedTransformation;
@@ -30,11 +32,15 @@ public class TimelineAdapter extends BaseAdapter {
     private final Context context;
     private List<StatusItem> statusItems;
     private DateFormat dateFormat;
+    private Picasso picasso;
 
     public TimelineAdapter(Context context) {
         this.context = context;
         this.statusItems = new ArrayList<StatusItem>();
         this.dateFormat = new SimpleDateFormat("MMM d yyyy, K:mm a", Locale.getDefault());
+        this.picasso = Picasso.with(context);
+
+        picasso.setDebugging(true);
     }
 
     @Override
@@ -53,8 +59,8 @@ public class TimelineAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View rowView;
+    public View getView(final int position, View convertView, final ViewGroup parent) {
+        final View rowView;
 
         // Reuse old view if it's present. But remember: Always set all of the view elements, because otherwise
         // the old state will be preserved (basically, don't rely on TextViews &co having the state you last set them to)
@@ -85,6 +91,8 @@ public class TimelineAdapter extends BaseAdapter {
         ImageView mediaExpansion = (ImageView) rowView.findViewById(R.id.media_expansion);
         View frontView = rowView.findViewById(R.id.front_view);
 
+        ((SwipeListView) parent).recycle(rowView, position);
+
         tweet.setMovementMethod(LinkMovementMethod.getInstance());
         tweet.setText(TweetFormatter.formatStatusText(context, status));
         displayName.setText(status.getUser().getName());
@@ -96,8 +104,7 @@ public class TimelineAdapter extends BaseAdapter {
         ((ViewGroup) rowView).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 
         // Use Picasso to retrieve and set profile images. Get from cache if already exists.
-        Picasso.with(context)
-                .load(status.getUser().getBiggerProfileImageURL())
+        picasso.load(status.getUser().getBiggerProfileImageURL())
                 .transform(new RoundedTransformation(50, 0))
                 .into(avatarImage);
 
@@ -107,8 +114,7 @@ public class TimelineAdapter extends BaseAdapter {
         if(mediaEntities.length > 0) {
             MediaEntity displayedMedia = mediaEntities[0];
 
-            Picasso.with(context)
-                    .load(displayedMedia.getMediaURL())
+            picasso.load(displayedMedia.getMediaURL())
                     .resizeDimen(R.dimen.media_expansion_size, R.dimen.media_expansion_size)
                     .centerCrop()
                     .transform(new RoundedTransformation(20, 0))
@@ -144,6 +150,14 @@ public class TimelineAdapter extends BaseAdapter {
                 frontView.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
         }
+
+        // Fix item clicks
+        frontView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "Clicked");
+            }
+        });
 
         return rowView;
     }

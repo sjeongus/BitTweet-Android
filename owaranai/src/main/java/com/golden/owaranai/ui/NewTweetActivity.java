@@ -2,7 +2,7 @@ package com.golden.owaranai.ui;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
@@ -13,10 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.golden.owaranai.ApplicationController;
 import com.golden.owaranai.R;
-import com.golden.owaranai.internal.MyTwitterFactory;
 import com.golden.owaranai.internal.StatusItem;
-import twitter4j.Twitter;
-import twitter4j.User;
+import com.golden.owaranai.services.TweetService;
 
 public class NewTweetActivity extends Activity {
     public static final String ARG_REPLY_TO_ID = "reply_to";
@@ -45,7 +43,7 @@ public class NewTweetActivity extends Activity {
         }
 
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
 
         viewTweetEdit = (EditText) findViewById(R.id.text);
         viewCharCounter = (TextView) findViewById(R.id.count);
@@ -76,7 +74,17 @@ public class NewTweetActivity extends Activity {
 
     private void sendTweet() {
         String text = viewTweetEdit.getText().toString();
-        new TweetTask().execute(text);
+
+        if(checkCharactersLeft(text) > -1) {
+            Intent serviceIntent = new Intent(this, TweetService.class);
+            serviceIntent.putExtra(Intent.EXTRA_TEXT, text);
+            startService(serviceIntent);
+            NavUtils.navigateUpFromSameTask(NewTweetActivity.this);
+        }
+    }
+
+    private int checkCharactersLeft(CharSequence str) {
+        return 140 - str.length();
     }
 
     private class TweetTextWatcher implements TextWatcher {
@@ -88,41 +96,12 @@ public class NewTweetActivity extends Activity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            viewCharCounter.setText(String.valueOf(140 - charSequence.length()));
+            viewCharCounter.setText(String.valueOf(checkCharactersLeft(charSequence)));
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
 
-        }
-    }
-
-    private class TweetTask extends AsyncTask<String, Void, Void> {
-        private User user;
-        private Twitter twitter;
-
-        @Override
-        protected void onPreExecute() {
-            twitter = MyTwitterFactory.getInstance(NewTweetActivity.this).getTwitter();
-            user = null;
-        }
-
-        @Override
-        protected Void doInBackground(String... args) {
-            String status = args[0];
-            try {
-                user = twitter.verifyCredentials();
-                twitter.updateStatus(status);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            finish();
         }
     }
 }

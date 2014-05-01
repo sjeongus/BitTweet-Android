@@ -1,6 +1,5 @@
 package com.golden.owaranai.ui;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -20,7 +19,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import com.crashlytics.android.Crashlytics;
 import com.golden.owaranai.R;
-import com.golden.owaranai.internal.PostStatus;
 import com.golden.owaranai.ui.fragments.HomeTweetsListFragment;
 import com.golden.owaranai.ui.fragments.MentionsTweetsListFragment;
 import com.golden.owaranai.ui.fragments.TweetsDetailFragment;
@@ -182,11 +180,6 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void showTweetDialog() {
-        DialogFragment tStatus = PostStatus.newInstance();
-        tStatus.show(getFragmentManager(), "dialog");
     }
 
     private void loadMentionsTimeline() {
