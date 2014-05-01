@@ -83,6 +83,7 @@ public class TimelineAdapter extends BaseAdapter {
         View accent = rowView.findViewById(R.id.accent_container);
         TextView rtBy = (TextView) rowView.findViewById(R.id.retweeted_by);
         ImageView mediaExpansion = (ImageView) rowView.findViewById(R.id.media_expansion);
+        View frontView = rowView.findViewById(R.id.front_view);
 
         tweet.setMovementMethod(LinkMovementMethod.getInstance());
         tweet.setText(TweetFormatter.formatStatusText(context, status));
@@ -123,9 +124,9 @@ public class TimelineAdapter extends BaseAdapter {
             rtBy.setText(String.format(context.getString(R.string.retweeted_by), originalStatus.getUser().getScreenName()));
 
             if(item.isMention()) {
-                rowView.setBackgroundColor(context.getResources().getColor(R.color.reply_background));
+                frontView.setBackgroundColor(context.getResources().getColor(R.color.reply_background));
             } else {
-                rowView.setBackgroundColor(0x000000);
+                frontView.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
 
             accent.setBackgroundColor(context.getResources().getColor(R.color.retweet_accent));
@@ -134,13 +135,13 @@ public class TimelineAdapter extends BaseAdapter {
 
             if(status.isFavorited()) {
                 accent.setBackgroundColor(context.getResources().getColor(R.color.favourite_accent));
-                rowView.setBackgroundColor(0x000000);
+                frontView.setBackgroundColor(context.getResources().getColor(R.color.white));
             } else if(item.isMention()) {
                 accent.setBackgroundColor(context.getResources().getColor(R.color.reply_accent));
-                rowView.setBackgroundColor(context.getResources().getColor(R.color.reply_background));
+                frontView.setBackgroundColor(context.getResources().getColor(R.color.reply_background));
             } else {
-                accent.setBackgroundColor(0x00000000);
-                rowView.setBackgroundColor(0x000000);
+                accent.setBackgroundColor(context.getResources().getColor(R.color.white));
+                frontView.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
         }
 

@@ -1,12 +1,14 @@
 package com.golden.owaranai.ui;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.golden.owaranai.ApplicationController;
@@ -22,55 +24,53 @@ public class NewTweetActivity extends Activity {
 
     private ApplicationController controller;
     private StatusItem inReplyToStatus;
+    private ActionBar actionBar;
 
     private EditText viewTweetEdit;
     private TextView viewCharCounter;
-    private TextView viewReplyText;
-    private Button viewBtnPost;
-    private Button viewBtnCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_tweet);
-        getActionBar().hide();
         initializeResources();
     }
 
     private void initializeResources() {
         controller = (ApplicationController) getApplication();
+        actionBar = getActionBar();
 
         if(getIntent() != null && INTENT_REPLY.equals(getIntent().getAction())) {
             inReplyToStatus = controller.getStatus(getIntent().getStringExtra(ARG_REPLY_TO_ID));
         }
 
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+
         viewTweetEdit = (EditText) findViewById(R.id.text);
         viewCharCounter = (TextView) findViewById(R.id.count);
-        viewReplyText = (TextView) findViewById(R.id.reply_text);
-        viewBtnPost = (Button) findViewById(R.id.btn_post_tweet);
-        viewBtnCancel = (Button) findViewById(R.id.btn_cancel_tweet);
 
         viewTweetEdit.addTextChangedListener(new TweetTextWatcher());
+        viewTweetEdit.requestFocus();
+    }
 
-        viewBtnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.new_tweet_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.action_tweet:
                 sendTweet();
-            }
-        });
-
-        viewBtnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
-        if(inReplyToStatus != null) {
-            viewReplyText.setText("Reply to: " + inReplyToStatus.getStatus().getText());
-            viewReplyText.setVisibility(View.VISIBLE);
-        } else {
-            viewReplyText.setVisibility(View.GONE);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

@@ -9,8 +9,10 @@ buildscript {
 }
 apply plugin: 'android'
 apply plugin: 'crashlytics'
+
 repositories {
     maven { url 'http://download.crashlytics.com/maven' }
+    maven { url 'http://clinker.47deg.com/nexus/content/groups/public' }
 }
 
 
@@ -44,6 +46,10 @@ dependencies {
     compile('de.keyboardsurfer.android.widget:crouton:1.8.3') {
         // exclusion is not neccessary, but generally a good idea.
         exclude group: 'com.google.android', module: 'support-v4'
+    }
+
+    compile ('com.fortysevendeg.swipelistview:swipelistview:1.0-SNAPSHOT@aar') {
+        transitive = true
     }
 
     compile 'com.nhaarman.listviewanimations:library:2.5.2'
