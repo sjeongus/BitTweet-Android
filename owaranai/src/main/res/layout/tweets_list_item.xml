@@ -2,7 +2,6 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:descendantFocusability="blocksDescendants"
         android:layout_height="wrap_content">
 
     <LinearLayout
@@ -14,26 +13,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <Button
+        <ImageButton
+                android:id="@+id/button_reply"
                 style="?android:buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Reply"/>
+                android:src="@drawable/ic_social_reply"/>
 
-        <Button
+        <ImageButton
+                android:id="@+id/button_retweet"
                 style="?android:buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Retweet"/>
+                android:src="@drawable/ic_navigation_refresh"/>
 
-        <Button
+        <ImageButton
+                android:id="@+id/button_fav"
                 style="?android:buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Favourite"/>
+                android:src="@drawable/ic_rating_important"/>
 
     </LinearLayout>
 
@@ -63,6 +65,7 @@
                     android:layout_marginRight="5dp"/>
 
             <LinearLayout
+                    android:id="@+id/tweet_text_container"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"

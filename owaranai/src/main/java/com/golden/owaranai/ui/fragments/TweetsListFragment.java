@@ -79,8 +79,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         @Override
         protected void onPostExecute(Void result) {
-            adapter.setStatuses(timelineContent.getStatusItems());
-            adapter.notifyDataSetChanged();
+            adapter.attachStatusesList(timelineContent.getStatusItems());
             pullToRefreshLayout.setRefreshComplete();
 
             if(firstRun && !isDetached() && ConnectionDetector.isOnWifi(getActivity())) {
@@ -104,8 +103,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            adapter.setStatuses(timelineContent.getStatusItems());
-            adapter.notifyDataSetChanged();
+            adapter.attachStatusesList(timelineContent.getStatusItems());
         }
     }
 
@@ -142,7 +140,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         // After the inheriting class defined its timelineContent instance, we should connect our adapter
         // to its existing statusItems List object, in case it already contains tweets. This happens before
         // we restore savedState, so *then* we are able to return to the saved scroll position.
-        adapter.setStatuses(timelineContent.getStatusItems());
+        adapter.attachStatusesList(timelineContent.getStatusItems());
 
         loadMoreBtn.setText("Load more");
         listView.addFooterView(loadMoreBtn);

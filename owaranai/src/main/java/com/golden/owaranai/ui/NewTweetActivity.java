@@ -7,14 +7,17 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.*;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.golden.owaranai.ApplicationController;
 import com.golden.owaranai.R;
 import com.golden.owaranai.internal.StatusItem;
 import com.golden.owaranai.services.TweetService;
+import com.golden.owaranai.ui.adapters.SimpleTweetAdapter;
+import com.golden.owaranai.ui.adapters.TimelineAdapter;
+import com.golden.owaranai.ui.adapters.TweetAdapter;
+import twitter4j.UserMentionEntity;
 
 public class NewTweetActivity extends Activity {
     public static final String ARG_REPLY_TO_ID = "reply_to";
@@ -38,10 +41,6 @@ public class NewTweetActivity extends Activity {
         controller = (ApplicationController) getApplication();
         actionBar = getActionBar();
 
-        if(getIntent() != null && INTENT_REPLY.equals(getIntent().getAction())) {
-            inReplyToStatus = controller.getStatus(getIntent().getStringExtra(ARG_REPLY_TO_ID));
-        }
-
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(false);
 
@@ -50,6 +49,42 @@ public class NewTweetActivity extends Activity {
 
         viewTweetEdit.addTextChangedListener(new TweetTextWatcher());
         viewTweetEdit.requestFocus();
+
+        if(getIntent() != null && INTENT_REPLY.equals(getIntent().getAction())) {
+            inReplyToStatus = controller.getStatus(getIntent().getStringExtra(ARG_REPLY_TO_ID));
+            initializeReplyToStatus();
+        }
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    private void initializeReplyToStatus() {
+        TimelineAdapter.ViewHolder holder = new TimelineAdapter.ViewHolder();
+        TweetAdapter adapter = new SimpleTweetAdapter(this);
+        ViewStub viewReplyStub = (ViewStub) findViewById(R.id.reply_container);
+        View viewReply = viewReplyStub.inflate();
+
+        holder.initialize(viewReply);
+        adapter.recreateView(inReplyToStatus, holder);
+        viewReply.setVisibility(View.VISIBLE);
+
+        StringBuilder newMentionPrefix = new StringBuilder();
+
+        newMentionPrefix.append("@").append(inReplyToStatus.getStatus().getUser().getScreenName());
+
+        for(UserMentionEntity originalMention : inReplyToStatus.getStatus().getUserMentionEntities()) {
+            if(originalMention.getScreenName().equals(inReplyToStatus.getStatus().getUser().getScreenName())) {
+                // No duplicates pls!
+                continue;
+            }
+
+            newMentionPrefix.append(" @").append(originalMention.getScreenName());
+        }
+
+        newMentionPrefix.append(" ");
+
+        viewTweetEdit.setText(newMentionPrefix);
+        viewTweetEdit.setSelection(newMentionPrefix.length());
     }
 
     @Override
@@ -77,7 +112,13 @@ public class NewTweetActivity extends Activity {
 
         if(checkCharactersLeft(text) > -1) {
             Intent serviceIntent = new Intent(this, TweetService.class);
+            serviceIntent.setAction(Intent.ACTION_SEND);
             serviceIntent.putExtra(Intent.EXTRA_TEXT, text);
+
+            if(inReplyToStatus != null) {
+                serviceIntent.putExtra(TweetService.ARG_TWEET_ID, inReplyToStatus.getId());
+            }
+
             startService(serviceIntent);
             NavUtils.navigateUpFromSameTask(NewTweetActivity.this);
         }
