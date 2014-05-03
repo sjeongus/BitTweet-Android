@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import com.crashlytics.android.Crashlytics;
 import com.golden.owaranai.R;
 import com.golden.owaranai.ui.fragments.HomeTweetsListFragment;
 import com.golden.owaranai.ui.fragments.MentionsTweetsListFragment;
@@ -47,8 +46,6 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Crashlytics.start(this);
-
 
         sharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();

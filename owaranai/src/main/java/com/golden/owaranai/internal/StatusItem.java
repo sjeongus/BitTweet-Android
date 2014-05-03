@@ -9,13 +9,11 @@ public class StatusItem {
     private String id;
     private Status status;
     private long myUserId;
-    private boolean retweetOverride;
-    private boolean favoriteOverride;
 
     public StatusItem(Status status, long myUserId) {
         this.myUserId = myUserId;
         this.id = String.valueOf(status.getId());
-        this.status = status;
+        this.setStatus(status);
     }
 
     public String getId() {
@@ -27,22 +25,10 @@ public class StatusItem {
     }
 
     public boolean isMention() {
-        return status.getInReplyToUserId() == myUserId;
+        return getStatus().getInReplyToUserId() == myUserId;
     }
 
-    public boolean isRetweetedByMe() {
-        return retweetOverride || status.isRetweetedByMe();
-    }
-
-    public void setRetweeted(boolean retweeted) {
-        this.retweetOverride = retweeted;
-    }
-
-    public boolean isFavorited() {
-        return favoriteOverride || status.isFavorited();
-    }
-
-    public void setFavorited(boolean favorited) {
-        this.favoriteOverride = favorited;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

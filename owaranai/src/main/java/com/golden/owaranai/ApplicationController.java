@@ -36,4 +36,9 @@ public class ApplicationController extends Application {
     public TwitterStreamRouter getTwitterStreamRouter() {
         return twitterStreamRouter;
     }
+
+    public void notifyStatusChanged() {
+        homeTimelineContent.notifyDataSetChanged();
+        mentionsTimelineContent.notifyDataSetChanged();
+    }
 }

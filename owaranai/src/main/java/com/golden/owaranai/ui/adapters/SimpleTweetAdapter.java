@@ -33,7 +33,7 @@ public class SimpleTweetAdapter implements TweetAdapter {
     }
 
     @Override
-    public void recreateView(StatusItem item, TimelineAdapter.ViewHolder holder) {
+    public void recreateView(StatusItem item, TweetViewHolder holder) {
         Status status = item.getStatus();
 
         if(status.isRetweet()) {
@@ -51,11 +51,13 @@ public class SimpleTweetAdapter implements TweetAdapter {
         holder.accent.setVisibility(View.GONE);
         holder.rtBy.setVisibility(View.GONE);
 
-        if(item.isRetweetedByMe()) {
-            // TODO
+        if(status.isRetweeted()) {
+            holder.retweetBtn.setImageResource(R.drawable.ic_navigation_undo_refresh);
+        } else {
+            holder.retweetBtn.setImageResource(R.drawable.ic_navigation_refresh);
         }
 
-        if(item.isFavorited()) {
+        if(status.isFavorited()) {
             holder.favBtn.setImageResource(R.drawable.ic_rating_not_important);
         } else {
             holder.favBtn.setImageResource(R.drawable.ic_rating_important);

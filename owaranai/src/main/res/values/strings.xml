@@ -3,7 +3,7 @@
 
     <string name="app_name">BitTweet</string>
     <string name="title_tweets_detail">Tweets Detail</string>
-    <string name="retweeted_by">Retweeted by @%1$s</string>
+    <string name="retweeted_by">Retweeted by %1$s</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
     <string name="home_timeline">Home timeline</string>
@@ -25,5 +25,6 @@
     <string name="action_tweet">Post tweet</string>
     <string name="avatar">Avatar</string>
     <string name="tweet_service_ongoing">Nonsense</string>
+    <string name="its_you">you</string>
 
 </resources>

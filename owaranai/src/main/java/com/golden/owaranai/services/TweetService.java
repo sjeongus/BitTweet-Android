@@ -8,6 +8,8 @@ import android.support.v4.app.NotificationCompat;
 import com.golden.owaranai.ApplicationController;
 import com.golden.owaranai.R;
 import com.golden.owaranai.internal.MyTwitterFactory;
+import com.golden.owaranai.internal.StatusItem;
+import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -18,6 +20,7 @@ public class TweetService extends Service {
     public static final String ARG_TWEET_ID = "tweet_id";
 
     private Twitter twitter;
+    private ApplicationController controller;
 
     public TweetService() {}
 
@@ -30,7 +33,9 @@ public class TweetService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         twitter = MyTwitterFactory.getInstance(this).getTwitter();
+        controller = (ApplicationController) getApplication();
     }
 
     @Override
@@ -47,7 +52,7 @@ public class TweetService extends Service {
             new FavTweetTask().execute(tweetId);
         } else if(ACTION_RT.equals(intent.getAction())) {
             String tweetId = intent.getStringExtra(ARG_TWEET_ID);
-            new RtTweetTask().execute(tweetId);
+            new RtTweetTask(tweetId).execute();
         }
 
         return START_STICKY;
@@ -98,41 +103,77 @@ public class TweetService extends Service {
         }
     }
 
-    private class FavTweetTask extends AsyncTask<String, Void, String> {
+    private class FavTweetTask extends AsyncTask<String, Void, Status> {
         @Override
-        protected String doInBackground(String... strings) {
+        protected twitter4j.Status doInBackground(String... strings) {
+            twitter4j.Status favorited = null;
+
             try {
                 twitter.verifyCredentials();
-                twitter.createFavorite(Long.parseLong(strings[0]));
+
+
+                if(controller.getStatus(strings[0]).getStatus().isFavorited()) {
+                    favorited = twitter.destroyFavorite(Long.parseLong(strings[0]));
+                } else {
+                    favorited = twitter.createFavorite(Long.parseLong(strings[0]));
+                }
             } catch (TwitterException e) {
                 e.printStackTrace();
             }
 
-            return strings[0];
+            return favorited;
         }
 
         @Override
-        protected void onPostExecute(String id) {
-            ((ApplicationController) getApplication()).getStatus(id).setFavorited(true);
+        protected void onPostExecute(twitter4j.Status status) {
+            if(status == null) {
+                // Error, uguu
+                return;
+            }
+
+            controller.getStatus(String.valueOf(status.getId())).setStatus(status);
+            controller.notifyStatusChanged();
         }
     }
 
-    private class RtTweetTask extends AsyncTask<String, Void, String> {
+    private class RtTweetTask extends AsyncTask<Void, Void, Status> {
+        private StatusItem statusContainer;
+
+        public RtTweetTask(String id) {
+            this.statusContainer = controller.getStatus(id);
+        }
+
         @Override
-        protected String doInBackground(String... strings) {
+        protected twitter4j.Status doInBackground(Void... voids) {
+            twitter4j.Status retweeted = null;
+
             try {
                 twitter.verifyCredentials();
-                twitter.retweetStatus(Long.parseLong(strings[0]));
+
+                if(statusContainer.getStatus().isRetweeted()) {
+                    twitter.destroyStatus(statusContainer.getStatus().getId());
+                    retweeted = statusContainer.getStatus().getRetweetedStatus();
+                } else {
+                    retweeted = twitter.retweetStatus(statusContainer.getStatus().getId());
+                }
             } catch (TwitterException e) {
                 e.printStackTrace();
             }
 
-            return strings[0];
+            return retweeted;
         }
 
         @Override
-        protected void onPostExecute(String id) {
-            ((ApplicationController) getApplication()).getStatus(id).setRetweeted(true);
+        protected void onPostExecute(twitter4j.Status status) {
+            if(status == null) {
+                // There was an error!
+                return;
+            }
+
+            // WARNING! The following line damages the property of all the hash maps that use an Id to point to the status with that Id
+            // Because it, based on need, replaces a status with a different status with a different Id
+            statusContainer.setStatus(status);
+            controller.notifyStatusChanged();
         }
     }
 }

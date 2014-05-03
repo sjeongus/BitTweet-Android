@@ -15,8 +15,8 @@ import com.golden.owaranai.R;
 import com.golden.owaranai.internal.StatusItem;
 import com.golden.owaranai.services.TweetService;
 import com.golden.owaranai.ui.adapters.SimpleTweetAdapter;
-import com.golden.owaranai.ui.adapters.TimelineAdapter;
 import com.golden.owaranai.ui.adapters.TweetAdapter;
+import com.golden.owaranai.ui.adapters.TweetViewHolder;
 import twitter4j.UserMentionEntity;
 
 public class NewTweetActivity extends Activity {
@@ -59,12 +59,11 @@ public class NewTweetActivity extends Activity {
     }
 
     private void initializeReplyToStatus() {
-        TimelineAdapter.ViewHolder holder = new TimelineAdapter.ViewHolder();
         TweetAdapter adapter = new SimpleTweetAdapter(this);
         ViewStub viewReplyStub = (ViewStub) findViewById(R.id.reply_container);
         View viewReply = viewReplyStub.inflate();
+        TweetViewHolder holder = new TweetViewHolder(viewReply);
 
-        holder.initialize(viewReply);
         adapter.recreateView(inReplyToStatus, holder);
         viewReply.setVisibility(View.VISIBLE);
 

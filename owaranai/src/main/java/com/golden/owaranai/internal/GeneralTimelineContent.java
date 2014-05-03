@@ -60,6 +60,12 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
 
     protected void addItem(StatusItem statusItem, boolean prepend) {
         if(statusMap.containsKey(statusItem.getId()) || !canAddItem(statusItem)) {
+            // Prevent general duplicates
+            return;
+        }
+
+        if(statusItem.getStatus().isRetweet() && statusMap.containsKey(String.valueOf(statusItem.getStatus().getRetweetedStatus().getId()))) {
+            // Prevent RT duplicates
             return;
         }
 
@@ -72,7 +78,6 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
         statusMap.put(statusItem.getId(), statusItem);
         globalStatusMap.put(statusItem.getId(), statusItem);
     }
-
 
     @Override
     public StatusItem getStatusItem(String id) {
@@ -151,6 +156,13 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
     public void detachStream() {
         TwitterStreamRouter router = ((ApplicationController) context).getTwitterStreamRouter();
         router.unregisterConsumer(this);
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        if(getAdapter() != null) {
+            getAdapter().notifyDataSetChanged();
+        }
     }
 
     protected BaseAdapter getAdapter() {

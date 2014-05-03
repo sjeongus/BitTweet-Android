@@ -14,23 +14,27 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     }
 
     @Override
-    public void recreateView(StatusItem item, TimelineAdapter.ViewHolder holder) {
+    public void recreateView(StatusItem item, TweetViewHolder holder) {
         super.recreateView(item, holder);
 
         Status status = item.getStatus();
-        Status originalStatus = status;
+        String retweetedByName = null;
         boolean isRT = false;
 
         if(status.isRetweet()) {
             isRT = true;
+            retweetedByName = status.isRetweeted() ? getContext().getString(R.string.its_you) : "@" + status.getUser().getScreenName();
             status = status.getRetweetedStatus();
+        } else if(status.isRetweeted()) {
+            isRT = true;
+            retweetedByName = getContext().getString(R.string.its_you);
         }
 
         holder.accent.setVisibility(View.VISIBLE);
 
         if(isRT) {
             holder.rtBy.setVisibility(View.VISIBLE);
-            holder.rtBy.setText(String.format(getContext().getString(R.string.retweeted_by), originalStatus.getUser().getScreenName()));
+            holder.rtBy.setText(String.format(getContext().getString(R.string.retweeted_by), retweetedByName));
 
             if(item.isMention()) {
                 holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.reply_background));

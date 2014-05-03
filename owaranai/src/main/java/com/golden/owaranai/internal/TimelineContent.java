@@ -13,4 +13,5 @@ public interface TimelineContent {
     public List<StatusItem> getStatusItems();
     public void update();
     public void loadMore();
+    public void notifyDataSetChanged();
 }
