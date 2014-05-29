@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context="org.bittweet.android.ui.NewTweetActivity"
+        android:orientation="vertical"
+        android:baselineAligned="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ViewStub
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/reply_container"
+            android:inflatedId="@id/reply_container"
+            android:layout="@layout/tweets_list_item"/>
+
+    <EditText
+            android:id="@+id/text"
+            android:lines="4"
+            android:hint="What's happening right now?"
+            android:textColorHint="#999"
+            android:textSize="14sp"
+            android:gravity="top"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:inputType="textLongMessage|textMultiLine|textCapSentences"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="right"
+            android:paddingTop="8dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="140"
+                android:textColor="#666"
+                android:id="@+id/count"/>
+
+    </LinearLayout>
+</LinearLayout>

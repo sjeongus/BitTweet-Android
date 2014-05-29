@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+package="org.bittweet.android" >
+
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+<application
+    android:name="org.bittweet.android.ApplicationController"
+    android:allowBackup="true"
+    android:icon="@drawable/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@style/Theme.BitTweet" >
+    <activity
+        android:name="org.bittweet.android.ui.TweetsListActivity"
+        android:label="@string/app_name" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    <activity
+        android:name="org.bittweet.android.ui.TweetsDetailActivity"
+        android:label="@string/title_tweets_detail"
+        android:parentActivityName="org.bittweet.android.ui.TweetsListActivity" >
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="org.bittweet.android.TweetsListActivity" />
+    </activity>
+    <activity
+        android:name="org.bittweet.android.ui.TwitterLoginActivity"
+        android:label="Log In to Twitter"
+        android:launchMode="singleInstance" >
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <data
+                android:host="t4jsample"
+                android:scheme="oauth" />
+        </intent-filter>
+    </activity>
+    <activity
+        android:name="org.bittweet.android.ui.NewTweetActivity"
+        android:label="@string/title_activity_new_tweet"
+        android:parentActivityName="org.bittweet.android.ui.TweetsListActivity" >
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="org.bittweet.android.TweetsListActivity" />
+    </activity>
+
+    <meta-data
+        android:name="com.crashlytics.ApiKey"
+        android:value="2ddc1636bd01706058f9c8213c58250afe71f717" />
+
+    <service
+        android:name="org.bittweet.android.services.TweetService"
+        android:enabled="true"
+        android:exported="false" >
+    </service>
+</application>
+
+</manifest>
