@@ -55,6 +55,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
         if (!isTwitterLoggedInAlready()) {
             startActivity(new Intent(getApplicationContext(), TwitterLoginActivity.class));
+            finish();
             return;
         }
 
@@ -72,7 +73,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.bittweet_ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);

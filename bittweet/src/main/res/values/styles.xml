@@ -1,8 +1,35 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="Theme.BitTweet" parent="android:Theme.Holo.Light">
-        <!-- Customize your theme here. -->
+    <style name="Theme.BitTweet" parent="@style/Theme.AppCompat.Light">
+        <item name="actionBarItemBackground">@drawable/selectable_background_bittweet</item>
+        <item name="popupMenuStyle">@style/PopupMenu.Bittweet</item>
+        <item name="dropDownListViewStyle">@style/DropDownListView.Bittweet</item>
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle.Bittweet</item>
+        <item name="actionDropDownStyle">@style/DropDownNav.Bittweet</item>
+        <item name="actionBarStyle">@style/ActionBar.Transparent.Bittweet</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_bittweet</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_bittweet</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Bittweet</item>
+
+        <item name="android:editTextBackground">@drawable/bittweet_edit_text_holo_light</item>
+
+        <item name="android:textColorHighlight">#9966a2fc</item>
+        <item name="android:textSelectHandleLeft">@drawable/bittweet_text_select_handle_left</item>
+        <item name="android:textSelectHandleRight">@drawable/bittweet_text_select_handle_right</item>
+        <item name="android:textSelectHandle">@drawable/bittweet_text_select_handle_middle</item>
+
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewBitTweet</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/bittweet_btn_check_holo_light</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/bittweet_btn_radio_holo_light</item>
+        <item name="android:buttonStyle">@style/ButtonBitTweet</item>
+        <item name="android:imageButtonStyle">@style/ImageButtonBitTweet</item>
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerBitTweet</item>
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarBitTweet</item>
+        <item name="android:seekBarStyle">@style/SeekBarBitTweet</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/bittweet_list_selector_holo_light</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/bittweet_activated_background_holo_light</item>
+        <item name="android:fastScrollThumbDrawable">@drawable/bittweet_fastscroll_thumb_holo</item>
     </style>
 
     <style name="Theme.BitTweet.DrawerListView">
