@@ -38,7 +38,8 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/counter">
 
         <TextView
                 android:layout_width="wrap_content"
@@ -49,4 +50,30 @@
                 android:id="@+id/count"/>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttons">
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Image"
+            android:layout_gravity="left"
+            android:id="@+id/attachImage" />
+
+        <ImageView
+            android:id="@+id/iamge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
 </LinearLayout>
