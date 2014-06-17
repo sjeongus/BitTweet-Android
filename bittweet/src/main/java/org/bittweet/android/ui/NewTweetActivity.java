@@ -4,33 +4,43 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewStub;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import org.bittweet.android.ApplicationController;
 import org.bittweet.android.R;
+import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.adapters.SimpleTweetAdapter;
 import org.bittweet.android.ui.adapters.TweetAdapter;
 import org.bittweet.android.ui.adapters.TweetViewHolder;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import twitter4j.TwitterException;
 import twitter4j.UserMentionEntity;
+import twitter4j.media.ImageUpload;
+import twitter4j.media.ImageUploadFactory;
+import twitter4j.media.MediaProvider;
 
 public class NewTweetActivity extends Activity {
     public static final String ARG_REPLY_TO_ID = "reply_to";
@@ -44,6 +54,8 @@ public class NewTweetActivity extends Activity {
     private TextView viewCharCounter;
     private Button attachImage;
     private ImageView uploadImage;
+    private Bitmap myBitmap;
+    private Uri imageUri;
 
     private final int SELECT_PHOTO = 1;
 
@@ -52,6 +64,8 @@ public class NewTweetActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_tweet);
         initializeResources();
+
+        myBitmap = null;
 
         uploadImage = (ImageView) findViewById(R.id.image);
         attachImage = (Button) findViewById(R.id.attachImage);
@@ -69,25 +83,23 @@ public class NewTweetActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SELECT_PHOTO && resultCode == Activity.RESULT_OK) {
             Context activity = getApplicationContext();
-            getBitmapFromCameraData(data, activity);
+            myBitmap = getBitmapFromCameraData(data, activity);
         }
         if (resultCode == Activity.RESULT_CANCELED) {
             // Do something
         }
     }
 
-    private void getBitmapFromCameraData(Intent data, Context context) {
-        Uri imageUri = data.getData();
+    private Bitmap getBitmapFromCameraData(Intent data, Context context) {
+        imageUri = data.getData();
         Bitmap bitmap;
         try {
             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
             if (bitmap != null) {
-                System.out.println("Bitmap is not null!");
                 uploadImage.setImageBitmap(bitmap);
                 uploadImage.setVisibility(View.VISIBLE);
             }
-            else
-                System.out.println("Bitmap turned out to be null");
+            return bitmap;
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -95,7 +107,7 @@ public class NewTweetActivity extends Activity {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        return null;
     }
 
     private void initializeResources() {
@@ -167,13 +179,62 @@ public class NewTweetActivity extends Activity {
         }
     }
 
+    private class UploadPicture extends AsyncTask<Void, Void, String> {
+        private ImageUpload upload;
+        private InputStream in;
+        private String url;
+
+        @Override
+        protected void onPreExecute() {
+            try {
+                ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(getApplicationContext()).getConfiguration());
+                upload = factory.getInstance(MediaProvider.TWITTER);
+                in = getContentResolver().openInputStream(imageUri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        protected String doInBackground(Void... args) {
+            File f = new File(imageUri.getPath());
+            try {
+                url = upload.upload(f.getName(), in);
+            } catch (TwitterException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Uri is " + imageUri.toString());
+            System.out.println("Uri path is " + imageUri.getPath().toString());
+            return url;
+        }
+
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
+    }
+
     private void sendTweet() {
         String text = viewTweetEdit.getText().toString();
+        if (myBitmap != null) {
+            try {
+                UploadPicture task = new UploadPicture();
+                task.execute();
+                text = text + " " + task.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         if(checkCharactersLeft(text) > -1) {
             Intent serviceIntent = new Intent(this, TweetService.class);
             serviceIntent.setAction(Intent.ACTION_SEND);
             serviceIntent.putExtra(Intent.EXTRA_TEXT, text);
+
 
             if(inReplyToStatus != null) {
                 serviceIntent.putExtra(TweetService.ARG_TWEET_ID, inReplyToStatus.getId());

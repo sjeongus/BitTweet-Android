@@ -55,6 +55,7 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0+'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
     compile 'org.twitter4j:twitter4j-stream:4.0.1'
+    compile 'org.twitter4j:twitter4j-media-support:4.0.1'
     compile 'com.squareup.picasso:picasso:2.2.0'
     compile 'com.crashlytics.android:crashlytics:1.+'
 }
