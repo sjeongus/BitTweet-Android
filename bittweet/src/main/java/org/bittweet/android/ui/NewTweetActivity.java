@@ -179,7 +179,7 @@ public class NewTweetActivity extends Activity {
         }
     }
 
-    private class UploadPicture extends AsyncTask<Void, Void, String> {
+    private class UploadPicture extends AsyncTask<String, Void, String> {
         private ImageUpload upload;
         private InputStream in;
         private String url;
@@ -195,10 +195,11 @@ public class NewTweetActivity extends Activity {
             }
         }
 
-        protected String doInBackground(Void... args) {
+        protected String doInBackground(String... args) {
+            String message = args[0];
             File f = new File(imageUri.getPath());
             try {
-                url = upload.upload(f.getName(), in);
+                url = upload.upload(f.getName(), in, message);
             } catch (TwitterException e) {
                 e.printStackTrace();
             } finally {
@@ -220,15 +221,15 @@ public class NewTweetActivity extends Activity {
 
     private void sendTweet() {
         String text = viewTweetEdit.getText().toString();
-        if (myBitmap != null) {
+        /*if (myBitmap != null) {
             try {
                 UploadPicture task = new UploadPicture();
                 task.execute();
-                text = text + " " + task.get();
+                //text = text + " " + task.get();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        }*/
 
         if(checkCharactersLeft(text) > -1) {
             Intent serviceIntent = new Intent(this, TweetService.class);
@@ -240,7 +241,17 @@ public class NewTweetActivity extends Activity {
                 serviceIntent.putExtra(TweetService.ARG_TWEET_ID, inReplyToStatus.getId());
             }
 
-            startService(serviceIntent);
+            if (myBitmap != null) {
+                try {
+                    UploadPicture task = new UploadPicture();
+                    task.execute(text);
+                    //text = text + " " + task.get();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            else
+                startService(serviceIntent);
             NavUtils.navigateUpFromSameTask(NewTweetActivity.this);
         }
     }
