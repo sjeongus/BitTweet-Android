@@ -27,6 +27,7 @@ import org.bittweet.android.ui.adapters.TweetAdapter;
 import org.bittweet.android.ui.adapters.TweetViewHolder;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import twitter4j.UserMentionEntity;
@@ -67,27 +68,34 @@ public class NewTweetActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SELECT_PHOTO && resultCode == Activity.RESULT_OK) {
-            Activity activity = NewTweetActivity.this;
-            Bitmap bitmap = getBitmapFromCameraData(data, activity);
-            if (bitmap != null) {
-                uploadImage.setVisibility(View.VISIBLE);
-                uploadImage.setImageBitmap(bitmap);
-            }
-            else
-                System.err.println("Could not attach image");
+            Context activity = getApplicationContext();
+            getBitmapFromCameraData(data, activity);
+        }
+        if (resultCode == Activity.RESULT_CANCELED) {
+            // Do something
         }
     }
 
-    private static Bitmap getBitmapFromCameraData(Intent data, Context context) {
+    private void getBitmapFromCameraData(Intent data, Context context) {
+        Uri imageUri = data.getData();
+        Bitmap bitmap;
         try {
-            final Uri imageUri = data.getData();
-            final InputStream imageStream = context.getContentResolver().openInputStream(imageUri);
-            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-            return selectedImage;
+            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+            if (bitmap != null) {
+                System.out.println("Bitmap is not null!");
+                uploadImage.setImageBitmap(bitmap);
+                uploadImage.setVisibility(View.VISIBLE);
+            }
+            else
+                System.out.println("Bitmap turned out to be null");
         } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return null;
+
     }
 
     private void initializeResources() {
