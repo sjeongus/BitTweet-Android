@@ -236,6 +236,8 @@ public class NewTweetActivity extends Activity {
             serviceIntent.setAction(Intent.ACTION_SEND);
             serviceIntent.putExtra(Intent.EXTRA_TEXT, text);
             serviceIntent.putExtra(Intent.EXTRA_STREAM, imageUri.toString());
+            if (imageUri != null)
+                imageUri = null;
 
 
             if(inReplyToStatus != null) {

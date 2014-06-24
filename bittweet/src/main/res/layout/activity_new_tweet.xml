@@ -31,9 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-    <LinearLayout
-            android:orientation="horizontal"
-            android:gravity="right"
+    <RelativeLayout
             android:paddingTop="8dp"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
@@ -41,15 +39,24 @@
             android:layout_height="wrap_content"
             android:id="@+id/counter">
 
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Image"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/attachImage" />
+
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 android:text="140"
+                android:layout_alignParentRight="true"
                 android:textColor="#666"
                 android:id="@+id/count"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="vertical"
@@ -60,19 +67,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttons">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Image"
-            android:layout_gravity="left"
-            android:id="@+id/attachImage" />
-
         <ImageView
             android:id="@+id/image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            android:visibility="visible" />
 
     </LinearLayout>
 
