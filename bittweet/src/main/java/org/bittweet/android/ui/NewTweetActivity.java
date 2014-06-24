@@ -179,7 +179,7 @@ public class NewTweetActivity extends Activity {
         }
     }
 
-    private class UploadPicture extends AsyncTask<String, Void, String> {
+    /*private class UploadPicture extends AsyncTask<String, Void, String> {
         private ImageUpload upload;
         private InputStream in;
         private String url;
@@ -217,7 +217,7 @@ public class NewTweetActivity extends Activity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
         }
-    }
+    }*/
 
     private void sendTweet() {
         String text = viewTweetEdit.getText().toString();
@@ -235,13 +235,14 @@ public class NewTweetActivity extends Activity {
             Intent serviceIntent = new Intent(this, TweetService.class);
             serviceIntent.setAction(Intent.ACTION_SEND);
             serviceIntent.putExtra(Intent.EXTRA_TEXT, text);
+            serviceIntent.putExtra(Intent.EXTRA_STREAM, imageUri.toString());
 
 
             if(inReplyToStatus != null) {
                 serviceIntent.putExtra(TweetService.ARG_TWEET_ID, inReplyToStatus.getId());
             }
 
-            if (myBitmap != null) {
+            /*if (myBitmap != null) {
                 try {
                     UploadPicture task = new UploadPicture();
                     task.execute(text);
@@ -250,8 +251,8 @@ public class NewTweetActivity extends Activity {
                     e.printStackTrace();
                 }
             }
-            else
-                startService(serviceIntent);
+            else*/
+            startService(serviceIntent);
             NavUtils.navigateUpFromSameTask(NewTweetActivity.this);
         }
     }

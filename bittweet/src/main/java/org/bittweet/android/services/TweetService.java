@@ -2,6 +2,7 @@ package org.bittweet.android.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -9,10 +10,19 @@ import org.bittweet.android.ApplicationController;
 import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.internal.StatusItem;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.media.ImageUpload;
+import twitter4j.media.ImageUploadFactory;
+import twitter4j.media.MediaProvider;
 
 public class TweetService extends Service {
     public static final String ACTION_FAV = "org.bittweet.android.actions.favourite";
@@ -46,7 +56,8 @@ public class TweetService extends Service {
 
         if(Intent.ACTION_SEND.equals(intent.getAction())) {
             String tweetText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            new ProcessTweetTask().execute(tweetText, intent.getStringExtra(ARG_TWEET_ID));
+            String imageString = intent.getStringExtra(Intent.EXTRA_STREAM);
+            new ProcessTweetTask().execute(tweetText, intent.getStringExtra(ARG_TWEET_ID), imageString);
         } else if(ACTION_FAV.equals(intent.getAction())) {
             String tweetId = intent.getStringExtra(ARG_TWEET_ID);
             new FavTweetTask().execute(tweetId);
@@ -81,19 +92,38 @@ public class TweetService extends Service {
 
         @Override
         protected Void doInBackground(String... strings) {
+            StatusUpdate update;
+            Uri imageUri = Uri.parse(strings[2]);
+            InputStream in = null;
             try {
+                in = getContentResolver().openInputStream(imageUri);
                 twitter.verifyCredentials();
-                StatusUpdate update = new StatusUpdate(strings[0]);
 
-                if(strings[1] != null) {
-                    update.setInReplyToStatusId(Long.parseLong(strings[1]));
+                if (imageUri != null) {
+                    ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(getApplicationContext()).getConfiguration());
+                    ImageUpload upload = factory.getInstance(MediaProvider.TWITTER);
+
+                    File f = new File(imageUri.getPath());
+                    String url = upload.upload(f.getName(), in, strings[0]);
                 }
-
-                twitter.updateStatus(update);
+                else {
+                    update = new StatusUpdate(strings[0]);
+                    if (strings[1] != null) {
+                        update.setInReplyToStatusId(Long.parseLong(strings[1]));
+                        twitter.updateStatus(update);
+                    }
+                }
             } catch (TwitterException e) {
                 e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
             return null;
         }
 
