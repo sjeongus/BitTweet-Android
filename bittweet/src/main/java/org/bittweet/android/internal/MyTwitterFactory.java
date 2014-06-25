@@ -24,6 +24,7 @@ public class MyTwitterFactory {
     private Context context;
     private Twitter twitter;
     private TwitterStream twitterStream;
+    private Configuration conf;
 
     private MyTwitterFactory(Context context) {
         this.context = context;
@@ -47,7 +48,7 @@ public class MyTwitterFactory {
         configurationBuilder.setOAuthConsumerKey(SecretKeys.CONSUMER_KEY);
         configurationBuilder.setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
 
-        Configuration conf = configurationBuilder.build();
+        conf = configurationBuilder.build();
 
         twitter = new TwitterFactory(conf).getInstance();
         twitterStream = new TwitterStreamFactory(conf).getInstance();
@@ -83,5 +84,9 @@ public class MyTwitterFactory {
 
     public TwitterStream getTwitterStream() {
         return twitterStream;
+    }
+
+    public Configuration getConfiguration() {
+        return conf;
     }
 }
