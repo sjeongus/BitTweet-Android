@@ -56,7 +56,10 @@ public class TweetService extends Service {
 
         if(Intent.ACTION_SEND.equals(intent.getAction())) {
             String tweetText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            String imageString = intent.getStringExtra(Intent.EXTRA_STREAM);
+            String imageString = "empty";
+            if (!intent.getStringExtra(Intent.EXTRA_STREAM).equals("empty")) {
+                imageString = intent.getStringExtra(Intent.EXTRA_STREAM);
+            }
             new ProcessTweetTask().execute(tweetText, intent.getStringExtra(ARG_TWEET_ID), imageString);
         } else if(ACTION_FAV.equals(intent.getAction())) {
             String tweetId = intent.getStringExtra(ARG_TWEET_ID);
@@ -93,37 +96,53 @@ public class TweetService extends Service {
         @Override
         protected Void doInBackground(String... strings) {
             StatusUpdate update;
-            Uri imageUri = Uri.parse(strings[2]);
-            InputStream in = null;
+            Uri imageUri;
+            String checking = "something";
+            if (strings[2].equals("empty")) {
+                imageUri = null;
+                checking = "empty";
+                System.err.println("The imageUri is null!");
+            }
+            else {
+                imageUri = Uri.parse(strings[2]);
+                System.err.println("The imageUri is " + strings[2]);
+            }
+
             try {
-                in = getContentResolver().openInputStream(imageUri);
                 twitter.verifyCredentials();
 
-                if (imageUri != null) {
-                    ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(getApplicationContext()).getConfiguration());
-                    ImageUpload upload = factory.getInstance(MediaProvider.TWITTER);
+                if (checking.equals("something")) {
+                    System.err.println("We are here.");
+                    InputStream in = null;
+                    try {
+                        in = getContentResolver().openInputStream(imageUri);
+                        ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(getApplicationContext()).getConfiguration());
+                        ImageUpload upload = factory.getInstance(MediaProvider.TWITTER);
 
-                    File f = new File(imageUri.getPath());
-                    String url = upload.upload(f.getName(), in, strings[0]);
+                        File f = new File(imageUri.getPath());
+                        String url = upload.upload(f.getName(), in, strings[0]);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 else {
+                    System.err.println("No we are here.");
                     update = new StatusUpdate(strings[0]);
                     if (strings[1] != null) {
                         update.setInReplyToStatusId(Long.parseLong(strings[1]));
-                        twitter.updateStatus(update);
                     }
+                    twitter.updateStatus(update);
                 }
             } catch (TwitterException e) {
                 e.printStackTrace();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
+
             return null;
         }
 

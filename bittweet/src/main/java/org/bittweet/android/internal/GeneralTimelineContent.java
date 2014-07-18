@@ -1,6 +1,9 @@
 package org.bittweet.android.internal;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.widget.BaseAdapter;
 import org.bittweet.android.ApplicationController;
 import org.bittweet.android.ui.adapters.TimelineAdapter;

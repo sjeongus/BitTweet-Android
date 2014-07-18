@@ -179,81 +179,24 @@ public class NewTweetActivity extends Activity {
         }
     }
 
-    /*private class UploadPicture extends AsyncTask<String, Void, String> {
-        private ImageUpload upload;
-        private InputStream in;
-        private String url;
-
-        @Override
-        protected void onPreExecute() {
-            try {
-                ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(getApplicationContext()).getConfiguration());
-                upload = factory.getInstance(MediaProvider.TWITTER);
-                in = getContentResolver().openInputStream(imageUri);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        protected String doInBackground(String... args) {
-            String message = args[0];
-            File f = new File(imageUri.getPath());
-            try {
-                url = upload.upload(f.getName(), in, message);
-            } catch (TwitterException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println("Uri is " + imageUri.toString());
-            System.out.println("Uri path is " + imageUri.getPath().toString());
-            return url;
-        }
-
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-        }
-    }*/
-
     private void sendTweet() {
         String text = viewTweetEdit.getText().toString();
-        /*if (myBitmap != null) {
-            try {
-                UploadPicture task = new UploadPicture();
-                task.execute();
-                //text = text + " " + task.get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
-
         if(checkCharactersLeft(text) > -1) {
             Intent serviceIntent = new Intent(this, TweetService.class);
             serviceIntent.setAction(Intent.ACTION_SEND);
             serviceIntent.putExtra(Intent.EXTRA_TEXT, text);
-            serviceIntent.putExtra(Intent.EXTRA_STREAM, imageUri.toString());
-            if (imageUri != null)
+            if (imageUri != null) {
+                serviceIntent.putExtra(Intent.EXTRA_STREAM, imageUri.toString());
                 imageUri = null;
-
+            }
+            else {
+                serviceIntent.putExtra(Intent.EXTRA_STREAM, "empty");
+            }
 
             if(inReplyToStatus != null) {
                 serviceIntent.putExtra(TweetService.ARG_TWEET_ID, inReplyToStatus.getId());
             }
 
-            /*if (myBitmap != null) {
-                try {
-                    UploadPicture task = new UploadPicture();
-                    task.execute(text);
-                    //text = text + " " + task.get();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            else*/
             startService(serviceIntent);
             NavUtils.navigateUpFromSameTask(NewTweetActivity.this);
         }
