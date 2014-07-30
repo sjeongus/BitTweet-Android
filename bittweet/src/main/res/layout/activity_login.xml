@@ -5,13 +5,56 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
+    <ImageView
+        android:id="@+id/backg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:gravity="bottom"
+        android:src="@drawable/maki"
+        android:adjustViewBounds="true" />
+
+    <ImageView
+        android:id="@+id/blur_image"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_gravity="bottom"
+        android:scaleType="centerCrop"/>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/login_text"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:id="@+id/textView2"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="60dp"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="@string/login_disclaim"
+        android:textSize="16sp"
+        android:id="@+id/textView3"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_button"
+        android:background="@android:color/transparent"
         android:id="@+id/button_login"
-        android:layout_gravity="center" />
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true" />
 
     <WebView
             android:id="@+id/webview"
