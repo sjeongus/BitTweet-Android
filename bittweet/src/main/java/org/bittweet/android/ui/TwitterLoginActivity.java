@@ -92,8 +92,13 @@ public class TwitterLoginActivity extends FragmentActivity {
             public boolean onPreDraw() {
                 height = content.getMeasuredHeight();
                 width = content.getMeasuredWidth();
+                int blurheight = blurredOverlay.getMeasuredHeight();
                 scaled = Utils.drawViewToBitmap(scaled, content, width, height, 5, windowBackground);
                 blurTask = new BlurTask(getApplicationContext(), scaled, 7);
+                Bitmap blurredBitmap = Bitmap.createBitmap(scaled, 0, 90/5, width/5, blurheight/5);
+                Bitmap enlarged = Bitmap.createScaledBitmap(blurredBitmap, width, blurheight, false);
+                blurredBitmap.recycle();
+                blurredOverlay.setImageBitmap(enlarged);
                 return true;
             }
         });
