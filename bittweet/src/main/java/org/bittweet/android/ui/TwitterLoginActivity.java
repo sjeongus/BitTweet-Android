@@ -42,6 +42,7 @@ public class TwitterLoginActivity extends FragmentActivity {
     public static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
     public static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
     static final String TWITTER_CALLBACK_URL = "oauth://t4jsample";
+    //static final String TWITTER_CALLBACK_URL = "api.twitter.com/oauth/authorize?force_login=true";
 
     // Twitter oauth urls
     static final String URL_TWITTER_AUTH = "auth_url";
