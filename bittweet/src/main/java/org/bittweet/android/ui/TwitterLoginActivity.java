@@ -61,13 +61,13 @@ public class TwitterLoginActivity extends FragmentActivity {
 
     // Misc
     private SharedPreferences sharedPreferences;
-    private ImageView blurredOverlay;
+    /*private ImageView blurredOverlay;
     private Bitmap scaled;
     private View content;
     private BlurTask blurTask;
     private int width;
     private int height;
-    private Drawable windowBackground;
+    private Drawable windowBackground;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +76,7 @@ public class TwitterLoginActivity extends FragmentActivity {
 
         getActionBar().hide();
 
-        int[] attrs = { android.R.attr.windowBackground };
+        /*int[] attrs = { android.R.attr.windowBackground };
 
         blurredOverlay = (ImageView) findViewById(R.id.blur_image);
         content = findViewById(R.id.backg);
@@ -95,13 +95,13 @@ public class TwitterLoginActivity extends FragmentActivity {
                 int blurheight = blurredOverlay.getMeasuredHeight();
                 scaled = Utils.drawViewToBitmap(scaled, content, width, height, 5, windowBackground);
                 blurTask = new BlurTask(getApplicationContext(), scaled, 7);
-                Bitmap blurredBitmap = Bitmap.createBitmap(scaled, 0, 90/5, width/5, blurheight/5);
+                Bitmap blurredBitmap = Bitmap.createBitmap(scaled, 0, 950/5, width/5, blurheight/5);
                 Bitmap enlarged = Bitmap.createScaledBitmap(blurredBitmap, width, blurheight, false);
                 blurredBitmap.recycle();
                 blurredOverlay.setImageBitmap(enlarged);
                 return true;
             }
-        });
+        });*/
 
         twitter = MyTwitterFactory.getInstance(this).getTwitter();
         loginButton = (Button) findViewById(R.id.button_login);
