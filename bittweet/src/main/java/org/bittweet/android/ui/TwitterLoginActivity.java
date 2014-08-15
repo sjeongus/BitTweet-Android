@@ -23,8 +23,8 @@ import android.widget.Toast;
 import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.internal.SecretKeys;
-import org.bittweet.android.ui.blur.BlurTask;
-import org.bittweet.android.ui.blur.Utils;
+//import org.bittweet.android.ui.blur.BlurTask;
+//import org.bittweet.android.ui.blur.Utils;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
