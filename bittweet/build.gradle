@@ -24,7 +24,10 @@ android {
         minSdkVersion 14
         targetSdkVersion 19
         versionCode 4
-        versionName "0.0.2"
+        versionName
+
+        renderscriptTargetApi 19
+        renderscriptSupportMode true
     }
     buildTypes {
         release {

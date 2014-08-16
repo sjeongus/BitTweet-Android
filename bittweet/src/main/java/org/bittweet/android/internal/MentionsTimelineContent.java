@@ -1,13 +1,14 @@
 package org.bittweet.android.internal;
 
 import android.content.Context;
+
+import java.util.List;
+import java.util.Map;
+
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.TwitterException;
-
-import java.util.List;
-import java.util.Map;
 
 public class MentionsTimelineContent extends GeneralTimelineContent {
     private static final String TAG = "MentionsTimelineContent";

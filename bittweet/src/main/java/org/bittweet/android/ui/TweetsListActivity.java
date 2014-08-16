@@ -19,7 +19,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+
 import com.crashlytics.android.Crashlytics;
+
 import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.ui.fragments.HomeTweetsListFragment;

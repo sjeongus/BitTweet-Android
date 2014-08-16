@@ -1,7 +1,12 @@
 package org.bittweet.android;
 
 import android.app.Application;
-import org.bittweet.android.internal.*;
+
+import org.bittweet.android.internal.HomeTimelineContent;
+import org.bittweet.android.internal.MentionsTimelineContent;
+import org.bittweet.android.internal.StatusItem;
+import org.bittweet.android.internal.TimelineContent;
+import org.bittweet.android.internal.TwitterStreamRouter;
 
 import java.util.HashMap;
 

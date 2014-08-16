@@ -2,29 +2,21 @@ package org.bittweet.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.internal.SecretKeys;
-import org.bittweet.android.ui.blur.BlurTask;
-import org.bittweet.android.ui.blur.Utils;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -62,13 +54,8 @@ public class TwitterLoginActivity extends FragmentActivity {
 
     // Misc
     private SharedPreferences sharedPreferences;
-    /*private ImageView blurredOverlay;
-    private Bitmap scaled;
-    private View content;
-    private BlurTask blurTask;
-    private int width;
-    private int height;
-    private Drawable windowBackground;*/
+    private ImageView blurredOverlay;
+    private ImageView background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,37 +64,15 @@ public class TwitterLoginActivity extends FragmentActivity {
 
         getActionBar().hide();
 
-        /*int[] attrs = { android.R.attr.windowBackground };
-
-        blurredOverlay = (ImageView) findViewById(R.id.blur_image);
-        content = findViewById(R.id.backg);
-        TypedValue outValue = new TypedValue();
-        getApplicationContext().getTheme().resolveAttribute(android.R.attr.windowBackground, outValue, true);
-
-        TypedArray style = getApplicationContext().getTheme().obtainStyledAttributes(outValue.resourceId, attrs);
-        windowBackground = style.getDrawable(0);
-        style.recycle();
-
-        ViewTreeObserver vto = content.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            public boolean onPreDraw() {
-                height = content.getMeasuredHeight();
-                width = content.getMeasuredWidth();
-                int blurheight = blurredOverlay.getMeasuredHeight();
-                scaled = Utils.drawViewToBitmap(scaled, content, width, height, 5, windowBackground);
-                blurTask = new BlurTask(getApplicationContext(), scaled, 7);
-                Bitmap blurredBitmap = Bitmap.createBitmap(scaled, 0, 950/5, width/5, blurheight/5);
-                Bitmap enlarged = Bitmap.createScaledBitmap(blurredBitmap, width, blurheight, false);
-                blurredBitmap.recycle();
-                blurredOverlay.setImageBitmap(enlarged);
-                return true;
-            }
-        });*/
-
         twitter = MyTwitterFactory.getInstance(this).getTwitter();
         loginButton = (Button) findViewById(R.id.button_login);
         webView = (WebView) findViewById(R.id.webview);
         sharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
+        background = (ImageView) findViewById(R.id.background);
+        blurredOverlay = (ImageView) findViewById(R.id.blurback);
+
+        Bitmap blurred = Blur.loadBitmapFromView(background);
+        Blur.blurBitmap(blurred, background, blurredOverlay, this);
 
         // When user clicks login button, should open up a web view that allows them to log in
         loginButton.setOnClickListener(new View.OnClickListener() {

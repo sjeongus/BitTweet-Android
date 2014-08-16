@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
@@ -24,23 +23,16 @@ import android.widget.TextView;
 
 import org.bittweet.android.ApplicationController;
 import org.bittweet.android.R;
-import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.adapters.SimpleTweetAdapter;
 import org.bittweet.android.ui.adapters.TweetAdapter;
 import org.bittweet.android.ui.adapters.TweetViewHolder;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
-import twitter4j.TwitterException;
 import twitter4j.UserMentionEntity;
-import twitter4j.media.ImageUpload;
-import twitter4j.media.ImageUploadFactory;
-import twitter4j.media.MediaProvider;
 
 public class NewTweetActivity extends Activity {
     public static final String ARG_REPLY_TO_ID = "reply_to";

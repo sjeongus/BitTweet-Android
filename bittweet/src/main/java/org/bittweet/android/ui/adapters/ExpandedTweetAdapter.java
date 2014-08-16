@@ -2,9 +2,11 @@ package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
 import android.view.View;
+
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.ui.util.RoundedTransformation;
+
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 

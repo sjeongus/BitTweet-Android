@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+
 import com.fortysevendeg.swipelistview.SwipeListView;
+
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.services.TweetService;

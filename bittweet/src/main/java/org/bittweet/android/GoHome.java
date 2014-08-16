@@ -1,7 +1,8 @@
 package org.bittweet.android;
 
-import java.util.Random;
 import java.util.List;
+import java.util.Random;
+
 import static java.util.Arrays.asList;
 
 /**

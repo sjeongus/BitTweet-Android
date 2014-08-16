@@ -2,16 +2,19 @@ package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
 import android.view.View;
+
+import com.squareup.picasso.Picasso;
+
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.ui.util.RoundedTransformation;
 import org.bittweet.android.ui.util.TransparentLinkMovementMethod;
 import org.bittweet.android.ui.util.TweetFormatter;
-import com.squareup.picasso.Picasso;
-import twitter4j.Status;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+
+import twitter4j.Status;
 
 public class SimpleTweetAdapter implements TweetAdapter {
     private final Context context;
