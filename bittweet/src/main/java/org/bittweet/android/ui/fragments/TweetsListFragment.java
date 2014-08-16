@@ -10,11 +10,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+
 import org.bittweet.android.R;
 import org.bittweet.android.internal.GeneralTimelineContent;
 import org.bittweet.android.internal.TimelineContent;
 import org.bittweet.android.ui.adapters.TimelineAdapter;
 import org.bittweet.android.ui.util.ConnectionDetector;
+
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;

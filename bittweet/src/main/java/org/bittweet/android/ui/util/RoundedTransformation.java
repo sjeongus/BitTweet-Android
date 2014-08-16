@@ -1,7 +1,12 @@
 package org.bittweet.android.ui.util;
 
-import android.graphics.*;
+import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.Shader;
 
 // From: https://gist.github.com/aprock/6213395
 // enables hardware accelerated rounded corners

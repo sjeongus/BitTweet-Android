@@ -1,18 +1,21 @@
 package org.bittweet.android.internal;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.widget.BaseAdapter;
+
 import org.bittweet.android.ApplicationController;
 import org.bittweet.android.ui.adapters.TimelineAdapter;
-import twitter4j.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import twitter4j.Paging;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.User;
 
 public abstract class GeneralTimelineContent implements TimelineContent, TwitterStreamConsumer {
     private Context context;

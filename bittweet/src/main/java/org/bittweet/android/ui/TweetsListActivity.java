@@ -1,5 +1,7 @@
 package org.bittweet.android.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -17,8 +19,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+
 import com.crashlytics.android.Crashlytics;
+
 import org.bittweet.android.R;
+import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.ui.fragments.HomeTweetsListFragment;
 import org.bittweet.android.ui.fragments.MentionsTweetsListFragment;
 import org.bittweet.android.ui.fragments.TweetsDetailFragment;
@@ -29,9 +34,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import twitter4j.Twitter;
+
 public class TweetsListActivity extends FragmentActivity implements TweetsListFragment.Callbacks {
     private boolean isTwoPane;
 
+    private Twitter mTwitter;
     private SharedPreferences sharedPreferences;
     private FragmentManager fragmentManager;
 
@@ -178,9 +186,34 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                 Intent newTweet = new Intent(this, NewTweetActivity.class);
                 startActivity(newTweet);
                 return true;
+            case R.id.action_logout:
+                logoutDialog();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void logoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.logout_title)
+                .setMessage(R.string.logout_confirm)
+                .setPositiveButton(R.string.logout_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        sharedPreferences.edit().clear().commit();
+                        mTwitter = MyTwitterFactory.getInstance(getApplicationContext()).getTwitter();
+                        mTwitter.setOAuthAccessToken(null);
+                        finish();
+                        startActivity(getIntent());
+                    }
+                })
+                .setNegativeButton(R.string.logout_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog object
+        builder.show();
     }
 
     private void loadMentionsTimeline() {

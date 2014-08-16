@@ -20,6 +20,15 @@
         <item>@drawable/ic_nav_mentions</item>
     </array>
 
+    <string name="login_text">Build 2, why is Maki in the background photo? We just don\'t know.</string>
+    <string name="login_disclaim">Art by 和遥キナ@三日目東シ40a(pixiv 22419). This will not be in the final</string>
+    <string name="login_button">Sign in via Twitter ≫</string>
+
+    <string name="logout_title">Log Out of BitTweet?</string>
+    <string name="logout_confirm">Are you sure you want to log out?</string>
+    <string name="logout_ok">Logout</string>
+    <string name="logout_cancel">Cancel</string>
+
     <string name="title_activity_new_tweet">Compose tweet</string>
     <string name="action_settings">Settings</string>
     <string name="action_tweet">Post tweet</string>

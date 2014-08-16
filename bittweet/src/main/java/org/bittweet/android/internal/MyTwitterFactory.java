@@ -3,15 +3,17 @@ package org.bittweet.android.internal;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+
 import org.bittweet.android.ui.TwitterLoginActivity;
+
+import java.io.File;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
-
-import java.io.File;
 
 /**
  * Created by soomin on 3/1/14.

@@ -2,10 +2,18 @@ package org.bittweet.android.internal;
 
 import android.content.Context;
 import android.os.Handler;
-import twitter4j.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import twitter4j.DirectMessage;
+import twitter4j.StallWarning;
+import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
+import twitter4j.TwitterStream;
+import twitter4j.User;
+import twitter4j.UserList;
+import twitter4j.UserStreamListener;
 
 public class TwitterStreamRouter {
     private TwitterStream stream;

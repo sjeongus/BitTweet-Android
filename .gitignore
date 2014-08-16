@@ -1,6 +1,7 @@
 .DS_Store
 
 # Built files
+/build
 *.apk
 
 # Android Studio
@@ -16,3 +17,6 @@
 
 # Local configuration files
 local.properties
+
+# Crashlytics
+com_crashlytics_export_strings.xml

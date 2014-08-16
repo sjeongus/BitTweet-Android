@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+
 import org.bittweet.android.ApplicationController;
 import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;

@@ -2,6 +2,7 @@ package org.bittweet.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,10 +11,13 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
+
 import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.internal.SecretKeys;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
@@ -30,6 +34,7 @@ public class TwitterLoginActivity extends FragmentActivity {
     public static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
     public static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
     static final String TWITTER_CALLBACK_URL = "oauth://t4jsample";
+    //static final String TWITTER_CALLBACK_URL = "api.twitter.com/oauth/authorize?force_login=true";
 
     // Twitter oauth urls
     static final String URL_TWITTER_AUTH = "auth_url";
@@ -49,21 +54,31 @@ public class TwitterLoginActivity extends FragmentActivity {
 
     // Misc
     private SharedPreferences sharedPreferences;
+    private ImageView blurredOverlay;
+    private ImageView background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        getActionBar().hide();
+
         twitter = MyTwitterFactory.getInstance(this).getTwitter();
         loginButton = (Button) findViewById(R.id.button_login);
         webView = (WebView) findViewById(R.id.webview);
         sharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
+        background = (ImageView) findViewById(R.id.background);
+        blurredOverlay = (ImageView) findViewById(R.id.blurback);
+
+        Bitmap blurred = Blur.loadBitmapFromView(background);
+        Blur.blurBitmap(blurred, background, blurredOverlay, this);
 
         // When user clicks login button, should open up a web view that allows them to log in
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getActionBar().show();
                 new RequestAuthTask().execute();
             }
         });
