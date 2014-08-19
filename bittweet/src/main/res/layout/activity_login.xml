@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:gravity="bottom"
-        android:src="@drawable/maki"
+        android:src="@drawable/background"
         android:adjustViewBounds="true" />
 
     <ImageView
