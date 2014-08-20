@@ -12,7 +12,6 @@ import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 /**

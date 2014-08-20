@@ -4,11 +4,10 @@ import android.content.Context;
 import android.view.View;
 
 import com.koushikdutta.ion.Ion;
-import com.squareup.picasso.Picasso;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
-import org.bittweet.android.ui.util.RoundedTransformationIon;
+import org.bittweet.android.ui.util.RoundedTransformation;
 import org.bittweet.android.ui.util.TransparentLinkMovementMethod;
 import org.bittweet.android.ui.util.TweetFormatter;
 
@@ -20,21 +19,16 @@ import twitter4j.Status;
 public class SimpleTweetAdapter implements TweetAdapter {
     private final Context context;
     private final SimpleDateFormat dateFormat;
-    private final Picasso picasso;
 
     public SimpleTweetAdapter(Context context) {
         this.context = context;
         this.dateFormat = new SimpleDateFormat("MMM d yyyy, K:mm a", Locale.getDefault());
-        this.picasso = Picasso.with(context);
     }
 
     protected Context getContext() {
         return context;
     }
 
-    protected Picasso getPicasso() {
-        return picasso;
-    }
 
     @Override
     public void recreateView(StatusItem item, TweetViewHolder holder) {
@@ -67,12 +61,7 @@ public class SimpleTweetAdapter implements TweetAdapter {
             holder.favBtn.setImageResource(R.drawable.ic_rating_important);
         }
 
-        // Use Picasso to retrieve and set profile images. Get from cache if already exists.
-        /*picasso.load(status.getUser().getBiggerProfileImageURLHttps())
-                .transform(new RoundedTransformation(50, 0))
-                .into(holder.avatarImage);*/
-
-        Ion.with(holder.avatarImage).transform(new RoundedTransformationIon(250, 0))
+        Ion.with(holder.avatarImage).transform(new RoundedTransformation(250, 0))
                 .animateGif(true)
                 .load(status.getUser().getBiggerProfileImageURLHttps());
     }
