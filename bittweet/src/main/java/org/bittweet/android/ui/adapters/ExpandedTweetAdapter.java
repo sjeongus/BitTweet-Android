@@ -1,16 +1,32 @@
 package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+
+import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.ui.util.RoundedTransformation;
+import org.bittweet.android.ui.util.RoundedTransformationIon;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.locks.Lock;
 
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 
 public class ExpandedTweetAdapter extends SimpleTweetAdapter {
+    static int width = 0;
+    static int height = 0;
+
     public ExpandedTweetAdapter(Context context) {
         super(context);
     }
@@ -64,13 +80,33 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
         MediaEntity[] mediaEntities = status.getMediaEntities();
 
         if(mediaEntities.length > 0) {
-            MediaEntity displayedMedia = mediaEntities[0];
+            final MediaEntity displayedMedia = mediaEntities[0];
+            final ImageView media = holder.mediaExpansion;
 
-            getPicasso().load(displayedMedia.getMediaURLHttps())
-                    .resizeDimen(R.dimen.media_expansion_size, R.dimen.media_expansion_size)
-                    .centerCrop()
+            /*media.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        media.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    } else {
+                        media.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    }
+
+                    width = media.getWidth();
+                    height = media.getHeight();
+                }
+            });*/
+
+            /*getPicasso().load(displayedMedia.getMediaURLHttps())
+                    //.resizeDimen(width, width)
+                    //.centerCrop()
                     .transform(new RoundedTransformation(20, 0))
-                    .into(holder.mediaExpansion);
+                    .into(holder.mediaExpansion);*/
+            Ion.with(holder.mediaExpansion)
+                    //.resize(width, height)
+                    //.centerCrop()
+                    //.transform(new RoundedTransformationIon(20, 0))
+                    .load(displayedMedia.getMediaURLHttps());
 
             holder.mediaExpansion.setVisibility(View.VISIBLE);
         } else {

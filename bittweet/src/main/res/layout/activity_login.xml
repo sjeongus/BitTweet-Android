@@ -37,6 +37,7 @@
         android:textStyle="bold"
         android:id="@+id/textView2"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="60dp"
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true" />

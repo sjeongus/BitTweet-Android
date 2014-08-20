@@ -3,11 +3,12 @@ package org.bittweet.android.ui.adapters;
 import android.content.Context;
 import android.view.View;
 
+import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
-import org.bittweet.android.ui.util.RoundedTransformation;
+import org.bittweet.android.ui.util.RoundedTransformationIon;
 import org.bittweet.android.ui.util.TransparentLinkMovementMethod;
 import org.bittweet.android.ui.util.TweetFormatter;
 
@@ -67,8 +68,12 @@ public class SimpleTweetAdapter implements TweetAdapter {
         }
 
         // Use Picasso to retrieve and set profile images. Get from cache if already exists.
-        picasso.load(status.getUser().getBiggerProfileImageURLHttps())
+        /*picasso.load(status.getUser().getBiggerProfileImageURLHttps())
                 .transform(new RoundedTransformation(50, 0))
-                .into(holder.avatarImage);
+                .into(holder.avatarImage);*/
+
+        Ion.with(holder.avatarImage).transform(new RoundedTransformationIon(250, 0))
+                .animateGif(true)
+                .load(status.getUser().getBiggerProfileImageURLHttps());
     }
 }

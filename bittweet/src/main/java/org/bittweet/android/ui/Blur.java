@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.os.Build;
 import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.Element;
 import android.support.v8.renderscript.RenderScript;
 import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -21,7 +23,7 @@ public class Blur {
     // Create a downsampled bitmap from view
     public static Bitmap loadBitmapFromView(View v) {
         float scale = 1f / 5;
-        v.measure(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        v.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         int bmpWidth = (int)(v.getMeasuredWidth() * scale);
         int bmpHeight = (int)(v.getMeasuredHeight() * scale);
         Bitmap b = Bitmap.createBitmap(bmpWidth, bmpHeight, Bitmap.Config.ARGB_8888);
@@ -113,7 +115,11 @@ public class Blur {
 
                 image.setImageBitmap(cropped);
 
-                image.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                   image.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
             }
         });
     }
