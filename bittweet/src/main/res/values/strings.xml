@@ -13,6 +13,7 @@
     <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Mentions</item>
+        <item>Settings</item>
     </string-array>
 
     <array name="nav_drawer_icons">

@@ -40,8 +40,10 @@ package="org.bittweet.android" >
             <category android:name="android.intent.category.BROWSABLE" />
 
             <data
-                android:host="t4jsample"
-                android:scheme="oauth" />
+                android:host="www.chromatiqa.org"
+                android:scheme="http"
+                android:pathPrefix="/bittweet/"/>
+
         </intent-filter>
     </activity>
     <activity

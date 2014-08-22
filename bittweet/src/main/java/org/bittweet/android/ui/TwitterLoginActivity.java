@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -33,8 +34,7 @@ public class TwitterLoginActivity extends FragmentActivity {
     public static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
     public static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
     public static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
-    static final String TWITTER_CALLBACK_URL = "oauth://t4jsample";
-    //static final String TWITTER_CALLBACK_URL = "api.twitter.com/oauth/authorize?force_login=true";
+    static final String TWITTER_CALLBACK_URL = "http://www.chromatiqa.org/bittweet/";
 
     // Twitter oauth urls
     static final String URL_TWITTER_AUTH = "auth_url";
@@ -87,8 +87,10 @@ public class TwitterLoginActivity extends FragmentActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        System.err.println(intent.toString());
 
         Uri uri = intent.getData();
+        System.err.println("Uri is " + uri);
 
         if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
             new HandleAuthTask(uri).execute();
@@ -120,7 +122,7 @@ public class TwitterLoginActivity extends FragmentActivity {
             if (!result.equals("")) {
                 displayLoginPage(result);
             } else {
-                Toast.makeText(TwitterLoginActivity.this, "Could not OAuth", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TwitterLoginActivity.this, "Could not OAuth. Restart the app completely.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -128,7 +130,17 @@ public class TwitterLoginActivity extends FragmentActivity {
     private void displayLoginPage(String url) {
         loginButton.setVisibility(View.GONE);
         webView.setVisibility(View.VISIBLE);
-        webView.loadUrl(url);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri uri = Uri.parse(url);
+                intent.setData(uri);
+                onNewIntent(intent);
+
+                return super.shouldOverrideUrlLoading(view, url);
+            }
+        }); webView.loadUrl(url);
     }
 
     // AsyncTask that obtains the API access key and secret, and stores into SharedPreferences
@@ -153,6 +165,10 @@ public class TwitterLoginActivity extends FragmentActivity {
                 } catch (TwitterException e) {
                     e.printStackTrace();
                     Log.e(TAG, "Could not get access token");
+                    return null;
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    return null;
                 }
             } else if (mUri == null) {
                 Log.e(TAG, "Uri is null");
@@ -190,6 +206,7 @@ public class TwitterLoginActivity extends FragmentActivity {
             e.commit(); // save changes
 
             Log.e("Twitter OAuth Token", "> " + token);
+            System.err.println("Oauth token is " + token);
 
             Toast.makeText(TwitterLoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
 

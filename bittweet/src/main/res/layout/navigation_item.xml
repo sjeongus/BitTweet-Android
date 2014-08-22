@@ -21,6 +21,8 @@
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
             android:minHeight="?android:attr/listPreferredItemHeightSmall"
             android:textColor="#111"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-thin"
             android:gravity="center_vertical"
             android:paddingRight="26dp"/>
 

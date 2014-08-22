@@ -15,8 +15,9 @@
             swipe:swipeFrontView="@+id/front_view"
             swipe:swipeBackView="@+id/back_view"
             swipe:swipeOpenOnLongPress="false"
-            swipe:swipeMode="left"
-            swipe:swipeOffsetLeft="50dp"
+            swipe:swipeMode="right"
+            swipe:swipeOffsetRight="68dp"
+            swipe:swipeCloseAllItemsWhenMoveList="true"
             android:smoothScrollbar="false" />
 
 </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
