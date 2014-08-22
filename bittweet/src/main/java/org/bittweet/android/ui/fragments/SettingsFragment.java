@@ -27,6 +27,7 @@ import twitter4j.Twitter;
 public class SettingsFragment extends PreferenceFragment {
     private Preference logout;
     private Preference tweetfeedback;
+    private SwitchPreference streaming;
     private SharedPreferences twitter;
     private Twitter mTwitter;
     private Context context;
@@ -69,7 +70,25 @@ public class SettingsFragment extends PreferenceFragment {
                 serviceIntent.setAction(NewTweetActivity.INTENT_FEEDBACK);
                 serviceIntent.putExtra(Intent.EXTRA_TEXT, info);
                 startActivity(serviceIntent);
-                return false;
+                return true;
+            }
+        });
+
+        streaming = (SwitchPreference) findPreference("pref_key_streaming");
+        streaming.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.preference_streaming)
+                        .setMessage(R.string.streaming_name)
+                        .setNegativeButton(R.string.streaming_ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                // Create the AlertDialog object
+                builder.show();
+                return true;
             }
         });
 

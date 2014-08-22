@@ -37,4 +37,8 @@
     <string name="tweet_service_ongoing">Nonsense</string>
     <string name="its_you">you</string>
 
+    <string name="preference_streaming">Stream Settings Changed</string>
+    <string name="streaming_name">Restart the app to apply changes.</string>
+    <string name="streaming_ok">OK</string>
+
 </resources>
