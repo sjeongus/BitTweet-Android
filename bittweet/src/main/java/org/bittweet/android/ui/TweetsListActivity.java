@@ -57,7 +57,6 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         super.onCreate(savedInstanceState);
         Crashlytics.start(this);
 
-
         sharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
 
@@ -122,6 +121,9 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                     case 1:
                         loadMentionsTimeline();
                         break;
+                    case 2:
+                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(intent);
                 }
 
                 drawerLayout.closeDrawer(drawerList);
@@ -186,34 +188,9 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                 Intent newTweet = new Intent(this, NewTweetActivity.class);
                 startActivity(newTweet);
                 return true;
-            case R.id.action_logout:
-                logoutDialog();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    public void logoutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.logout_title)
-                .setMessage(R.string.logout_confirm)
-                .setPositiveButton(R.string.logout_ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        sharedPreferences.edit().clear().commit();
-                        mTwitter = MyTwitterFactory.getInstance(getApplicationContext()).getTwitter();
-                        mTwitter.setOAuthAccessToken(null);
-                        finish();
-                        startActivity(getIntent());
-                    }
-                })
-                .setNegativeButton(R.string.logout_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        // Create the AlertDialog object
-        builder.show();
     }
 
     private void loadMentionsTimeline() {

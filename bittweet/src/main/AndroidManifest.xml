@@ -54,6 +54,13 @@ package="org.bittweet.android" >
             android:name="android.support.PARENT_ACTIVITY"
             android:value="org.bittweet.android.TweetsListActivity" />
     </activity>
+    <activity android:name=".ui.SettingsActivity" android:label="Settings"
+        android:screenOrientation="nosensor">
+        <intent-filer>
+            <action android:name=".ui.SettingsActivity" />
+            <category android:name="android.intent.category.PREFERENCE" />
+        </intent-filer>
+    </activity>
 
     <meta-data
         android:name="com.crashlytics.ApiKey"

@@ -21,8 +21,8 @@
         <item>@drawable/ic_nav_mentions</item>
     </array>
 
-    <string name="login_text">Build 5: Now with 100% more Kotorifaces</string>
-    <string name="login_disclaim">Art by たた＠2日目（土）西る40a(pixiv 1005205). This will not be in the final</string>
+    <string name="login_text">Build 5: Why is rice so white?</string>
+    <string name="login_disclaim">聖城(pixiv 728107). This will not be in the final release.</string>
     <string name="login_button">Sign in via Twitter ≫</string>
 
     <string name="logout_title">Log Out of BitTweet?</string>

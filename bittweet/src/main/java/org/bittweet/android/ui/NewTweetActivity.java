@@ -37,6 +37,7 @@ import twitter4j.UserMentionEntity;
 public class NewTweetActivity extends Activity {
     public static final String ARG_REPLY_TO_ID = "reply_to";
     public static final String INTENT_REPLY = "org.bittweet.android.actions.REPLY";
+    public static final String INTENT_FEEDBACK = "org.bittweet.android.actions.FEEDBACK";
 
     private ApplicationController controller;
     private StatusItem inReplyToStatus;
@@ -118,6 +119,10 @@ public class NewTweetActivity extends Activity {
         if(getIntent() != null && INTENT_REPLY.equals(getIntent().getAction())) {
             inReplyToStatus = controller.getStatus(getIntent().getStringExtra(ARG_REPLY_TO_ID));
             initializeReplyToStatus();
+        }
+
+        if (getIntent() != null && INTENT_FEEDBACK.equals(getIntent().getAction())) {
+            viewTweetEdit.setText(getIntent().getStringExtra(Intent.EXTRA_TEXT));
         }
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);

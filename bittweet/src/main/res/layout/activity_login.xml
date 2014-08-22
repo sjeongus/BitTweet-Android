@@ -17,14 +17,14 @@
     <ImageView
         android:id="@+id/blurback"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="100dp"
         android:layout_gravity="bottom"
         android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/white"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="100dp"
         android:background="#a8ffffff"
         android:layout_gravity="bottom"
         android:scaleType="centerCrop"/>
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:text="@string/login_disclaim"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:id="@+id/textView3"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="8dp"
