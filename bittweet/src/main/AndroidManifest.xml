@@ -56,10 +56,10 @@ package="org.bittweet.android" >
     </activity>
     <activity android:name=".ui.SettingsActivity" android:label="Settings"
         android:screenOrientation="nosensor">
-        <intent-filer>
+        <intent-filter>
             <action android:name=".ui.SettingsActivity" />
             <category android:name="android.intent.category.PREFERENCE" />
-        </intent-filer>
+        </intent-filter>
     </activity>
 
     <meta-data
