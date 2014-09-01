@@ -9,9 +9,11 @@ import org.bittweet.android.ui.TwitterLoginActivity;
 import java.io.File;
 
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.User;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -22,6 +24,9 @@ import twitter4j.conf.ConfigurationBuilder;
 public class MyTwitterFactory {
     private static final String TAG = "MyTwitterFactory";
     private static MyTwitterFactory singletonInstance = null;
+
+    public static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
+    public static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
 
     private Context context;
     private Twitter twitter;
@@ -34,10 +39,11 @@ public class MyTwitterFactory {
         installHttpResponseCache();
 
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        configurationBuilder.setDebugEnabled(true);
 
-        SharedPreferences prefs = context.getSharedPreferences("MyTwitter", 0);
-        String oauthKey = prefs.getString(TwitterLoginActivity.PREF_KEY_OAUTH_TOKEN, null);
-        String oauthSecret = prefs.getString(TwitterLoginActivity.PREF_KEY_OAUTH_SECRET, null);
+        SharedPreferences prefs = context.getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
+        String oauthKey = prefs.getString(PREF_KEY_OAUTH_TOKEN, null);
+        String oauthSecret = prefs.getString(PREF_KEY_OAUTH_SECRET, null);
 
         if(oauthKey != null) {
             configurationBuilder.setOAuthAccessToken(oauthKey);
@@ -82,6 +88,15 @@ public class MyTwitterFactory {
 
     public Twitter getTwitter() {
         return twitter;
+    }
+
+    public long getUserId() {
+        try {
+            return twitter.getId();
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public TwitterStream getTwitterStream() {

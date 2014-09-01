@@ -9,6 +9,8 @@ import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import org.bittweet.android.ui.WebViewActivity;
+
 import twitter4j.Status;
 import twitter4j.URLEntity;
 import twitter4j.UserMentionEntity;
@@ -67,7 +69,12 @@ public class TweetFormatter {
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            Intent intent = new Intent(context, WebViewActivity.class);
+            System.err.println("WebView intent " + intent.toString());
+            System.err.println("Sending to WebView: " + url);
+            intent.setData(Uri.parse(url));
+            intent.putExtra("URL", true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(intent);
         }
     }

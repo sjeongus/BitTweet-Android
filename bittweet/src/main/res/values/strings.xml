@@ -6,13 +6,14 @@
     <string name="retweeted_by">Retweeted by %1$s</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
-    <string name="home_timeline">Home timeline</string>
+    <string name="home_timeline">Home</string>
     <string name="mentions_timeline">\@Mentions</string>
     <string name="media_expansion_desc">Attached media</string>
 
     <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Mentions</item>
+        <item>Profile</item>
         <item>Settings</item>
     </string-array>
 
@@ -21,9 +22,10 @@
         <item>@drawable/ic_nav_mentions</item>
     </array>
 
-    <string name="login_text">Build 5: Why is rice so white?</string>
-    <string name="login_disclaim">聖城(pixiv 728107). This will not be in the final release.</string>
+    <string name="login_text">Build 6: Ro-Kyu-Bu! Pretty sure we can go to jail for this.</string>
+    <string name="login_disclaim">カズタ＠赤色のエプロン(pixiv 735960). This will not be in the final release.</string>
     <string name="login_button">Sign in via Twitter ≫</string>
+    <string name="login_title">Sign Into Twitter</string>
 
     <string name="logout_title">Log Out of BitTweet?</string>
     <string name="logout_confirm">Are you sure you want to log out?</string>
@@ -38,7 +40,29 @@
     <string name="its_you">you</string>
 
     <string name="preference_streaming">Stream Settings Changed</string>
-    <string name="streaming_name">Restart the app to apply changes.</string>
+    <string name="streaming_name">The app will now restart to apply changes.</string>
     <string name="streaming_ok">OK</string>
+
+    <string name="streaming_rate_title">Currently Rate Limited</string>
+    <string name="stream_rate_message">You cannot enable streaming while rate limited.</string>
+    <string name="stream_rate_ok">OK</string>
+
+    <string name="connection_title">No Internet Connection</string>
+    <string name="connection_message">You must be connected to the Internet!</string>
+    <string name="connection_cancel">Cancel</string>
+
+    <string name="rate_limit_message">Rate limit exceeded! Try again in %1$d</string>
+
+    <string name="title_activity_profile">Profile</string>
+    <string name="profile_status_me">It\'s you!</string>
+    <string name="profile_status_mutual">Mutual Follow</string>
+    <string name="profile_status_following">Following</string>
+    <string name="profile_status_followed">Is following you</string>
+    <string name="profile_verified">Verified</string>
+    <string name="profile_protected">Protected</string>
+    <string name="profile_tweet_count">Tweets</string>
+    <string name="profile_follower_count">Followers</string>
+    <string name="profile_following_count">Following</string>
+    <string name="profile_favorites_count">Favorites</string>
 
 </resources>

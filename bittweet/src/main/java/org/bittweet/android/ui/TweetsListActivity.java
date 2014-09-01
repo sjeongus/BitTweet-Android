@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -22,7 +23,9 @@ import android.widget.SimpleAdapter;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.bittweet.android.BuildConfig;
 import org.bittweet.android.R;
+import org.bittweet.android.internal.GeneralTimelineContent;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.ui.fragments.HomeTweetsListFragment;
 import org.bittweet.android.ui.fragments.MentionsTweetsListFragment;
@@ -34,28 +37,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import twitter4j.Twitter;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 public class TweetsListActivity extends FragmentActivity implements TweetsListFragment.Callbacks {
     private boolean isTwoPane;
 
-    private Twitter mTwitter;
     private SharedPreferences sharedPreferences;
     private FragmentManager fragmentManager;
 
     private static final String TAG = "TweetsListActivity";
+    public static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
 
+    private Thread thread;
+    private Runnable profrun;
+    private long myUserId;
+
     public boolean isTwitterLoggedInAlready() {
-        return sharedPreferences.getBoolean(TwitterLoginActivity.PREF_KEY_TWITTER_LOGIN, false);
+        return sharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Crashlytics.start(this);
+
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.start(this);
+        }
 
         sharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
@@ -73,7 +83,31 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
             isTwoPane = true;
         }
 
+        thread = new Thread() {
+            @Override
+            public void run()
+            {
+                myUserId = MyTwitterFactory.getInstance(getApplicationContext()).getUserId();
+
+            }
+        };
+        thread.start();
+
         loadHomeTimeline();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent.getBooleanExtra("LOGOUT", false)) {
+            System.err.println("Got LOGOUT. Logging out.");
+            finish();
+            Intent logout = new Intent(TweetsListActivity.this, TwitterLoginActivity.class);
+            startActivity(logout);
+            return;
+        } else if (intent.getBooleanExtra("RESTART", false)) {
+            System.err.println("Got RESTART. Logging out.");
+            recreate();
+        }
     }
 
     private void initializeDrawer() {
@@ -122,8 +156,15 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                         loadMentionsTimeline();
                         break;
                     case 2:
-                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                        startActivity(intent);
+
+                        Intent profIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        profIntent.putExtra("USER", myUserId);
+                        startActivity(profIntent);
+                        break;
+                    case 3:
+                        Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(settingsIntent);
+                        break;
                 }
 
                 drawerLayout.closeDrawer(drawerList);
@@ -148,6 +189,12 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Crouton.cancelAllCroutons();
+    }
 
     @Override
     public void onItemSelected(String id) {

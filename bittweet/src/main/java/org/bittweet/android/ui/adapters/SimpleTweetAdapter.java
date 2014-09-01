@@ -63,6 +63,6 @@ public class SimpleTweetAdapter implements TweetAdapter {
 
         Ion.with(holder.avatarImage).transform(new RoundedTransformation(250, 0))
                 .animateGif(true)
-                .load(status.getUser().getBiggerProfileImageURLHttps());
+                .load(status.getUser().getOriginalProfileImageURLHttps());
     }
 }
