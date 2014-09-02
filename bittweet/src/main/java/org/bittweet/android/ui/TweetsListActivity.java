@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 
 public class TweetsListActivity extends FragmentActivity implements TweetsListFragment.Callbacks {
     private boolean isTwoPane;
@@ -53,7 +56,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
     private Thread thread;
     private Runnable profrun;
-    private long myUserId;
+    private String myUser;
 
     public boolean isTwitterLoggedInAlready() {
         return sharedPreferences.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
@@ -87,8 +90,15 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
             @Override
             public void run()
             {
-                myUserId = MyTwitterFactory.getInstance(getApplicationContext()).getUserId();
-
+                MyTwitterFactory twitterFact = MyTwitterFactory.getInstance(getApplicationContext());
+                Twitter twitter = twitterFact.getTwitter();
+                try {
+                    //twitter.verifyCredentials();
+                    long userId = twitterFact.getUserId();
+                    myUser = twitter.showUser(userId).getScreenName();
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
             }
         };
         thread.start();
@@ -158,7 +168,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                     case 2:
 
                         Intent profIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                        profIntent.putExtra("USER", myUserId);
+                        profIntent.putExtra("USERNAME", myUser);
                         startActivity(profIntent);
                         break;
                     case 3:

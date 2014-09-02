@@ -9,6 +9,7 @@ import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
+import org.bittweet.android.ui.fragments.TweetsListFragment;
 import org.bittweet.android.ui.util.RoundedTransformation;
 
 import twitter4j.MediaEntity;
@@ -81,8 +82,8 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                     media.getViewTreeObserver().removeOnPreDrawListener(this);
 
                     width = media.getWidth();
-                    height = media.getHeight();
-                    setImage(media, width, height, displayedMedia.getMediaURLHttps());
+                    //height = media.getHeight();
+                    setImage(media, width, (int) (width * 5/8), displayedMedia.getMediaURLHttps());
                     return true;
                 }
             });

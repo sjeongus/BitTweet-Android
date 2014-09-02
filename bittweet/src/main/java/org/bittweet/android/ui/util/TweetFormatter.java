@@ -2,13 +2,23 @@ package org.bittweet.android.ui.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.text.Layout;
+import android.text.Selection;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
+import org.bittweet.android.R;
+import org.bittweet.android.ui.ProfileActivity;
 import org.bittweet.android.ui.WebViewActivity;
 
 import twitter4j.Status;
@@ -58,13 +68,29 @@ public class TweetFormatter {
         return movedBy;
     }
 
-    private static class LinkSpan extends ClickableSpan {
+    public static abstract class TouchableSpan extends ClickableSpan {
+        private boolean mIsPressed;
+
+        public TouchableSpan() {
+        }
+
+        public void setPressed(boolean isSelected) {
+            mIsPressed = isSelected;
+        }
+    }
+
+    private static class LinkSpan extends TouchableSpan {
         private String url;
         private Context context;
+        private boolean mIsPressed;
 
         public LinkSpan(Context context, String url) {
             this.url = url;
             this.context = context;
+        }
+
+        public void setPressed(boolean isSelected) {
+            this.mIsPressed = isSelected;
         }
 
         @Override
@@ -77,20 +103,44 @@ public class TweetFormatter {
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(intent);
         }
+
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            // Set text color
+            ds.setColor(mIsPressed ? Color.LTGRAY : context.getResources().getColor(R.color.unpressed_link_color));
+            // Set to false to remove underline
+            ds.setUnderlineText(false);
+        }
     }
 
-    private static class UserSpan extends ClickableSpan {
+    private static class UserSpan extends TouchableSpan {
         private String username;
         private Context context;
+        private boolean mIsPressed;
 
         public UserSpan(Context context, String username) {
             this.username = username;
             this.context = context;
         }
 
+        public void setPressed(boolean isSelected) {
+            this.mIsPressed = isSelected;
+        }
+
         @Override
         public void onClick(View view) {
             System.out.println("Clicked on @" + username);
+            Intent intent = new Intent(context, ProfileActivity.class);
+            intent.putExtra("USERNAME", username);
+            context.startActivity(intent);
+        }
+
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            // Set text color
+            ds.setColor(mIsPressed ? Color.LTGRAY : context.getResources().getColor(R.color.unpressed_link_color));
+            // Set to false to remove underline
+            ds.setUnderlineText(false);
         }
     }
 }

@@ -5,4 +5,6 @@
     <color name="favourite_accent">#ffc600</color>
     <color name="reply_background">#e8f3ff</color>
     <color name="white">#fff</color>
+    <color name="unpressed_link_color">#66a2fc</color>
+    <color name="tweet_pressed_color">#ff888888</color>
 </resources>

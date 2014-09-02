@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -44,6 +45,8 @@ public class ProfileActivity extends FragmentActivity {
     private ImageView avatar;
     private ImageView header;
 
+    private LinearLayout countainer;
+
     private Context context;
     private Twitter twitter;
     private User myUser;
@@ -73,11 +76,17 @@ public class ProfileActivity extends FragmentActivity {
         avatar = (ImageView) findViewById(R.id.profilephoto);
         header = (ImageView) findViewById(R.id.headerphoto);
 
+        countainer = (LinearLayout) findViewById(R.id.countainer);
+
         LoadTask loadTask = new LoadTask();
         loadTask.execute();
     }
 
     public class LoadTask extends AsyncTask<Void, Void, Void> {
+        private String username;
+        private String displayname;
+        private boolean isVerified;
+        private boolean isProtected;
         private int tweets;
         private int followers;
         private int following;
@@ -86,22 +95,31 @@ public class ProfileActivity extends FragmentActivity {
         private String url;
         private String location;
 
+        private long myUserId;
+        private long userId;
+
         @Override
         protected Void doInBackground(Void... args) {
             twitter = MyTwitterFactory.getInstance(ProfileActivity.this).getTwitter();
-            long myUserId = MyTwitterFactory.getInstance(ProfileActivity.this).getUserId();
-            long userId = getIntent().getLongExtra("USER", 0);
+            myUserId = MyTwitterFactory.getInstance(ProfileActivity.this).getUserId();
+            //userId = getIntent().getLongExtra("USERID", 0);
+            username = getIntent().getStringExtra("USERNAME");
             try {
-                twitter.verifyCredentials();
-                myUser = twitter.showUser(myUserId);
-                user = twitter.showUser(userId);
+                //twitter.verifyCredentials();
+                //myUser = twitter.showUser(myUserId);
+                user = twitter.showUser(username);
+                userId = user.getId();
+                username = user.getScreenName();
+                displayname = user.getName();
+                isVerified = user.isVerified();
+                isProtected = user.isProtected();
                 relationShip = twitter.showFriendship(myUserId, userId);
                 tweets = user.getStatusesCount();
                 followers = user.getFollowersCount();
                 following = user.getFriendsCount();
                 favorites = user.getFavouritesCount();
                 about = user.getDescription();
-                url = user.getURL();
+                url = user.getURLEntity().getDisplayURL();
                 location = user.getLocation();
             } catch (TwitterException e) {
                 e.printStackTrace();
@@ -111,23 +129,33 @@ public class ProfileActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            if (user == myUser) {
-                whoText.setText(R.string.profile_status_me);
-                whoText.setVisibility(View.VISIBLE);
-            } else if (relationShip.isSourceFollowedByTarget() && !relationShip.isSourceFollowingTarget()) {
-                whoText.setText(R.string.profile_status_followed);
-                whoText.setVisibility(View.VISIBLE);
-            } else if (!relationShip.isSourceFollowedByTarget() && relationShip.isSourceFollowingTarget()) {
-                whoText.setText(R.string.profile_status_following);
-                whoText.setVisibility(View.VISIBLE);
-            } else if (relationShip.isSourceFollowingTarget() && relationShip.isSourceFollowingTarget()) {
-                whoText.setText(R.string.profile_status_mutual);
-                whoText.setVisibility(View.VISIBLE);
-            } else {
-                // Do nothing because we don't need to display this
+            countainer.setVisibility(View.VISIBLE);
+
+            userName.setText("@" + username);
+            displayName.setText(displayname);
+            if (isVerified) {
+                verified.setVisibility(View.VISIBLE);
+            }
+            if (isProtected) {
+                protect.setVisibility(View.VISIBLE);
             }
 
+            if (userId == myUserId) {
+                whoText.setText(R.string.profile_status_me);
+            } else {
+                setTitle("@" + username);
+                if (relationShip.isSourceFollowingTarget() && relationShip.isSourceFollowedByTarget()) {
+                    whoText.setText(R.string.profile_status_mutual);
+                } else if (relationShip.isSourceFollowedByTarget()) {
+                    whoText.setText(R.string.profile_status_followed);
+                } else {
+                    whoText.setText(R.string.profile_status_notfollowed);
+                }
+            }
+
+
             Ion.with(avatar)
+                    .resize(250, 250)
                     .transform(new RoundedTransformation(250, 0))
                     .load(user.getOriginalProfileImageURLHttps());
 

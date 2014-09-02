@@ -3,12 +3,15 @@ package org.bittweet.android.ui.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -49,6 +52,10 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private boolean streaming;
     private Handler handler;
     private Runnable streamrun;
+
+    public boolean isMentionsTimeline() {
+        return false;
+    }
 
     @Override
     public void onRefreshStarted(View view) {
@@ -123,7 +130,11 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         activity = getActivity();
         prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         twitPrefs = getActivity().getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
-        streaming = prefs.getBoolean("pref_key_streaming", false);
+        if (ConnectionDetector.isOnWifi(getActivity())) {
+            streaming = prefs.getBoolean("pref_key_streaming", false);
+        } else {
+            streaming = false;
+        }
         adapter = new TimelineAdapter(activity);
     }
 

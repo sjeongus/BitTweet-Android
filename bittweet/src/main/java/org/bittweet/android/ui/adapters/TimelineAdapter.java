@@ -2,11 +2,15 @@ package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
 
@@ -75,10 +79,40 @@ public class TimelineAdapter extends BaseAdapter {
         // Fix item clicks
         final View finalConvertView = convertView;
 
+        holder.tweetContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                View parentView = (View) v.getParent();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    parentView.setBackgroundColor(Color.LTGRAY);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    parentView.setBackgroundColor(Color.WHITE);
+                    ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
+                } else {
+                    parentView.setBackgroundColor(Color.WHITE);
+                }
+                return onTouch(v, event);
+            }
+        });
         holder.tweetContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
+            }
+        });
+
+        holder.frontView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    v.setBackgroundColor(Color.LTGRAY);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.setBackgroundColor(Color.WHITE);
+                    ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
+                } else {
+                    v.setBackgroundColor(Color.WHITE);
+                }
+                return true;
             }
         });
 

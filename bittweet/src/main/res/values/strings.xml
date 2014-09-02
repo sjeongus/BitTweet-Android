@@ -56,8 +56,8 @@
     <string name="title_activity_profile">Profile</string>
     <string name="profile_status_me">It\'s you!</string>
     <string name="profile_status_mutual">Mutual Follow</string>
-    <string name="profile_status_following">Following</string>
-    <string name="profile_status_followed">Is following you</string>
+    <string name="profile_status_notfollowed">Not following you</string>
+    <string name="profile_status_followed">Following you</string>
     <string name="profile_verified">Verified</string>
     <string name="profile_protected">Protected</string>
     <string name="profile_tweet_count">Tweets</string>

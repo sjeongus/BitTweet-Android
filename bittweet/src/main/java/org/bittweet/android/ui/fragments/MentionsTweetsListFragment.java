@@ -5,9 +5,15 @@ import android.os.Bundle;
 import org.bittweet.android.ApplicationController;
 
 public class MentionsTweetsListFragment extends TweetsListFragment {
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTimelineContent(((ApplicationController) getActivity().getApplication()).getMentionsTimelineContent());
+    }
+
+    @Override
+    public boolean isMentionsTimeline() {
+        return true;
     }
 }
