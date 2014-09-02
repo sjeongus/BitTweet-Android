@@ -91,7 +91,7 @@ public class TimelineAdapter extends BaseAdapter {
                 } else {
                     parentView.setBackgroundColor(Color.WHITE);
                 }
-                return onTouch(v, event);
+                return false;
             }
         });
         holder.tweetContainer.setOnClickListener(new View.OnClickListener() {
