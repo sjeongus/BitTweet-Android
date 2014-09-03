@@ -8,10 +8,12 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
+import com.koushikdutta.ion.bitmap.Transform;
+
 // From: https://gist.github.com/aprock/6213395
 // enables hardware accelerated rounded corners
 // original idea here : http://www.curious-creature.org/2012/12/11/android-recipe-1-image-with-rounded-corners/
-public class RoundedTransformation implements com.squareup.picasso.Transformation {
+public class RoundedTransformation implements Transform {
     private final int radius;
     private final int margin; // dp
 

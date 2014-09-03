@@ -40,8 +40,10 @@ package="org.bittweet.android" >
             <category android:name="android.intent.category.BROWSABLE" />
 
             <data
-                android:host="t4jsample"
-                android:scheme="oauth" />
+                android:host="www.chromatiqa.org"
+                android:scheme="http"
+                android:pathPrefix="/bittweet/"/>
+
         </intent-filter>
     </activity>
     <activity
@@ -51,6 +53,13 @@ package="org.bittweet.android" >
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value="org.bittweet.android.TweetsListActivity" />
+    </activity>
+    <activity android:name=".ui.SettingsActivity" android:label="Settings"
+        android:screenOrientation="nosensor">
+        <intent-filter>
+            <action android:name=".ui.SettingsActivity" />
+            <category android:name="android.intent.category.PREFERENCE" />
+        </intent-filter>
     </activity>
 
     <meta-data

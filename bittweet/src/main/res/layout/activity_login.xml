@@ -11,20 +11,20 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:gravity="bottom"
-        android:src="@drawable/maki"
+        android:src="@drawable/background"
         android:adjustViewBounds="true" />
 
     <ImageView
         android:id="@+id/blurback"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="100dp"
         android:layout_gravity="bottom"
         android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/white"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="100dp"
         android:background="#a8ffffff"
         android:layout_gravity="bottom"
         android:scaleType="centerCrop"/>
@@ -37,6 +37,7 @@
         android:textStyle="bold"
         android:id="@+id/textView2"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="60dp"
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true" />
@@ -46,7 +47,7 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:text="@string/login_disclaim"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:id="@+id/textView3"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="8dp"

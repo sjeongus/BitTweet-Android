@@ -2,6 +2,10 @@ package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+
+import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
@@ -11,6 +15,9 @@ import twitter4j.MediaEntity;
 import twitter4j.Status;
 
 public class ExpandedTweetAdapter extends SimpleTweetAdapter {
+    private int width;
+    private int height;
+
     public ExpandedTweetAdapter(Context context) {
         super(context);
     }
@@ -64,17 +71,34 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
         MediaEntity[] mediaEntities = status.getMediaEntities();
 
         if(mediaEntities.length > 0) {
-            MediaEntity displayedMedia = mediaEntities[0];
+            final MediaEntity displayedMedia = mediaEntities[0];
+            final ImageView media = holder.mediaExpansion;
 
-            getPicasso().load(displayedMedia.getMediaURLHttps())
-                    .resizeDimen(R.dimen.media_expansion_size, R.dimen.media_expansion_size)
-                    .centerCrop()
-                    .transform(new RoundedTransformation(20, 0))
-                    .into(holder.mediaExpansion);
+            // To get the dimensions of the image preview before it is drawn
+            media.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    media.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                    width = media.getWidth();
+                    height = media.getHeight();
+                    setImage(media, width, height, displayedMedia.getMediaURLHttps());
+                    return true;
+                }
+            });
 
             holder.mediaExpansion.setVisibility(View.VISIBLE);
         } else {
             holder.mediaExpansion.setVisibility(View.GONE);
         }
+    }
+
+    // Set the image preview on timeline with Ion
+    public void setImage(ImageView view, int width, int height, String url) {
+        Ion.with(view)
+                .resize(width, height)
+                .centerCrop()
+                .transform(new RoundedTransformation(20, 0))
+                .load(url);
     }
 }

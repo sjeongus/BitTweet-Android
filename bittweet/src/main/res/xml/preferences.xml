@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+        android:title="Account Settings"
+        android:key="pref_key_account_settings" >
+
+        <Preference
+            android:key="pref_key_logout"
+            android:title="Log out" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Client"
+        android:key="pref_key_client_settings" >
+
+        <SwitchPreference
+            android:key="pref_key_streaming"
+            android:title="Streaming on WiFi"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Feedback"
+        android:key="pref_key_feedback" >
+
+        <Preference
+            android:key="pref_key_feedback_twitter"
+            android:title="Send Feedback via Twitter"
+            android:summary="Tweet us feeback about the app." />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -13,6 +13,7 @@
     <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Mentions</item>
+        <item>Settings</item>
     </string-array>
 
     <array name="nav_drawer_icons">
@@ -20,8 +21,8 @@
         <item>@drawable/ic_nav_mentions</item>
     </array>
 
-    <string name="login_text">Build 2, why is Maki in the background photo? We just don\'t know.</string>
-    <string name="login_disclaim">Art by 和遥キナ@三日目東シ40a(pixiv 22419). This will not be in the final</string>
+    <string name="login_text">Build 5: Why is rice so white?</string>
+    <string name="login_disclaim">聖城(pixiv 728107). This will not be in the final release.</string>
     <string name="login_button">Sign in via Twitter ≫</string>
 
     <string name="logout_title">Log Out of BitTweet?</string>
@@ -35,5 +36,9 @@
     <string name="avatar">Avatar</string>
     <string name="tweet_service_ongoing">Nonsense</string>
     <string name="its_you">you</string>
+
+    <string name="preference_streaming">Stream Settings Changed</string>
+    <string name="streaming_name">Restart the app to apply changes.</string>
+    <string name="streaming_ok">OK</string>
 
 </resources>
