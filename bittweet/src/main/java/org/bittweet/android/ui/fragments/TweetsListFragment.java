@@ -57,6 +57,11 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         return false;
     }
 
+    public void clearTimeline() {
+        //listView.setAdapter(null);
+        //adapter.clearList();
+    }
+
     @Override
     public void onRefreshStarted(View view) {
         updateAdapter();

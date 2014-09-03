@@ -32,7 +32,7 @@ public class LinkTouchMovementMethod extends LinkMovementMethod {
                 Selection.setSelection(spannable, spannable.getSpanStart(mPressedSpan),
                         spannable.getSpanEnd(mPressedSpan));
             } else {
-                grandparentView.setBackgroundColor(Color.LTGRAY);
+                //grandparentView.setBackgroundColor(Color.LTGRAY);
                 parentView.onTouchEvent(event);
             }
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -41,7 +41,7 @@ public class LinkTouchMovementMethod extends LinkMovementMethod {
                 mPressedSpan.setPressed(false);
                 mPressedSpan = null;
                 Selection.removeSelection(spannable);
-                grandparentView.setBackgroundColor(Color.WHITE);
+                //grandparentView.setBackgroundColor(Color.WHITE);
                 /*if (!grandpaRect.contains((int)event.getX(), (int)event.getY())) {
                     grandparentView.setBackgroundColor(Color.WHITE);
                     mPressedSpan.setPressed(false);
@@ -52,15 +52,15 @@ public class LinkTouchMovementMethod extends LinkMovementMethod {
                 mPressedSpan.setPressed(false);
                 super.onTouchEvent(textView, spannable, event);
             } else {
-                grandparentView.setBackgroundColor(Color.WHITE);
+                //grandparentView.setBackgroundColor(Color.WHITE);
                 parentView.onTouchEvent(event);
             }
             mPressedSpan = null;
             Selection.removeSelection(spannable);
-            grandparentView.setBackgroundColor(Color.WHITE);
+            //grandparentView.setBackgroundColor(Color.WHITE);
         }
-        //return true;
-        return super.onTouchEvent(textView, spannable, event);
+        return false;
+        //return super.onTouchEvent(textView, spannable, event);
     }
 
     private TweetFormatter.TouchableSpan getPressedSpan(TextView textView, Spannable spannable, MotionEvent event) {

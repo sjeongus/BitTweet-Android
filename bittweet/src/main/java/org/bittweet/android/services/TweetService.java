@@ -1,9 +1,14 @@
 package org.bittweet.android.services;
 
+import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
@@ -11,12 +16,15 @@ import org.bittweet.android.ApplicationController;
 import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.internal.StatusItem;
+import org.bittweet.android.ui.TweetsListActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -29,6 +37,8 @@ public class TweetService extends Service {
     public static final String ACTION_FAV = "org.bittweet.android.actions.favourite";
     public static final String ACTION_RT = "org.bittweet.android.actions.retweet";
     public static final String ARG_TWEET_ID = "tweet_id";
+
+    private SharedPreferences twitPref;
 
     private Twitter twitter;
     private ApplicationController controller;
@@ -45,7 +55,8 @@ public class TweetService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        twitter = MyTwitterFactory.getInstance(this).getTwitter();
+        twitPref = getSharedPreferences("MyTwitter", MODE_PRIVATE);
+        twitter = MyTwitterFactory.getInstance(TweetService.this).getTwitter();
         controller = (ApplicationController) getApplication();
     }
 
@@ -73,18 +84,35 @@ public class TweetService extends Service {
         return START_STICKY;
     }
 
+    /*public void tweetSend(String message) {
+        Intent intentBroadcast = new Intent("TWEET_SEND");
+        intentBroadcast.putExtra("MESSAGE", message);
+
+        sendBroadcast(intentBroadcast);
+    }*/
+
     private void hideNotification() {
-        stopForeground(true);
+        //stopForeground(true);
+        Intent intent = new Intent();
+        intent.setAction("org.bittweet.android.services.TweetService");
+        twitPref.edit().putString("TWEET_SEND", "Tweet sent!").commit();
+        System.err.println("Tweet sent broadcast sent!");
+        sendBroadcast(intent);
     }
 
     private void showNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        /*NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setOngoing(true);
         builder.setTicker("Updating status...");
         builder.setContentText("...");
         builder.setContentTitle("Updating status...");
         builder.setSmallIcon(R.drawable.ic_nav_timeline);
-        startForeground(R.string.tweet_service_ongoing, builder.build());
+        startForeground(R.string.tweet_service_ongoing, builder.build());*/
+
+        Intent myIntent = new Intent("org.bittweet.android.services.TweetService");
+        twitPref.edit().putString("TWEET_SEND", "Updating status...").commit();
+        System.err.println("Tweet send broadcast sent!");
+        sendBroadcast(myIntent);
     }
 
     private class ProcessTweetTask extends AsyncTask<String, Void, Void> {
@@ -113,11 +141,10 @@ public class TweetService extends Service {
                 twitter.verifyCredentials();
 
                 if (checking.equals("something")) {
-                    System.err.println("We are here.");
                     InputStream in = null;
                     try {
                         in = getContentResolver().openInputStream(imageUri);
-                        ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(getApplicationContext()).getConfiguration());
+                        ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(TweetService.this).getConfiguration());
                         ImageUpload upload = factory.getInstance(MediaProvider.TWITTER);
 
                         File f = new File(imageUri.getPath());
@@ -133,7 +160,6 @@ public class TweetService extends Service {
                     }
                 }
                 else {
-                    System.err.println("No we are here.");
                     update = new StatusUpdate(strings[0]);
                     if (strings[1] != null) {
                         update.setInReplyToStatusId(Long.parseLong(strings[1]));
@@ -160,7 +186,6 @@ public class TweetService extends Service {
 
             try {
                 twitter.verifyCredentials();
-
 
                 if(controller.getStatus(strings[0]).getStatus().isFavorited()) {
                     favorited = twitter.destroyFavorite(Long.parseLong(strings[0]));

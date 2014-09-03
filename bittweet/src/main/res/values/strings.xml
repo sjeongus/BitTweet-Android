@@ -51,7 +51,10 @@
     <string name="connection_message">You must be connected to the Internet!</string>
     <string name="connection_cancel">Cancel</string>
 
-    <string name="rate_limit_message">Rate limit exceeded! Try again in %1$d</string>
+    <string name="rate_limit_message_min">Rate limit exceeded! Try again in %1$d minutes!</string>
+    <string name="rate_limit_message_min1">Rate limit exceeded! Try again in %1$d minute!</string>
+    <string name="rate_limit_message_sec">Rate limit exceeded! Try again in %1$d seconds!</string>
+    <string name="rate_limit_message_sec1">Rate limit exceeded! Try again in %1$d second!</string>
 
     <string name="title_activity_profile">Profile</string>
     <string name="profile_status_me">It\'s you!</string>

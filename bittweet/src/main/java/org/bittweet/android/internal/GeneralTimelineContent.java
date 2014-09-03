@@ -116,11 +116,19 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
         int time;
         final String text;
         if (seconds > 60) {
-            time = (int) seconds/60;
-            text = String.format(res.getString(R.string.rate_limit_message) + " minutes!", time);
+            time = (int) seconds / 60;
+            if (time == 1) {
+                text = String.format(res.getString(R.string.rate_limit_message_min1), time);
+            } else {
+                text = String.format(res.getString(R.string.rate_limit_message_min), time);
+            }
         } else {
             time = seconds;
-            text = String.format(res.getString(R.string.rate_limit_message) + " seconds!", time);
+            if (time == 1) {
+                text = String.format(res.getString(R.string.rate_limit_message_sec1), time);
+            } else {
+                text = String.format(res.getString(R.string.rate_limit_message_sec), time);
+            }
         }
         SharedPreferences twitPref = activity.getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
         twitPref.edit().putInt("Rate_Limited", seconds).commit();

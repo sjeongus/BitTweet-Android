@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,6 +36,10 @@ public class TimelineAdapter extends BaseAdapter {
         this.context = context;
         this.statusItems = new ArrayList<StatusItem>();
         this.tweetAdapter = new ExpandedTweetAdapter(context);
+    }
+
+    public void clearList() {
+        statusItems.clear();
     }
 
     @Override
@@ -79,7 +84,7 @@ public class TimelineAdapter extends BaseAdapter {
         // Fix item clicks
         final View finalConvertView = convertView;
 
-        holder.tweetContainer.setOnTouchListener(new View.OnTouchListener() {
+        /*holder.tweetContainer.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 View parentView = (View) v.getParent();
@@ -93,11 +98,15 @@ public class TimelineAdapter extends BaseAdapter {
                 }
                 return false;
             }
-        });
+        });*/
         holder.tweetContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //ColorDrawable color = (ColorDrawable) view.getBackground();
+                //int colorId = color.getColor();
+                //view.setBackgroundColor(Color.LTGRAY);
                 ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
+                //view.setBackgroundColor(colorId);
             }
         });
 
@@ -105,16 +114,26 @@ public class TimelineAdapter extends BaseAdapter {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    v.setBackgroundColor(Color.LTGRAY);
+                    //v.setBackgroundColor(Color.LTGRAY);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    v.setBackgroundColor(Color.WHITE);
+                    //v.setBackgroundColor(Color.WHITE);
                     ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
                 } else {
-                    v.setBackgroundColor(Color.WHITE);
+                    //v.setBackgroundColor(Color.WHITE);
                 }
                 return true;
             }
         });
+        /*holder.frontView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //ColorDrawable color = (ColorDrawable) v.getBackground();
+                //int colorId = color.getColor();
+                //v.setBackgroundColor(Color.LTGRAY);
+                //((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
+                //v.setBackgroundColor(colorId);
+            }
+        });*/
 
         // Buttons
         holder.replyBtn.setOnClickListener(new View.OnClickListener() {

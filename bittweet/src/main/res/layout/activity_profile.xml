@@ -331,8 +331,7 @@
                         android:singleLine="true"
                         android:textSize="15sp"
                         android:fontFamily="sans-serif-light"
-                        android:gravity="center"
-                        android:clickable="true" />
+                        android:gravity="center" />
 
                 </LinearLayout>
 
