@@ -68,4 +68,7 @@
     <string name="profile_following_count">Following</string>
     <string name="profile_favorites_count">Favorites</string>
 
+    <string name="tweet_updating">Updating status...</string>
+    <string name="tweet_sent">Tweet sent!</string>
+    <string name="tweet_error">Could not send tweet</string>
 </resources>

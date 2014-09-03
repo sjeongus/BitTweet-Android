@@ -91,39 +91,46 @@ public class TweetService extends Service {
         sendBroadcast(intentBroadcast);
     }*/
 
-    private void hideNotification() {
+    private void notifier(boolean start, boolean success) {
         //stopForeground(true);
         Intent intent = new Intent();
         intent.setAction("org.bittweet.android.services.TweetService");
-        twitPref.edit().putString("TWEET_SEND", "Tweet sent!").commit();
+        if (start) {
+            twitPref.edit().putString("TWEET_SEND", "sending").commit();
+        } else if (success) {
+            twitPref.edit().putString("TWEET_SEND", "sent").commit();
+        } else {
+            twitPref.edit().putString("TWEET_SEND", "error").commit();
+        }
         System.err.println("Tweet sent broadcast sent!");
         sendBroadcast(intent);
     }
 
-    private void showNotification() {
-        /*NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+    /*private void showNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setOngoing(true);
         builder.setTicker("Updating status...");
         builder.setContentText("...");
         builder.setContentTitle("Updating status...");
         builder.setSmallIcon(R.drawable.ic_nav_timeline);
-        startForeground(R.string.tweet_service_ongoing, builder.build());*/
+        startForeground(R.string.tweet_service_ongoing, builder.build());
 
-        Intent myIntent = new Intent("org.bittweet.android.services.TweetService");
-        twitPref.edit().putString("TWEET_SEND", "Updating status...").commit();
+        Intent intent = new Intent();
+        intent.setAction("org.bittweet.android.services.TweetService");
+        twitPref.edit().putString("TWEET_SEND", "sent").commit();
         System.err.println("Tweet send broadcast sent!");
-        sendBroadcast(myIntent);
-    }
+        sendBroadcast(intent);
+    }*/
 
-    private class ProcessTweetTask extends AsyncTask<String, Void, Void> {
+    private class ProcessTweetTask extends AsyncTask<String, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
-            showNotification();
+            notifier(true, false);
         }
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected Boolean doInBackground(String... strings) {
             StatusUpdate update;
             Uri imageUri;
             String checking = "something";
@@ -144,18 +151,21 @@ public class TweetService extends Service {
                     InputStream in = null;
                     try {
                         in = getContentResolver().openInputStream(imageUri);
-                        ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(TweetService.this).getConfiguration());
+                        //ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(TweetService.this).getConfiguration());
+                        ImageUploadFactory factory = new ImageUploadFactory(twitter.getConfiguration());
                         ImageUpload upload = factory.getInstance(MediaProvider.TWITTER);
 
                         File f = new File(imageUri.getPath());
                         String url = upload.upload(f.getName(), in, strings[0]);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
+                        return false;
                     } finally {
                         try {
                             in.close();
                         } catch (IOException e) {
                             e.printStackTrace();
+                            return false;
                         }
                     }
                 }
@@ -168,14 +178,15 @@ public class TweetService extends Service {
                 }
             } catch (TwitterException e) {
                 e.printStackTrace();
+                return false;
             }
 
-            return null;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            hideNotification();
+        protected void onPostExecute(Boolean result) {
+            notifier(false, result);
         }
     }
 

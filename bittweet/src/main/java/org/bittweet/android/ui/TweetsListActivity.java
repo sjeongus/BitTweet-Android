@@ -315,8 +315,16 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         @Override
         public void onReceive(Context context, Intent intent) {
             System.err.println("Broadcast received!");
-            System.err.println("Showing crouton for tweet sent");
-            Crouton.showText(activity, twitPref.getString("TWEET_SEND", "null"), Style.INFO);
+            String status = twitPref.getString("TWEET_SEND", "null");
+            System.err.println(status);
+            if (status == "sending") {
+                Crouton.showText(activity, R.string.tweet_updating, Style.INFO);
+            } else if (status == "sent") {
+                Crouton.showText(activity, R.string.tweet_sent, Style.CONFIRM);
+            } else if (status == "error") {
+                Crouton.showText(activity, R.string.tweet_error, Style.ALERT);
+            }
+
             twitPref.edit().putString("TWEET_SEND", "null").commit();
         }
     };
