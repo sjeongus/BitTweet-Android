@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:scaleType="fitXY"
                 android:adjustViewBounds="true"
-                android:minHeight="150dp"
+                android:minHeight="180dp"
                 android:tint="#32000000"
                 android:background="#ff7b7b7b"/>
 

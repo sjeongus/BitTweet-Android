@@ -4,13 +4,20 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +25,11 @@ import android.view.ViewStub;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.ApplicationController;
 import org.bittweet.android.R;
@@ -28,13 +38,15 @@ import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.adapters.SimpleTweetAdapter;
 import org.bittweet.android.ui.adapters.TweetAdapter;
 import org.bittweet.android.ui.adapters.TweetViewHolder;
+import org.bittweet.android.ui.util.RoundedTransformation;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import twitter4j.UserMentionEntity;
 
-public class NewTweetActivity extends Activity {
+public class NewTweetActivity extends FragmentActivity {
     public static final String ARG_REPLY_TO_ID = "reply_to";
     public static final String INTENT_REPLY = "org.bittweet.android.actions.REPLY";
     public static final String INTENT_FEEDBACK = "org.bittweet.android.actions.FEEDBACK";
@@ -45,28 +57,49 @@ public class NewTweetActivity extends Activity {
 
     private EditText viewTweetEdit;
     private TextView viewCharCounter;
-    private Button attachImage;
+    private ImageButton attachImage;
     private ImageView uploadImage;
+    private ImageView avatar;
     private Bitmap myBitmap;
     private Uri imageUri;
+    private String myAvatar;
+    private String myUser;
+    private SharedPreferences twitPref;
 
-    private final int SELECT_PHOTO = 1;
+    private final int IMAGE_PICKER_SELECT = 999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_tweet);
+        twitPref = getSharedPreferences("MyTwitter", MODE_PRIVATE);
+        myUser = twitPref.getString("USERNAME", "null");
+        myAvatar = twitPref.getString("AVATAR", "null");
         initializeResources();
 
         myBitmap = null;
 
+        avatar = (ImageView) findViewById(R.id.profilephoto);
+        Ion.with(avatar).resize(250, 250).transform(new RoundedTransformation(250, 0)).animateGif(true).load(myAvatar);
         uploadImage = (ImageView) findViewById(R.id.image);
-        attachImage = (Button) findViewById(R.id.attachImage);
+        uploadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (myBitmap != null) {
+                    myBitmap = null;
+                    imageUri = null;
+                    uploadImage.setImageBitmap(null);
+                    attachImage.setEnabled(true);
+                    uploadImage.setVisibility(View.GONE);
+                }
+            }
+        });
+        attachImage = (ImageButton) findViewById(R.id.attachImage);
         attachImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+                startActivityForResult(photoPickerIntent, IMAGE_PICKER_SELECT);
             }
         });
     }
@@ -74,33 +107,63 @@ public class NewTweetActivity extends Activity {
     /* Photo Selection result */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SELECT_PHOTO && resultCode == Activity.RESULT_OK) {
+        if (requestCode == IMAGE_PICKER_SELECT && resultCode == Activity.RESULT_OK) {
             Context activity = getApplicationContext();
-            myBitmap = getBitmapFromCameraData(data, activity);
+            //myBitmap = getBitmapFromCameraData(data, activity);
+            //uploadImage.setImageBitmap(myBitmap);
+            //uploadImage.setVisibility(View.VISIBLE);
+            //attachImage.setEnabled(false);
+            BitmapWorkerTask task = new BitmapWorkerTask(uploadImage, data);
+            task.execute();
         }
         if (resultCode == Activity.RESULT_CANCELED) {
             // Do something
         }
     }
 
-    private Bitmap getBitmapFromCameraData(Intent data, Context context) {
-        imageUri = data.getData();
-        Bitmap bitmap;
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-            if (bitmap != null) {
-                uploadImage.setImageBitmap(bitmap);
-                uploadImage.setVisibility(View.VISIBLE);
-            }
-            return bitmap;
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    class BitmapWorkerTask extends AsyncTask<Void, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private Intent mData;
+        private int data = 0;
+
+        public BitmapWorkerTask(ImageView imageView, Intent data) {
+            // Use a WeakReference to ensure the ImageView can be garbage collected
+            imageViewReference = new WeakReference<ImageView>(imageView);
+            mData = data;
         }
-        return null;
+
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            Context activity = getApplicationContext();
+            Bitmap bitmap = getBitmapFromCameraData(mData, activity);
+            return bitmap;
+        }
+
+        // Once complete, see if ImageView is still around and set bitmap.
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (imageViewReference != null && bitmap != null) {
+                final ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    myBitmap = bitmap;
+                    imageView.setImageBitmap(bitmap);
+                    imageView.setVisibility(View.VISIBLE);
+                    attachImage.setEnabled(false);
+                }
+            }
+        }
+    }
+
+    public Bitmap getBitmapFromCameraData(Intent data, Context context) {
+        imageUri = data.getData();
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver().query(imageUri,filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String picturePath = cursor.getString(columnIndex);
+        cursor.close();
+        return BitmapFactory.decodeFile(picturePath);
     }
 
     private void initializeResources() {
@@ -142,7 +205,8 @@ public class NewTweetActivity extends Activity {
         newMentionPrefix.append("@").append(inReplyToStatus.getStatus().getUser().getScreenName());
 
         for(UserMentionEntity originalMention : inReplyToStatus.getStatus().getUserMentionEntities()) {
-            if(originalMention.getScreenName().equals(inReplyToStatus.getStatus().getUser().getScreenName())) {
+            if(originalMention.getScreenName().equals(inReplyToStatus.getStatus().getUser().getScreenName())
+                    || originalMention.getScreenName().equals(myUser)) {
                 // No duplicates pls!
                 continue;
             }

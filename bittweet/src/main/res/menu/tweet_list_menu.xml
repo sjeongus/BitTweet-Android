@@ -4,6 +4,6 @@
     <item
             android:id="@+id/action_tweet"
             android:icon="@drawable/ic_action_tweet"
-            android:title="Tweet"
-            android:showAsAction="ifRoom" />
+            android:title="@string/tweet"
+            android:showAsAction="always" />
 </menu>

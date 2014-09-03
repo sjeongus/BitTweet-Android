@@ -64,6 +64,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
     private Thread thread;
     private Runnable profrun;
     private String myUser;
+    private String myAvatar;
     private Activity activity;
 
     public boolean isTwitterLoggedInAlready() {
@@ -105,6 +106,9 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                     //twitter.verifyCredentials();
                     long userId = twitterFact.getUserId();
                     myUser = twitter.showUser(userId).getScreenName();
+                    myAvatar = twitter.showUser(userId).getOriginalProfileImageURLHttps();
+                    twitPref.edit().putString("AVATAR", myAvatar).commit();
+                    twitPref.edit().putString("USERNAME", myUser).commit();
                 } catch (TwitterException e) {
                     e.printStackTrace();
                 }
@@ -266,7 +270,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_tweet:
-                Intent newTweet = new Intent(this, NewTweetActivity.class);
+                Intent newTweet = new Intent(getApplicationContext(), NewTweetActivity.class);
                 startActivity(newTweet);
                 return true;
             default:

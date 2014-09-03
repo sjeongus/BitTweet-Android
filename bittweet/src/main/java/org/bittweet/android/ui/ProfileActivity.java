@@ -63,8 +63,8 @@ public class ProfileActivity extends FragmentActivity {
         whoText = (TextView) findViewById(R.id.whotext);
         userName = (TextView) findViewById(R.id.username);
         displayName = (TextView) findViewById(R.id.displayname);
-        verified = (TextView) findViewById(R.id.displayname);
-        protect = (TextView) findViewById(R.id.displayname);
+        verified = (TextView) findViewById(R.id.verifiedtext);
+        protect = (TextView) findViewById(R.id.protectedtext);
         tweetCount = (TextView) findViewById(R.id.tweetnumber);
         followerCount = (TextView) findViewById(R.id.followernumber);
         followingCount = (TextView) findViewById(R.id.followingnumber);
@@ -112,7 +112,9 @@ public class ProfileActivity extends FragmentActivity {
                 username = user.getScreenName();
                 displayname = user.getName();
                 isVerified = user.isVerified();
+                System.err.println("Is verified?" + isVerified);
                 isProtected = user.isProtected();
+                System.err.println("Is protected? " + isProtected);
                 relationShip = twitter.showFriendship(myUserId, userId);
                 tweets = user.getStatusesCount();
                 followers = user.getFollowersCount();
