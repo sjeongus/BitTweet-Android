@@ -25,7 +25,7 @@
             <RelativeLayout
                 android:id="@+id/content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent" >
                 
                 <ImageView
                     android:id="@+id/profilephoto"
@@ -36,40 +36,41 @@
                     android:layout_marginRight="5dp"
                     android:scaleType="centerCrop"/>
 
-                <ImageView
-                    android:id="@+id/image"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:scaleType="centerCrop"
-                    android:padding="8dp"
-                    android:visibility="gone"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true" />
-
                 <ScrollView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/profilephoto"
                     android:layout_toLeftOf="@+id/image"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginLeft="10dp">
+                    android:scrollbarStyle="outsideInset">
 
                     <EditText
                         android:id="@+id/text"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
                         android:background="#fff"
                         android:hint="@string/tweet_hint"
                         android:textColorHint="#999"
                         android:textSize="15sp"
+                        android:gravity="top"
                         android:fontFamily="sans-serif-light"
                         android:inputType="textLongMessage|textMultiLine|textCapSentences"
                         android:imeOptions="flagNoExtractUi"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
 
                 </ScrollView>
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentRight="true"
+                    android:scaleType="centerCrop"
+                    android:padding="8dp"
+                    android:visibility="gone" />
 
             </RelativeLayout>
 

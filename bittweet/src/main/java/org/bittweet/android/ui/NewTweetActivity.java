@@ -109,10 +109,6 @@ public class NewTweetActivity extends FragmentActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMAGE_PICKER_SELECT && resultCode == Activity.RESULT_OK) {
             Context activity = getApplicationContext();
-            //myBitmap = getBitmapFromCameraData(data, activity);
-            //uploadImage.setImageBitmap(myBitmap);
-            //uploadImage.setVisibility(View.VISIBLE);
-            //attachImage.setEnabled(false);
             BitmapWorkerTask task = new BitmapWorkerTask(uploadImage, data);
             task.execute();
         }
@@ -121,7 +117,53 @@ public class NewTweetActivity extends FragmentActivity {
         }
     }
 
-    class BitmapWorkerTask extends AsyncTask<Void, Void, Bitmap> {
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(String path,
+                                                         int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(path, options);
+    }
+
+    public static float convertPixelsToDp(float px, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / (metrics.densityDpi / 160f);
+        return dp;
+    }
+
+    class BitmapWorkerTask extends AsyncTask<Void, Void, String> {
         private final WeakReference<ImageView> imageViewReference;
         private Intent mData;
         private int data = 0;
@@ -134,20 +176,22 @@ public class NewTweetActivity extends FragmentActivity {
 
         // Decode image in background.
         @Override
-        protected Bitmap doInBackground(Void... params) {
+        protected String doInBackground(Void... params) {
             Context activity = getApplicationContext();
-            Bitmap bitmap = getBitmapFromCameraData(mData, activity);
-            return bitmap;
+            //Bitmap bitmap = getBitmapFromCameraData(mData, activity);
+            String picturePath = getBitmapFromCameraData(mData, activity);
+            return picturePath;
         }
 
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (imageViewReference != null && bitmap != null) {
+        protected void onPostExecute(String path) {
+            if (imageViewReference != null && path != null) {
                 final ImageView imageView = imageViewReference.get();
                 if (imageView != null) {
-                    myBitmap = bitmap;
-                    imageView.setImageBitmap(bitmap);
+                    myBitmap = BitmapFactory.decodeFile(path);
+                    int size = (int) convertPixelsToDp(100, getApplicationContext());
+                    imageView.setImageBitmap(decodeSampledBitmapFromResource(path, size, size));
                     imageView.setVisibility(View.VISIBLE);
                     attachImage.setEnabled(false);
                 }
@@ -155,7 +199,7 @@ public class NewTweetActivity extends FragmentActivity {
         }
     }
 
-    public Bitmap getBitmapFromCameraData(Intent data, Context context) {
+    public String getBitmapFromCameraData(Intent data, Context context) {
         imageUri = data.getData();
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
         Cursor cursor = context.getContentResolver().query(imageUri,filePathColumn, null, null, null);
@@ -163,7 +207,8 @@ public class NewTweetActivity extends FragmentActivity {
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String picturePath = cursor.getString(columnIndex);
         cursor.close();
-        return BitmapFactory.decodeFile(picturePath);
+        //return BitmapFactory.decodeFile(picturePath);
+        return picturePath;
     }
 
     private void initializeResources() {

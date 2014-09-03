@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -86,7 +88,8 @@ public class WebViewActivity extends Activity {
             webView.getSettings().setBuiltInZoomControls(true);
             webView.getSettings().setDisplayZoomControls(false);
             webView.getSettings().setJavaScriptEnabled(true);
-            //webView.loadUrl(getIntent().getDataString());
+            webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+            webView.setWebChromeClient(new WebChromeClient());
             if (getIntent().getBooleanExtra("URL", false)) {
                 webView.loadUrl(getIntent().getDataString());
                 webView.setWebViewClient(new WebViewClient() {

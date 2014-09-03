@@ -26,7 +26,7 @@
     <string name="login_text">Build 6: Ro-Kyu-Bu! Pretty sure we can go to jail for this.</string>
     <string name="login_disclaim">カズタ＠赤色のエプロン(pixiv 735960). This will not be in the final release.</string>
     <string name="login_button">Sign in via Twitter ≫</string>
-    <string name="login_title">Sign Into Twitter</string>
+    <string name="login_title">Sign In to Twitter</string>
 
     <string name="logout_title">Log Out of BitTweet?</string>
     <string name="logout_confirm">Are you sure you want to log out?</string>
