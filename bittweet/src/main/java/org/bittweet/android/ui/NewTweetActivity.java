@@ -5,10 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,13 +16,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -40,31 +39,28 @@ import org.bittweet.android.ui.adapters.TweetAdapter;
 import org.bittweet.android.ui.adapters.TweetViewHolder;
 import org.bittweet.android.ui.util.RoundedTransformation;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import twitter4j.UserMentionEntity;
+
+import static org.bittweet.android.ui.util.ImageUtils.convertPixelsToDp;
+import static org.bittweet.android.ui.util.ImageUtils.decodeSampledBitmapFromResource;
+import static org.bittweet.android.ui.util.ImageUtils.rotateBitmap;
+import static org.bittweet.android.ui.util.ImageUtils.scaleCenterCrop;
 
 public class NewTweetActivity extends FragmentActivity {
     public static final String ARG_REPLY_TO_ID = "reply_to";
     public static final String INTENT_REPLY = "org.bittweet.android.actions.REPLY";
     public static final String INTENT_FEEDBACK = "org.bittweet.android.actions.FEEDBACK";
 
-    private ApplicationController controller;
     private StatusItem inReplyToStatus;
-    private ActionBar actionBar;
 
     private EditText viewTweetEdit;
     private TextView viewCharCounter;
     private ImageButton attachImage;
     private ImageView uploadImage;
-    private ImageView avatar;
-    private Bitmap myBitmap;
     private Uri imageUri;
-    private String myAvatar;
     private String myUser;
-    private SharedPreferences twitPref;
 
     private final int IMAGE_PICKER_SELECT = 999;
 
@@ -72,26 +68,25 @@ public class NewTweetActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_tweet);
-        twitPref = getSharedPreferences("MyTwitter", MODE_PRIVATE);
+        SharedPreferences twitPref = getSharedPreferences("MyTwitter", MODE_PRIVATE);
         myUser = twitPref.getString("USERNAME", "null");
-        myAvatar = twitPref.getString("AVATAR", "null");
+        String myAvatar = twitPref.getString("AVATAR", "null");
         initializeResources();
 
-        myBitmap = null;
-
-        avatar = (ImageView) findViewById(R.id.profilephoto);
+        ImageView avatar = (ImageView) findViewById(R.id.profilephoto);
         Ion.with(avatar).resize(250, 250).transform(new RoundedTransformation(250, 0)).animateGif(true).load(myAvatar);
         uploadImage = (ImageView) findViewById(R.id.image);
-        uploadImage.setOnClickListener(new View.OnClickListener() {
+        uploadImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                if (myBitmap != null) {
-                    myBitmap = null;
+            public boolean onLongClick(View v) {
+                if (imageUri != null) {
                     imageUri = null;
                     uploadImage.setImageBitmap(null);
                     attachImage.setEnabled(true);
                     uploadImage.setVisibility(View.GONE);
+                    attachImage.setBackgroundResource(R.drawable.bittweet_activated_background_holo_light);
                 }
+                return true;
             }
         });
         attachImage = (ImageButton) findViewById(R.id.attachImage);
@@ -104,69 +99,27 @@ public class NewTweetActivity extends FragmentActivity {
         });
     }
 
-    /* Photo Selection result */
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        // Only will trigger it if no physical keyboard is open
+        inputMethodManager.showSoftInput(viewTweetEdit, InputMethodManager.SHOW_IMPLICIT);
+        return true;
+    }
+
+    // Photo selection result
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMAGE_PICKER_SELECT && resultCode == Activity.RESULT_OK) {
-            Context activity = getApplicationContext();
             BitmapWorkerTask task = new BitmapWorkerTask(uploadImage, data);
             task.execute();
         }
-        if (resultCode == Activity.RESULT_CANCELED) {
-            // Do something
-        }
     }
 
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
-
-    public static Bitmap decodeSampledBitmapFromResource(String path,
-                                                         int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFile(path, options);
-    }
-
-    public static float convertPixelsToDp(float px, Context context){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float dp = px / (metrics.densityDpi / 160f);
-        return dp;
-    }
-
+    // Asynchronously load bitmap into imageview
     class BitmapWorkerTask extends AsyncTask<Void, Void, String> {
         private final WeakReference<ImageView> imageViewReference;
         private Intent mData;
-        private int data = 0;
 
         public BitmapWorkerTask(ImageView imageView, Intent data) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -178,27 +131,29 @@ public class NewTweetActivity extends FragmentActivity {
         @Override
         protected String doInBackground(Void... params) {
             Context activity = getApplicationContext();
-            //Bitmap bitmap = getBitmapFromCameraData(mData, activity);
-            String picturePath = getBitmapFromCameraData(mData, activity);
-            return picturePath;
+            return getBitmapFromCameraData(mData, activity);
         }
 
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(String path) {
-            if (imageViewReference != null && path != null) {
+            if (path != null) {
                 final ImageView imageView = imageViewReference.get();
                 if (imageView != null) {
-                    myBitmap = BitmapFactory.decodeFile(path);
-                    int size = (int) convertPixelsToDp(100, getApplicationContext());
-                    imageView.setImageBitmap(decodeSampledBitmapFromResource(path, size, size));
+                    int size = (int) convertPixelsToDp(150, getApplicationContext());
+                    Bitmap downmap = decodeSampledBitmapFromResource(path, size, size);
+                    downmap = rotateBitmap(path, downmap);
+                    downmap = scaleCenterCrop(downmap, size, size);
+                    imageView.setImageBitmap(downmap);
                     imageView.setVisibility(View.VISIBLE);
                     attachImage.setEnabled(false);
+                    attachImage.setBackgroundColor(Color.LTGRAY);
                 }
             }
         }
     }
 
+    // Function to get bitmap from gallery
     public String getBitmapFromCameraData(Intent data, Context context) {
         imageUri = data.getData();
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
@@ -207,13 +162,12 @@ public class NewTweetActivity extends FragmentActivity {
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String picturePath = cursor.getString(columnIndex);
         cursor.close();
-        //return BitmapFactory.decodeFile(picturePath);
         return picturePath;
     }
 
     private void initializeResources() {
-        controller = (ApplicationController) getApplication();
-        actionBar = getActionBar();
+        ApplicationController controller = (ApplicationController) getApplication();
+        ActionBar actionBar = getActionBar();
 
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(false);

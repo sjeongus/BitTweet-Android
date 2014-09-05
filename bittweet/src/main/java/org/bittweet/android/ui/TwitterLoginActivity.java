@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import org.bittweet.android.R;
+import org.bittweet.android.ui.util.Blur;
 import org.bittweet.android.ui.util.ConnectionDetector;
 
 public class TwitterLoginActivity extends FragmentActivity {

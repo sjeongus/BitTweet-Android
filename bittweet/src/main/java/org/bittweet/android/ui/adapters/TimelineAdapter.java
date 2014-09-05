@@ -2,16 +2,11 @@ package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.fortysevendeg.swipelistview.SwipeListView;
 
@@ -23,9 +18,6 @@ import org.bittweet.android.ui.NewTweetActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by soomin on 3/23/2014.
- */
 public class TimelineAdapter extends BaseAdapter {
     private static final String TAG = "TimelineAdapter";
     private final Context context;
@@ -84,33 +76,8 @@ public class TimelineAdapter extends BaseAdapter {
         // Fix item clicks
         final View finalConvertView = convertView;
 
-        /*holder.tweetContainer.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                View parentView = (View) v.getParent();
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    parentView.setBackgroundColor(Color.LTGRAY);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    parentView.setBackgroundColor(Color.WHITE);
-                    ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
-                } else {
-                    parentView.setBackgroundColor(Color.WHITE);
-                }
-                return false;
-            }
-        });*/
-        holder.tweetContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //ColorDrawable color = (ColorDrawable) view.getBackground();
-                //int colorId = color.getColor();
-                //view.setBackgroundColor(Color.LTGRAY);
-                ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
-                //view.setBackgroundColor(colorId);
-            }
-        });
-
-        holder.frontView.setOnTouchListener(new View.OnTouchListener() {
+        // Call the OnItemClick method of the ListView to open TweetDetails
+        /*holder.frontView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -123,17 +90,15 @@ public class TimelineAdapter extends BaseAdapter {
                 }
                 return true;
             }
-        });
-        /*holder.frontView.setOnClickListener(new View.OnClickListener() {
+        });*/
+        holder.frontView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ColorDrawable color = (ColorDrawable) v.getBackground();
-                //int colorId = color.getColor();
-                //v.setBackgroundColor(Color.LTGRAY);
-                //((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
-                //v.setBackgroundColor(colorId);
+                System.out.println("The view was clicked");
+                ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
+                //((ListView) finalConvertView.getParent()).performClick();
             }
-        });*/
+        });
 
         // Buttons
         holder.replyBtn.setOnClickListener(new View.OnClickListener() {

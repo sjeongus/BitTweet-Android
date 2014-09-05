@@ -2,7 +2,8 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:id="@+id/tweet_row_item" >
 
     <LinearLayout
         android:id="@+id/back_view"
@@ -43,10 +44,11 @@
         android:layout_width="match_parent"
         android:id="@+id/front_view"
         android:tag="front"
-        android:background="@color/white"
         android:orientation="horizontal"
         android:paddingRight="16dp"
+        android:paddingEnd="16dp"
         android:paddingLeft="0dp"
+        android:paddingStart="0dp"
         android:minHeight="70dp"
         android:layout_height="wrap_content">
 
@@ -63,7 +65,8 @@
             android:contentDescription="@string/avatar"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"/>
 
         <LinearLayout
             android:id="@+id/tweet_text_container"
@@ -72,7 +75,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical" >
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -84,6 +87,7 @@
                     android:text="Username"
                     android:id="@+id/username"
                     android:layout_marginRight="8dp"
+                    android:layout_marginEnd="8dp"
                     android:singleLine="true"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -96,6 +100,7 @@
                     android:id="@+id/displayname"
                     android:fontFamily="sans-serif-light"
                     android:layout_toRightOf="@+id/username"
+                    android:layout_toEndOf="@+id/username"
                     android:textSize="14sp" />
             </RelativeLayout>
 
@@ -106,13 +111,14 @@
                 android:textColor="#666"
                 android:layout_marginTop="5dp"
                 android:singleLine="true"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:fontFamily="sans-serif-light"
                 android:text="Retweeted by Person"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
                 android:text="Quick red fox jumps over the lazy dog"
                 android:id="@+id/tweet"
                 android:fontFamily="sans-serif-light"
@@ -127,7 +133,7 @@
                 android:fontFamily="sans-serif-light"
                 android:singleLine="true"
                 android:layout_marginTop="5dp"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:textColor="#666"/>
 
             <ImageView
@@ -137,7 +143,7 @@
                 android:contentDescription="@string/media_expansion_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
+                android:background="@android:color/transparent"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true" />
         </LinearLayout>

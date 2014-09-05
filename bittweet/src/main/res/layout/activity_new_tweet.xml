@@ -16,7 +16,8 @@
         android:inflatedId="@id/reply_container"
         android:layout="@layout/tweets_list_item"/>
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/tweetcompose"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -24,31 +25,41 @@
 
             <RelativeLayout
                 android:id="@+id/content"
+                android:background="@android:color/transparent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="0dp"
+                android:layout_weight="1" >
                 
                 <ImageView
                     android:id="@+id/profilephoto"
+                    android:background="@android:color/transparent"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:scaleType="centerCrop"/>
 
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_toRightOf="@+id/profilephoto"
+                    android:layout_toEndOf="@+id/profilephoto"
                     android:layout_toLeftOf="@+id/image"
+                    android:layout_toStartOf="@+id/image"
                     android:scrollbarStyle="outsideInset">
 
                     <EditText
                         android:id="@+id/text"
                         android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:background="#fff"
+                        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                        android:background="@android:color/transparent"
                         android:hint="@string/tweet_hint"
                         android:textColorHint="#999"
                         android:textSize="15sp"
@@ -63,11 +74,14 @@
 
                 <ImageView
                     android:id="@+id/image"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
+                    android:background="@drawable/bittweet_imageview_click"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:scaleType="centerCrop"
                     android:padding="8dp"
                     android:visibility="gone" />
@@ -76,27 +90,31 @@
 
             <FrameLayout
                 android:paddingTop="8dp"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
                 android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0"
                 android:orientation="horizontal"
                 android:id="@+id/counter"
                 android:layout_alignParentBottom="true" >
 
                 <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:padding="20dp"
                     android:id="@+id/attachImage"
                     android:src="@drawable/ic_action_image"
                     android:contentDescription="@string/action_attach_image"
-                    android:background="@android:color/transparent"
+                    android:background="@drawable/bittweet_activated_background_holo_light"
                     android:layout_gravity="start"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginEnd="15dp"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:text="140"
@@ -107,6 +125,6 @@
 
             </FrameLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -9,15 +10,14 @@ import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
-import org.bittweet.android.ui.fragments.TweetsListFragment;
 import org.bittweet.android.ui.util.RoundedTransformation;
 
 import twitter4j.MediaEntity;
 import twitter4j.Status;
+import twitter4j.URLEntity;
 
 public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     private int width;
-    private int height;
 
     public ExpandedTweetAdapter(Context context) {
         super(context);
@@ -49,7 +49,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
             if(item.isMention()) {
                 holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.reply_background));
             } else {
-                holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.white));
+                holder.frontView.setBackgroundResource(R.drawable.bittweet_tweet_background);
             }
 
             holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.retweet_accent));
@@ -58,22 +58,23 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
 
             if(status.isFavorited()) {
                 holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.favourite_accent));
-                holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.white));
+                holder.frontView.setBackgroundResource(R.drawable.bittweet_tweet_background);
             } else if(item.isMention()) {
                 holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.reply_accent));
                 holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.reply_background));
             } else {
-                holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.white));
-                holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.white));
+                holder.accent.setBackgroundColor(Color.TRANSPARENT);
+                holder.frontView.setBackgroundResource(R.drawable.bittweet_tweet_background);
             }
         }
 
         // Load media
         MediaEntity[] mediaEntities = status.getMediaEntities();
+        URLEntity[] urlEntities = status.getURLEntities();
+        final ImageView media = holder.mediaExpansion;
 
         if(mediaEntities.length > 0) {
             final MediaEntity displayedMedia = mediaEntities[0];
-            final ImageView media = holder.mediaExpansion;
 
             // To get the dimensions of the image preview before it is drawn
             media.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -81,14 +82,33 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                 public boolean onPreDraw() {
                     media.getViewTreeObserver().removeOnPreDrawListener(this);
 
+                    // Get the width of the view and set height to 16:10 aspect ratio
                     width = media.getWidth();
-                    //height = media.getHeight();
-                    setImage(media, width, (int) (width * 5/8), displayedMedia.getMediaURLHttps());
+                    setImage(media, width, width * 5/8, displayedMedia.getMediaURLHttps());
                     return true;
                 }
             });
 
             holder.mediaExpansion.setVisibility(View.VISIBLE);
+        } else if(urlEntities.length > 0) {
+            for (final URLEntity urlEntity : urlEntities) {
+                if (urlEntity.getExpandedURL().matches("^https?://(?:[a-z\\-]+\\.)+[a-z]{2,6}(?:/[^/#?]+)+\\.(?:jpe?g|gif|png)$")) {
+                    // To get the dimensions of the image preview before it is drawn
+                    media.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            media.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                            // Get the width of the view and set height to 16:10 aspect ratio
+                            width = media.getWidth();
+                            setImage(media, width, width * 5/8, urlEntity.getExpandedURL());
+                            return true;
+                        }
+                    });
+                    holder.mediaExpansion.setVisibility(View.VISIBLE);
+                    break;
+                }
+            }
         } else {
             holder.mediaExpansion.setVisibility(View.GONE);
         }

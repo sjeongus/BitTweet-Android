@@ -11,7 +11,6 @@ import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.ui.ProfileActivity;
 import org.bittweet.android.ui.util.LinkTouchMovementMethod;
 import org.bittweet.android.ui.util.RoundedTransformation;
-import org.bittweet.android.ui.util.TransparentLinkMovementMethod;
 import org.bittweet.android.ui.util.TweetFormatter;
 
 import java.text.SimpleDateFormat;
@@ -42,9 +41,11 @@ public class SimpleTweetAdapter implements TweetAdapter {
 
         final String username = status.getUser().getScreenName();
 
-        //holder.tweet.setMovementMethod(new TransparentLinkMovementMethod(holder.tweetContainer));
-        holder.tweet.setMovementMethod(new LinkTouchMovementMethod());
+        // Movement method to color timeline links and mentions gray when pressed
+        holder.tweet.setMovementMethod(new LinkTouchMovementMethod(true));
+        // Formats tweet to enable clicking of mentions and links, and sets status text
         holder.tweet.setText(TweetFormatter.formatStatusText(context, status));
+
         holder.displayName.setText(status.getUser().getName());
         holder.userName.setText("@" + username);
         holder.time.setText(dateFormat.format(status.getCreatedAt()));
@@ -66,12 +67,14 @@ public class SimpleTweetAdapter implements TweetAdapter {
             holder.favBtn.setImageResource(R.drawable.ic_rating_important);
         }
 
+        // Get and set avatar asynchronously
         Ion.with(holder.avatarImage)
                 .resize(150, 150)
                 .transform(new RoundedTransformation(250, 0))
                 .animateGif(true)
                 .load(status.getUser().getOriginalProfileImageURLHttps());
 
+        // OnClick method for avatar image that launches user's profile
         holder.avatarImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

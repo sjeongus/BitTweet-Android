@@ -6,11 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.CursorLoader;
 
 import org.bittweet.android.ApplicationController;
 import org.bittweet.android.R;
@@ -69,10 +73,11 @@ public class TweetService extends Service {
         if(Intent.ACTION_SEND.equals(intent.getAction())) {
             String tweetText = intent.getStringExtra(Intent.EXTRA_TEXT);
             String imageString = "empty";
+            // Get the string extra to check if an image has been attached. Set empty if none
             if (!intent.getStringExtra(Intent.EXTRA_STREAM).equals("empty")) {
                 imageString = intent.getStringExtra(Intent.EXTRA_STREAM);
             }
-            new ProcessTweetTask().execute(tweetText, intent.getStringExtra(ARG_TWEET_ID), imageString);
+            new ProcessTweetTask(imageString).execute(tweetText, intent.getStringExtra(ARG_TWEET_ID));
         } else if(ACTION_FAV.equals(intent.getAction())) {
             String tweetId = intent.getStringExtra(ARG_TWEET_ID);
             new FavTweetTask().execute(tweetId);
@@ -84,15 +89,8 @@ public class TweetService extends Service {
         return START_STICKY;
     }
 
-    /*public void tweetSend(String message) {
-        Intent intentBroadcast = new Intent("TWEET_SEND");
-        intentBroadcast.putExtra("MESSAGE", message);
-
-        sendBroadcast(intentBroadcast);
-    }*/
-
+    // Function that sends a broadcast to TweetsListActivity of results of a tweet
     private void notifier(boolean start, boolean success) {
-        //stopForeground(true);
         Intent intent = new Intent();
         intent.setAction("org.bittweet.android.services.TweetService");
         if (start) {
@@ -106,76 +104,39 @@ public class TweetService extends Service {
         sendBroadcast(intent);
     }
 
-    /*private void showNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setOngoing(true);
-        builder.setTicker("Updating status...");
-        builder.setContentText("...");
-        builder.setContentTitle("Updating status...");
-        builder.setSmallIcon(R.drawable.ic_nav_timeline);
-        startForeground(R.string.tweet_service_ongoing, builder.build());
-
-        Intent intent = new Intent();
-        intent.setAction("org.bittweet.android.services.TweetService");
-        twitPref.edit().putString("TWEET_SEND", "sent").commit();
-        System.err.println("Tweet send broadcast sent!");
-        sendBroadcast(intent);
-    }*/
-
+    // Asynchronously send a tweet
     private class ProcessTweetTask extends AsyncTask<String, Void, Boolean> {
 
-        @Override
-        protected void onPreExecute() {
-            notifier(true, false);
+        private String uriPath;
+
+        public ProcessTweetTask(String uriString) {
+            // Get uriString and check if empty
+            if (!uriString.equals( "empty")) {
+                // If a uri string was found, get the absolute real path from the uri
+                uriPath = getRealPathFromURI(Uri.parse(uriString));
+            } else {
+                uriPath = "empty";
+            }
         }
 
         @Override
         protected Boolean doInBackground(String... strings) {
+            // Notify in beginning of status updating
+            notifier(true, false);
             StatusUpdate update;
-            Uri imageUri;
-            String checking = "something";
-            if (strings[2].equals("empty")) {
-                imageUri = null;
-                checking = "empty";
-                System.err.println("The imageUri is null!");
-            }
-            else {
-                imageUri = Uri.parse(strings[2]);
-                System.err.println("The imageUri is " + strings[2]);
-            }
-
             try {
                 twitter.verifyCredentials();
-
-                if (checking.equals("something")) {
-                    InputStream in = null;
-                    try {
-                        in = getContentResolver().openInputStream(imageUri);
-                        //ImageUploadFactory factory = new ImageUploadFactory(MyTwitterFactory.getInstance(TweetService.this).getConfiguration());
-                        ImageUploadFactory factory = new ImageUploadFactory(twitter.getConfiguration());
-                        ImageUpload upload = factory.getInstance(MediaProvider.TWITTER);
-
-                        File f = new File(imageUri.getPath());
-                        String url = upload.upload(f.getName(), in, strings[0]);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                        return false;
-                    } finally {
-                        try {
-                            in.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return false;
-                        }
-                    }
+                update = new StatusUpdate(strings[0]);
+                // Check if tweet is a mention, and set to mention
+                if (strings[1] != null) {
+                    update.setInReplyToStatusId(Long.parseLong(strings[1]));
                 }
-                else {
-                    update = new StatusUpdate(strings[0]);
-                    if (strings[1] != null) {
-                        update.setInReplyToStatusId(Long.parseLong(strings[1]));
-                    }
-                    twitter.updateStatus(update);
+                // Check if an image is attached, and attach to the tweet
+                if (!uriPath.equals("empty")) {
+                    File f = new File(uriPath);
+                    update.setMedia(f);
                 }
+                twitter.updateStatus(update);
             } catch (TwitterException e) {
                 e.printStackTrace();
                 return false;
@@ -186,8 +147,19 @@ public class TweetService extends Service {
 
         @Override
         protected void onPostExecute(Boolean result) {
+            // notify at end of result
             notifier(false, result);
         }
+    }
+
+    // Function to get the absolute uri path from a uri
+    private String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(getApplicationContext(), contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     private class FavTweetTask extends AsyncTask<String, Void, Status> {
@@ -213,7 +185,7 @@ public class TweetService extends Service {
         @Override
         protected void onPostExecute(twitter4j.Status status) {
             if(status == null) {
-                // Error, uguu
+                // Error, Display a Crouton informing user favorite failed
                 return;
             }
 
@@ -252,7 +224,7 @@ public class TweetService extends Service {
         @Override
         protected void onPostExecute(twitter4j.Status status) {
             if(status == null) {
-                // There was an error!
+                // There was an error! Inform user with Crouton that retweet failed
                 return;
             }
 

@@ -236,6 +236,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
 
     @Override
     public void onItemSelected(String id) {
+        System.out.println("Item was selected");
         if (isTwoPane) {
             Bundle arguments = new Bundle();
             arguments.putString(TweetsDetailFragment.ARG_ITEM_ID, id);
