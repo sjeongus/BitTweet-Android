@@ -27,10 +27,9 @@ public class LinkTouchMovementMethod extends LinkMovementMethod {
                 mPressedSpan.setPressed(true);
                 Selection.setSelection(spannable, spannable.getSpanStart(mPressedSpan),
                         spannable.getSpanEnd(mPressedSpan));
-            } else {
-                if (wantClick) {
-                    grandparentView.onTouchEvent(event);
-                }
+            } else if (wantClick) {
+                grandparentView.onTouchEvent(event);
+                parentView.onTouchEvent(event);
             }
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
             TweetFormatter.TouchableSpan touchedSpan = getPressedSpan(textView, spannable, event);
@@ -38,21 +37,21 @@ public class LinkTouchMovementMethod extends LinkMovementMethod {
                 mPressedSpan.setPressed(false);
                 mPressedSpan = null;
                 Selection.removeSelection(spannable);
+            } else if (wantClick) {
+                grandparentView.onTouchEvent(event);
             }
         } else {
             if (mPressedSpan != null) {
                 mPressedSpan.setPressed(false);
                 super.onTouchEvent(textView, spannable, event);
-            } else {
-                if (wantClick) {
-                    grandparentView.onTouchEvent(event);
-                    grandparentView.callOnClick();
-                }
+            } else if (wantClick) {
+                grandparentView.onTouchEvent(event);
+                parentView.onTouchEvent(event);
             }
             mPressedSpan = null;
             Selection.removeSelection(spannable);
         }
-        return true;
+        return false;
     }
 
     private TweetFormatter.TouchableSpan getPressedSpan(TextView textView, Spannable spannable, MotionEvent event) {

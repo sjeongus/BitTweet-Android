@@ -7,7 +7,7 @@
 
         <Preference
             android:key="pref_key_logout"
-            android:title="Log out" />
+            android:title="@string/setting_logout" />
 
     </PreferenceCategory>
 
@@ -17,7 +17,7 @@
 
         <SwitchPreference
             android:key="pref_key_streaming"
-            android:title="Streaming on WiFi"
+            android:title="@string/setting_streaming"
             android:defaultValue="false" />
 
     </PreferenceCategory>
@@ -28,8 +28,8 @@
 
         <Preference
             android:key="pref_key_feedback_twitter"
-            android:title="Send Feedback via Twitter"
-            android:summary="Tweet us feeback about the app." />
+            android:title="@string/setting_feedback_twitter"
+            android:summary="@string/setting_feedback_twitter_desc" />
 
     </PreferenceCategory>
 

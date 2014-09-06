@@ -3,6 +3,7 @@ package org.bittweet.android.ui.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -76,29 +77,39 @@ public class TimelineAdapter extends BaseAdapter {
         // Fix item clicks
         final View finalConvertView = convertView;
 
+        holder.tweetContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
+            }
+        });
+
         // Call the OnItemClick method of the ListView to open TweetDetails
-        /*holder.frontView.setOnTouchListener(new View.OnTouchListener() {
+        holder.frontView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    //v.setBackgroundColor(Color.LTGRAY);
+                    v.setPressed(true);
+                } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    v.setPressed(false);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    //v.setBackgroundColor(Color.WHITE);
+                    v.setPressed(false);
                     ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
+                    return true;
                 } else {
-                    //v.setBackgroundColor(Color.WHITE);
+                    v.setPressed(false);
                 }
-                return true;
+                return false;
             }
-        });*/
-        holder.frontView.setOnClickListener(new View.OnClickListener() {
+        });
+        /*holder.frontView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 System.out.println("The view was clicked");
                 ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
                 //((ListView) finalConvertView.getParent()).performClick();
             }
-        });
+        });*/
 
         // Buttons
         holder.replyBtn.setOnClickListener(new View.OnClickListener() {

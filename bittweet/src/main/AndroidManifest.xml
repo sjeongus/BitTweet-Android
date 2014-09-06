@@ -11,12 +11,12 @@ package="org.bittweet.android" >
     android:allowBackup="true"
     android:icon="@drawable/ic_launcher"
     android:label="@string/app_name"
-    android:theme="@style/Theme.BitTweet"
-    android:configChanges="orientation|keyboardHidden|keyboard|screenSize">
+    android:theme="@style/Theme.BitTweet" >
     <activity
         android:name="org.bittweet.android.ui.TweetsListActivity"
         android:label="@string/app_name"
-        android:launchMode="singleTop" >
+        android:launchMode="singleTop"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +26,8 @@ package="org.bittweet.android" >
     <activity
         android:name="org.bittweet.android.ui.TweetsDetailActivity"
         android:label="@string/title_tweets_detail"
-        android:parentActivityName="org.bittweet.android.ui.TweetsListActivity" >
+        android:parentActivityName="org.bittweet.android.ui.TweetsListActivity"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize">
     </activity>
     <activity
         android:name="org.bittweet.android.ui.TwitterLoginActivity"
