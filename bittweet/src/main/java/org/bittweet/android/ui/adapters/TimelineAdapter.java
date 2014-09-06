@@ -92,20 +92,19 @@ public class TimelineAdapter extends BaseAdapter {
                     v.setPressed(true);
                 } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     v.setPressed(false);
+                    return false;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     v.setPressed(false);
                     ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
-                    return true;
-                } else {
-                    v.setPressed(false);
                 }
-                return false;
+                return true;
             }
         });
         /*holder.frontView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 System.out.println("The view was clicked");
+                v.setPressed(true);
                 ((ListView) finalConvertView.getParent()).performItemClick(finalConvertView, position, getItemId(position));
                 //((ListView) finalConvertView.getParent()).performClick();
             }

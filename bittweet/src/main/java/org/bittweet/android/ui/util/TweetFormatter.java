@@ -44,6 +44,20 @@ public class TweetFormatter {
         return SpannableString.valueOf(builder);
     }
 
+    public static SpannableString formatReplyText(Context context, Status status) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+
+        builder.append(status.getText());
+
+        int movedBy = 0;
+
+        // Make normal URLs and media URLs clickable
+        movedBy = linkify(context, builder, status.getURLEntities(), movedBy);
+        linkify(context, builder, status.getMediaEntities(), movedBy);
+
+        return SpannableString.valueOf(builder);
+    }
+
     public static SpannableString formatDescriptionText(Context context, User user) {
         SpannableStringBuilder builder = new SpannableStringBuilder();
 

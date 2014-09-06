@@ -39,6 +39,7 @@ public class LinkTouchMovementMethod extends LinkMovementMethod {
                 Selection.removeSelection(spannable);
             } else if (wantClick) {
                 grandparentView.onTouchEvent(event);
+                return false;
             }
         } else {
             if (mPressedSpan != null) {
@@ -51,7 +52,7 @@ public class LinkTouchMovementMethod extends LinkMovementMethod {
             mPressedSpan = null;
             Selection.removeSelection(spannable);
         }
-        return false;
+        return true;
     }
 
     private TweetFormatter.TouchableSpan getPressedSpan(TextView textView, Spannable spannable, MotionEvent event) {

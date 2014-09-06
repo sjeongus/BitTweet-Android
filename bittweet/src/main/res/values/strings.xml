@@ -39,6 +39,8 @@
     <string name="tweet">Compose Tweet</string>
     <string name="action_tweet">Post</string>
     <string name="tweet_hint">What\'s happening right now?</string>
+    <string name="in_reply_to">Replying to</string>
+
     <string name="avatar">Avatar</string>
     <string name="tweet_service_ongoing">Nonsense</string>
     <string name="its_you">you</string>

@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -37,7 +38,9 @@ import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.adapters.SimpleTweetAdapter;
 import org.bittweet.android.ui.adapters.TweetAdapter;
 import org.bittweet.android.ui.adapters.TweetViewHolder;
+import org.bittweet.android.ui.util.LinkTouchMovementMethod;
 import org.bittweet.android.ui.util.RoundedTransformation;
+import org.bittweet.android.ui.util.TweetFormatter;
 
 import java.lang.ref.WeakReference;
 
@@ -184,20 +187,20 @@ public class NewTweetActivity extends FragmentActivity {
         }
 
         if (getIntent() != null && INTENT_FEEDBACK.equals(getIntent().getAction())) {
-            viewTweetEdit.setText(getIntent().getStringExtra(Intent.EXTRA_TEXT));
+            String feedback = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            viewTweetEdit.setText(feedback);
+            viewTweetEdit.setSelection(feedback.length());
         }
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     private void initializeReplyToStatus() {
-        TweetAdapter adapter = new SimpleTweetAdapter(this);
-        ViewStub viewReplyStub = (ViewStub) findViewById(R.id.reply_container);
-        View viewReply = viewReplyStub.inflate();
-        TweetViewHolder holder = new TweetViewHolder(viewReply);
-
-        adapter.recreateView(inReplyToStatus, holder);
-        viewReply.setVisibility(View.VISIBLE);
+        LinearLayout replyContainer = (LinearLayout) findViewById(R.id.reply_container);
+        TextView replyText = (TextView) findViewById(R.id.reply_text);
+        replyContainer.setVisibility(View.VISIBLE);
+        replyText.setMovementMethod(new LinkTouchMovementMethod(true));
+        replyText.setText(TweetFormatter.formatReplyText(NewTweetActivity.this, inReplyToStatus.getStatus()));
 
         StringBuilder newMentionPrefix = new StringBuilder();
 
