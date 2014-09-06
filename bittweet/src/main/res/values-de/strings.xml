@@ -3,18 +3,18 @@
 
     <string name="app_name">BitTweet</string>
     <string name="title_tweets_detail">Tweets Detail</string>
-    <string name="retweeted_by">リツイートした人 %1$s</string>
+    <string name="retweeted_by">Retweeted by %1$s</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
-    <string name="home_timeline">タイムライン</string>
-    <string name="mentions_timeline">\@返信</string>
+    <string name="home_timeline">Home</string>
+    <string name="mentions_timeline">\@Mentions</string>
     <string name="media_expansion_desc">Attached media</string>
 
     <string-array name="nav_drawer_items">
-        <item>タイムライン</item>
-        <item>返信</item>
-        <item>プロフィール</item>
-        <item>設定</item>
+        <item>Timeline</item>
+        <item>Erwähnungen</item>
+        <item>Profil</item>
+        <item>Einstellungen</item>
     </string-array>
 
     <array name="nav_drawer_icons">
@@ -25,54 +25,53 @@
 
     <string name="login_text">Build 6: Ro-Kyu-Bu! Pretty sure we can go to jail for this.</string>
     <string name="login_disclaim">カズタ＠赤色のエプロン(pixiv 735960). This will not be in the final release.</string>
-    <string name="login_button">Twitterでログイン ≫</string>
-    <string name="login_title">Twitterでログイン</string>
+    <string name="login_button">Bei Twitter einloggen »</string>
+    <string name="login_title">Bei Twitter einloggen</string>
 
-    <string name="logout_title">ログアウト?</string>
+    <string name="logout_title">Abmelden</string>
     <string name="logout_confirm">Are you sure you want to log out?</string>
-    <string name="logout_ok">はい</string>
-    <string name="logout_cancel">いいえ</string>
+    <string name="logout_ok">Ja</string>
+    <string name="logout_cancel">Nein</string>
 
-    <string name="title_activity_new_tweet">新規ツイート</string>
-    <string name="action_settings">設定</string>
-    <string name="action_attach_image">イメージを付ける</string>
-    <string name="tweet">新規ツイート</string>
-    <string name="action_tweet">つぶやく</string>
+    <string name="title_activity_new_tweet">Tweet verfassen</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_attach_image">Medien anhängen</string>
+    <string name="tweet">Tweet verfassen</string>
+    <string name="action_tweet">Absenden</string>
     <string name="tweet_hint">What\'s happening right now?</string>
-
     <string name="avatar">Avatar</string>
     <string name="tweet_service_ongoing">Nonsense</string>
     <string name="its_you">you</string>
 
-    <string name="setting_logout">ログアウト</string>
-    <string name="setting_streaming">Wi-Fiでストリーム</string>
-    <string name="setting_feedback_twitter">Twitterで意見を送信</string>
+    <string name="setting_logout">Abmelden</string>
+    <string name="setting_streaming">Bei WiFi-Verbindung Streaming benutzen</string>
+    <string name="setting_feedback_twitter">Feedback senden via Twitter</string>
     <string name="setting_feedback_twitter_desc">Tweet us feedback about the app.</string>
 
     <string name="preference_streaming">Stream Settings Changed</string>
     <string name="streaming_name">The app will now restart to apply changes.</string>
-    <string name="streaming_ok">はい</string>
+    <string name="streaming_ok">Ja</string>
 
     <string name="connection_title">No Internet Connection</string>
     <string name="connection_message">You must be connected to the Internet!</string>
-    <string name="connection_cancel">キャンセル</string>
+    <string name="connection_cancel">Abbrechen</string>
 
     <string name="rate_limit_message_min">Rate limit exceeded! Try again in %1$d minutes!</string>
     <string name="rate_limit_message_min1">Rate limit exceeded! Try again in %1$d minute!</string>
     <string name="rate_limit_message_sec">Rate limit exceeded! Try again in %1$d seconds!</string>
     <string name="rate_limit_message_sec1">Rate limit exceeded! Try again in %1$d second!</string>
 
-    <string name="title_activity_profile">プロフィール</string>
-    <string name="profile_status_me">あなたですよ！</string>
-    <string name="profile_status_mutual">相互フォローです</string>
-    <string name="profile_status_notfollowed">フォローされていません</string>
-    <string name="profile_status_followed">フォローされています</string>
-    <string name="profile_verified">認証</string>
-    <string name="profile_protected">非公開</string>
-    <string name="profile_tweet_count">ツイート</string>
-    <string name="profile_follower_count">フォロワー</string>
-    <string name="profile_following_count">フォロー</string>
-    <string name="profile_favorites_count">お気に入り</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="profile_status_me">Das bist Du!</string>
+    <string name="profile_status_mutual">Folgt Dir auch</string>
+    <string name="profile_status_notfollowed">Folgt Dir nicht</string>
+    <string name="profile_status_followed">Folgt Dir</string>
+    <string name="profile_verified">Verifiziert</string>
+    <string name="profile_protected">Geschützt</string>
+    <string name="profile_tweet_count">Tweets</string>
+    <string name="profile_follower_count">Follower</string>
+    <string name="profile_following_count">Folge ich</string>
+    <string name="profile_favorites_count">Favoriten</string>
 
     <string name="tweet_updating">Updating status&#8230;</string>
     <string name="tweet_sent">Tweet sent!</string>
