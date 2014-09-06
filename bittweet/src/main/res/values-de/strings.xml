@@ -3,11 +3,11 @@
 
     <string name="app_name">BitTweet</string>
     <string name="title_tweets_detail">Tweets Detail</string>
-    <string name="retweeted_by">Retweeted by %1$s</string>
+    <string name="retweeted_by">Retweetet von %1$s</string>
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
     <string name="home_timeline">Home</string>
-    <string name="mentions_timeline">\@Mentions</string>
+    <string name="mentions_timeline">\@Erwähnungen</string>
     <string name="media_expansion_desc">Attached media</string>
 
     <string-array name="nav_drawer_items">
