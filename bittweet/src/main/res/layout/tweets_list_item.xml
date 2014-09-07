@@ -85,7 +85,7 @@
                     android:id="@+id/username"
                     android:layout_marginRight="8dp"
                     android:singleLine="true"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -94,8 +94,9 @@
                     android:text="Full Name"
                     android:singleLine="true"
                     android:id="@+id/displayname"
+                    android:fontFamily="sans-serif-light"
                     android:layout_toRightOf="@+id/username"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
             </RelativeLayout>
 
             <TextView
@@ -105,7 +106,8 @@
                 android:textColor="#666"
                 android:layout_marginTop="5dp"
                 android:singleLine="true"
-                android:textSize="9sp"
+                android:textSize="10sp"
+                android:fontFamily="sans-serif-light"
                 android:text="Retweeted by Person"/>
 
             <TextView
@@ -113,17 +115,19 @@
                 android:layout_height="wrap_content"
                 android:text="Quick red fox jumps over the lazy dog"
                 android:id="@+id/tweet"
+                android:fontFamily="sans-serif-light"
                 android:layout_marginTop="5dp"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="12 hours ago"
                 android:id="@+id/time"
+                android:fontFamily="sans-serif-light"
                 android:singleLine="true"
                 android:layout_marginTop="5dp"
-                android:textSize="9sp"
+                android:textSize="10sp"
                 android:textColor="#666"/>
 
             <ImageView
@@ -133,7 +137,7 @@
                 android:contentDescription="@string/media_expansion_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="150dp"
+
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true" />
         </LinearLayout>

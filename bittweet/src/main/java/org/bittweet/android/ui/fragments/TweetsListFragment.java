@@ -1,12 +1,17 @@
 package org.bittweet.android.ui.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,6 +31,7 @@ import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 public class TweetsListFragment extends Fragment implements OnRefreshListener, AdapterView.OnItemClickListener {
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private static final String STATE_SCROLL = "scroll_position";
+    private static final String FIRST_RUN = "first_run";
     private static final String TAG = "TweetsListFragment";
 
     private Callbacks callbacks = dummyCallbacks;
@@ -42,7 +48,19 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     private int lastUsedScrollY = 0;
 
     private SharedPreferences prefs;
+    private SharedPreferences twitPrefs;
     private boolean streaming;
+    private Handler handler;
+    private Runnable streamrun;
+
+    public boolean isMentionsTimeline() {
+        return false;
+    }
+
+    public void clearTimeline() {
+        //listView.setAdapter(null);
+        //adapter.clearList();
+    }
 
     @Override
     public void onRefreshStarted(View view) {
@@ -67,16 +85,11 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
     // AsyncTask that executes update
     public class TimelineTask extends AsyncTask<Void, Void, Void> {
-        private final boolean firstRun;
-
-        public TimelineTask(boolean firstRun) {
-            this.firstRun = firstRun;
-        }
 
         @Override
         protected Void doInBackground(Void... args) {
             try {
-                timelineContent.update();
+                timelineContent.update(getActivity());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -87,11 +100,8 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         @Override
         protected void onPostExecute(Void result) {
             adapter.attachStatusesList(timelineContent.getStatusItems());
-            pullToRefreshLayout.setRefreshComplete();
-
-            if(firstRun && !isDetached() && ConnectionDetector.isOnWifi(getActivity()) && streaming) {
-                // Streaming
-                ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
+            if (!streaming) {
+                pullToRefreshLayout.setRefreshComplete();
             }
         }
     }
@@ -100,7 +110,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                timelineContent.loadMore();
+                timelineContent.loadMore(getActivity());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -114,12 +124,8 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         }
     }
 
-    public void updateAdapter(boolean firstRun) {
-        new TimelineTask(firstRun).execute();
-    }
-
     public void updateAdapter() {
-        updateAdapter(false);
+        new TimelineTask().execute();
     }
 
     @Override
@@ -128,14 +134,13 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         setRetainInstance(true);
         activity = getActivity();
         prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        streaming = prefs.getBoolean("pref_key_streaming", false);
+        twitPrefs = getActivity().getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
+        if (ConnectionDetector.isOnWifi(getActivity())) {
+            streaming = prefs.getBoolean("pref_key_streaming", false);
+        } else {
+            streaming = false;
+        }
         adapter = new TimelineAdapter(activity);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateAdapter(true);
     }
 
     @Override
@@ -164,10 +169,34 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
             }
         });
 
-        ActionBarPullToRefresh.from(activity)
-                .allChildrenArePullable()
-                .listener(this)
-                .setup(pullToRefreshLayout);
+        if (twitPrefs.getBoolean("FIRST_RUN", false)) {
+            updateAdapter();
+            twitPrefs.edit().putBoolean("FIRST_RUN", false).commit();
+        }
+
+        if (!streaming) {
+            ActionBarPullToRefresh.from(activity)
+                    .allChildrenArePullable()
+                    .listener(this)
+                    .setup(pullToRefreshLayout);
+        } else if(!isDetached() && ConnectionDetector.isOnWifi(getActivity()) && streaming) {
+            // Streaming
+            int seconds = twitPrefs.getInt("Rate_Limited", 0);
+            if (seconds > 0) {
+                handler = new Handler();
+                handler.postDelayed(streamrun = new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        updateAdapter();
+                        ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
+                    }
+                }, seconds * 1000);
+            } else {
+                updateAdapter();
+                ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
+            }
+        }
 
         return view;
     }
@@ -201,6 +230,10 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
     @Override
     public void onDetach() {
         super.onDetach();
+
+        if (handler != null) {
+            handler.removeCallbacks(streamrun);
+        }
 
         // Reset the active callbacks interface to the dummy implementation.
         callbacks = dummyCallbacks;

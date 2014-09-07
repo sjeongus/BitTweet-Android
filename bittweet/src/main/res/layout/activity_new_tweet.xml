@@ -1,80 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context="org.bittweet.android.ui.NewTweetActivity"
-        android:orientation="vertical"
-        android:baselineAligned="false"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.bittweet.android.ui.NewTweetActivity"
+    android:orientation="vertical"
+    android:baselineAligned="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <ViewStub
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/reply_container"
-            android:inflatedId="@id/reply_container"
-            android:layout="@layout/tweets_list_item"/>
-
-    <EditText
-            android:id="@+id/text"
-            android:lines="4"
-            android:hint="What's happening right now?"
-            android:textColorHint="#999"
-            android:textSize="14sp"
-            android:gravity="top"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:inputType="textLongMessage|textMultiLine|textCapSentences"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    <RelativeLayout
-            android:paddingTop="8dp"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/counter">
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Image"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/attachImage" />
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:text="140"
-                android:layout_alignParentRight="true"
-                android:textColor="#666"
-                android:id="@+id/count"/>
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/buttons">
+        android:id="@+id/reply_container"
+        android:inflatedId="@id/reply_container"
+        android:layout="@layout/tweets_list_item"/>
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:scaleType="centerInside"
-            android:padding="8dp"
-            android:visibility="visible" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/white">
 
-    </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+                
+                <ImageView
+                    android:id="@+id/profilephoto"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="5dp"
+                    android:scaleType="centerCrop"/>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/profilephoto"
+                    android:layout_toLeftOf="@+id/image"
+                    android:scrollbarStyle="outsideInset">
+
+                    <EditText
+                        android:id="@+id/text"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:background="#fff"
+                        android:hint="@string/tweet_hint"
+                        android:textColorHint="#999"
+                        android:textSize="15sp"
+                        android:gravity="top"
+                        android:fontFamily="sans-serif-light"
+                        android:inputType="textLongMessage|textMultiLine|textCapSentences"
+                        android:imeOptions="flagNoExtractUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </ScrollView>
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentRight="true"
+                    android:scaleType="centerCrop"
+                    android:padding="8dp"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:paddingTop="8dp"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/counter"
+                android:layout_alignParentBottom="true" >
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/attachImage"
+                    android:src="@drawable/ic_action_image"
+                    android:contentDescription="@string/action_attach_image"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="start"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:text="140"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_gravity="center_vertical|end"
+                    android:textColor="#666"
+                    android:id="@+id/count"/>
+
+            </FrameLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

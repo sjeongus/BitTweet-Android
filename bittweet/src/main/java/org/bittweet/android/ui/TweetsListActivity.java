@@ -1,12 +1,17 @@
 package org.bittweet.android.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -22,8 +27,12 @@ import android.widget.SimpleAdapter;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.bittweet.android.BuildConfig;
 import org.bittweet.android.R;
+import org.bittweet.android.internal.GeneralTimelineContent;
 import org.bittweet.android.internal.MyTwitterFactory;
+import org.bittweet.android.internal.TimelineContent;
+import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.fragments.HomeTweetsListFragment;
 import org.bittweet.android.ui.fragments.MentionsTweetsListFragment;
 import org.bittweet.android.ui.fragments.TweetsDetailFragment;
@@ -34,30 +43,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 
 public class TweetsListActivity extends FragmentActivity implements TweetsListFragment.Callbacks {
     private boolean isTwoPane;
 
-    private Twitter mTwitter;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences twitPref;
     private FragmentManager fragmentManager;
 
     private static final String TAG = "TweetsListActivity";
+    public static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
 
+    private Thread thread;
+    private Runnable profrun;
+    private String myUser;
+    private String myAvatar;
+    private Activity activity;
+
     public boolean isTwitterLoggedInAlready() {
-        return sharedPreferences.getBoolean(TwitterLoginActivity.PREF_KEY_TWITTER_LOGIN, false);
+        return twitPref.getBoolean(PREF_KEY_TWITTER_LOGIN, false);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Crashlytics.start(this);
 
-        sharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
+        if (!BuildConfig.DEBUG) {
+            Crashlytics.start(this);
+        }
+
+        activity = TweetsListActivity.this;
+        twitPref = getSharedPreferences("MyTwitter", MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
 
         if (!isTwitterLoggedInAlready()) {
@@ -73,7 +96,46 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
             isTwoPane = true;
         }
 
+        thread = new Thread() {
+            @Override
+            public void run()
+            {
+                MyTwitterFactory twitterFact = MyTwitterFactory.getInstance(getApplicationContext());
+                Twitter twitter = twitterFact.getTwitter();
+                try {
+                    //twitter.verifyCredentials();
+                    long userId = twitterFact.getUserId();
+                    myUser = twitter.showUser(userId).getScreenName();
+                    myAvatar = twitter.showUser(userId).getOriginalProfileImageURLHttps();
+                    twitPref.edit().putString("AVATAR", myAvatar).commit();
+                    twitPref.edit().putString("USERNAME", myUser).commit();
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("org.bittweet.android.services.TweetService");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(tweetReceiver, filter);
+
         loadHomeTimeline();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent.getBooleanExtra("LOGOUT", false)) {
+            System.err.println("Got LOGOUT. Logging out.");
+            finish();
+            Intent logout = new Intent(TweetsListActivity.this, TwitterLoginActivity.class);
+            startActivity(logout);
+            return;
+        } else if (intent.getBooleanExtra("RESTART", false)) {
+            System.err.println("Got RESTART. Logging out.");
+            recreate();
+        }
     }
 
     private void initializeDrawer() {
@@ -122,8 +184,14 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                         loadMentionsTimeline();
                         break;
                     case 2:
-                        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                        startActivity(intent);
+                        Intent profIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        profIntent.putExtra("USERNAME", myUser);
+                        startActivity(profIntent);
+                        break;
+                    case 3:
+                        Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                        startActivity(settingsIntent);
+                        break;
                 }
 
                 drawerLayout.closeDrawer(drawerList);
@@ -148,6 +216,23 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("org.bittweet.android.services.TweetService");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(tweetReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Crouton.cancelAllCroutons();
+        this.unregisterReceiver(tweetReceiver);
+    }
 
     @Override
     public void onItemSelected(String id) {
@@ -185,7 +270,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_tweet:
-                Intent newTweet = new Intent(this, NewTweetActivity.class);
+                Intent newTweet = new Intent(getApplicationContext(), NewTweetActivity.class);
                 startActivity(newTweet);
                 return true;
             default:
@@ -229,4 +314,22 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         fragment.setActivateOnItemClick(isTwoPane);
         getActionBar().setSubtitle(R.string.home_timeline);
     }
+
+    private BroadcastReceiver tweetReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.err.println("Broadcast received!");
+            String status = twitPref.getString("TWEET_SEND", "null");
+            System.err.println(status);
+            if (status == "sending") {
+                Crouton.showText(activity, R.string.tweet_updating, Style.INFO);
+            } else if (status == "sent") {
+                Crouton.showText(activity, R.string.tweet_sent, Style.CONFIRM);
+            } else if (status == "error") {
+                Crouton.showText(activity, R.string.tweet_error, Style.ALERT);
+            }
+
+            twitPref.edit().putString("TWEET_SEND", "null").commit();
+        }
+    };
 }

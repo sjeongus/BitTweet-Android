@@ -1,12 +1,15 @@
 package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
+import org.bittweet.android.ui.ProfileActivity;
+import org.bittweet.android.ui.util.LinkTouchMovementMethod;
 import org.bittweet.android.ui.util.RoundedTransformation;
 import org.bittweet.android.ui.util.TransparentLinkMovementMethod;
 import org.bittweet.android.ui.util.TweetFormatter;
@@ -29,7 +32,6 @@ public class SimpleTweetAdapter implements TweetAdapter {
         return context;
     }
 
-
     @Override
     public void recreateView(StatusItem item, TweetViewHolder holder) {
         Status status = item.getStatus();
@@ -38,10 +40,13 @@ public class SimpleTweetAdapter implements TweetAdapter {
             status = status.getRetweetedStatus();
         }
 
-        holder.tweet.setMovementMethod(new TransparentLinkMovementMethod(holder.tweetContainer));
+        final String username = status.getUser().getScreenName();
+
+        //holder.tweet.setMovementMethod(new TransparentLinkMovementMethod(holder.tweetContainer));
+        holder.tweet.setMovementMethod(new LinkTouchMovementMethod());
         holder.tweet.setText(TweetFormatter.formatStatusText(context, status));
         holder.displayName.setText(status.getUser().getName());
-        holder.userName.setText("@" + status.getUser().getScreenName());
+        holder.userName.setText("@" + username);
         holder.time.setText(dateFormat.format(status.getCreatedAt()));
 
         // Defaults
@@ -61,8 +66,19 @@ public class SimpleTweetAdapter implements TweetAdapter {
             holder.favBtn.setImageResource(R.drawable.ic_rating_important);
         }
 
-        Ion.with(holder.avatarImage).transform(new RoundedTransformation(250, 0))
+        Ion.with(holder.avatarImage)
+                .resize(150, 150)
+                .transform(new RoundedTransformation(250, 0))
                 .animateGif(true)
-                .load(status.getUser().getBiggerProfileImageURLHttps());
+                .load(status.getUser().getOriginalProfileImageURLHttps());
+
+        holder.avatarImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProfileActivity.class);
+                intent.putExtra("USERNAME", username);
+                context.startActivity(intent);
+            }
+        });
     }
 }

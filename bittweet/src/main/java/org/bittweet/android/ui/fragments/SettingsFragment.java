@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v4.app.NavUtils;
 
@@ -17,6 +18,7 @@ import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.NewTweetActivity;
+import org.bittweet.android.ui.TweetsListActivity;
 import org.bittweet.android.ui.TwitterLoginActivity;
 
 import twitter4j.Twitter;
@@ -42,6 +44,7 @@ public class SettingsFragment extends PreferenceFragment {
         twitter = this.getActivity().getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
 
         context = getActivity();
+        System.err.println(context);
         logout = findPreference("pref_key_logout");
         logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -76,6 +79,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         streaming = (SwitchPreference) findPreference("pref_key_streaming");
         streaming.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -83,7 +87,11 @@ public class SettingsFragment extends PreferenceFragment {
                         .setMessage(R.string.streaming_name)
                         .setNegativeButton(R.string.streaming_ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-
+                                Intent intent = new Intent(context, TweetsListActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("RESTART", true);
+                                startActivity(intent);
+                                return;
                             }
                         });
                 // Create the AlertDialog object
@@ -99,12 +107,19 @@ public class SettingsFragment extends PreferenceFragment {
                 .setMessage(R.string.logout_confirm)
                 .setPositiveButton(R.string.logout_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.clear().commit();
                         twitter.edit().clear().commit();
                         mTwitter = MyTwitterFactory.getInstance(context).getTwitter();
                         mTwitter.setOAuthAccessToken(null);
-                        //finish();
-                        Intent intent = new Intent(context, TwitterLoginActivity.class);
+                        //getActivity().finish();
+                        Intent intent = new Intent(context, TweetsListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        intent.putExtra("LOGOUT", true);
+                        System.err.println("LOGOUT passed. Logging out!");
                         startActivity(intent);
+                        return;
                     }
                 })
                 .setNegativeButton(R.string.logout_cancel, new DialogInterface.OnClickListener() {
@@ -125,7 +140,6 @@ public class SettingsFragment extends PreferenceFragment {
             return capitalize(manufacturer) + " " + model;
         }
     }
-
 
     private String capitalize(String s) {
         if (s == null || s.length() == 0) {

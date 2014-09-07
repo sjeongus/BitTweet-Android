@@ -11,7 +11,9 @@ package="org.bittweet.android" >
     android:allowBackup="true"
     android:icon="@drawable/ic_launcher"
     android:label="@string/app_name"
-    android:theme="@style/Theme.BitTweet" >
+    android:theme="@style/Theme.BitTweet"
+    android:hardwareAccelerated="true"
+    android:configChanges="orientation|keyboardHidden|keyboard|screenSize">
     <activity
         android:name="org.bittweet.android.ui.TweetsListActivity"
         android:label="@string/app_name" >
@@ -25,14 +27,30 @@ package="org.bittweet.android" >
         android:name="org.bittweet.android.ui.TweetsDetailActivity"
         android:label="@string/title_tweets_detail"
         android:parentActivityName="org.bittweet.android.ui.TweetsListActivity" >
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="org.bittweet.android.TweetsListActivity" />
     </activity>
     <activity
         android:name="org.bittweet.android.ui.TwitterLoginActivity"
-        android:label="Log In to Twitter"
-        android:launchMode="singleInstance" >
+        android:theme="@style/Theme.BitTweetLogin"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize" >
+    </activity>
+    <activity
+        android:name="org.bittweet.android.ui.NewTweetActivity"
+        android:label="@string/title_activity_new_tweet"
+        android:parentActivityName="org.bittweet.android.ui.TweetsListActivity"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
+        android:windowSoftInputMode="stateAlwaysVisible|adjustResize" >
+    </activity>
+    <activity android:name=".ui.SettingsActivity" android:label="Settings"
+        android:screenOrientation="nosensor">
+        <intent-filter>
+            <action android:name=".ui.SettingsActivity" />
+            <category android:name="android.intent.category.PREFERENCE" />
+        </intent-filter>
+    </activity>
+    <activity android:name=".ui.WebViewActivity"
+        android:launchMode="singleTop"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
+        android:parentActivityName="org.bittweet.android.ui.TweetsListActivity" >
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
 
@@ -46,20 +64,10 @@ package="org.bittweet.android" >
 
         </intent-filter>
     </activity>
-    <activity
-        android:name="org.bittweet.android.ui.NewTweetActivity"
-        android:label="@string/title_activity_new_tweet"
+    <activity android:name=".ui.ProfileActivity"
+        android:label="@string/title_activity_profile"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
         android:parentActivityName="org.bittweet.android.ui.TweetsListActivity" >
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="org.bittweet.android.TweetsListActivity" />
-    </activity>
-    <activity android:name=".ui.SettingsActivity" android:label="Settings"
-        android:screenOrientation="nosensor">
-        <intent-filter>
-            <action android:name=".ui.SettingsActivity" />
-            <category android:name="android.intent.category.PREFERENCE" />
-        </intent-filter>
     </activity>
 
     <meta-data

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:orientation="vertical"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <ImageView
         android:id="@+id/background"
@@ -14,60 +14,72 @@
         android:src="@drawable/background"
         android:adjustViewBounds="true" />
 
-    <ImageView
-        android:id="@+id/blurback"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:scaleType="centerCrop" />
-
-    <ImageView
-        android:id="@+id/white"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="#a8ffffff"
-        android:layout_gravity="bottom"
-        android:scaleType="centerCrop"/>
-
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/login_text"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:id="@+id/textView2"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="60dp"
+        android:minHeight="100dp"
         android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true" />
+        android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:text="@string/login_disclaim"
-        android:textSize="14sp"
-        android:id="@+id/textView3"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true" />
+        <ImageView
+            android:id="@+id/blurback"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:tint="#96ffffff" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/login_button"
-        android:background="@android:color/transparent"
-        android:id="@+id/button_login"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_gravity="bottom"
-        android:layout_alignParentBottom="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_text"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light"
+                android:id="@+id/textView2"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:padding="5dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_button"
+                android:background="@drawable/bittweet_activated_background_holo_light"
+                android:id="@+id/button_login"
+                android:fontFamily="sans-serif-thin"
+                android:padding="5dp"
+                android:layout_marginBottom="0dp"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/login_disclaim"
+                android:fontFamily="sans-serif-thin"
+                android:textSize="14sp"
+                android:ellipsize="none"
+                android:id="@+id/textView3"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                android:padding="5dp"
+                android:layout_alignParentBottom="true" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
     <WebView
-            android:id="@+id/webview"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:id="@+id/webview"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"/>
+
 </FrameLayout>

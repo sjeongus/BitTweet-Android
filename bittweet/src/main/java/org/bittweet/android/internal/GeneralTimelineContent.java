@@ -1,9 +1,13 @@
 package org.bittweet.android.internal;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.widget.BaseAdapter;
 
 import org.bittweet.android.ApplicationController;
+import org.bittweet.android.R;
 import org.bittweet.android.ui.adapters.TimelineAdapter;
 
 import java.util.ArrayList;
@@ -11,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -104,10 +110,39 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
 
     protected abstract List<Status> getMore(Paging paging) throws TwitterException;
 
+    protected void rateLimited(Activity activity, int seconds) {
+        final Activity act = activity;
+        Resources res = activity.getResources();
+        int time;
+        final String text;
+        if (seconds > 60) {
+            time = (int) seconds / 60;
+            if (time == 1) {
+                text = String.format(res.getString(R.string.rate_limit_message_min1), time);
+            } else {
+                text = String.format(res.getString(R.string.rate_limit_message_min), time);
+            }
+        } else {
+            time = seconds;
+            if (time == 1) {
+                text = String.format(res.getString(R.string.rate_limit_message_sec1), time);
+            } else {
+                text = String.format(res.getString(R.string.rate_limit_message_sec), time);
+            }
+        }
+        SharedPreferences twitPref = activity.getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
+        twitPref.edit().putInt("Rate_Limited", seconds).commit();
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                Crouton.makeText(act, text, Style.ALERT).show();
+            }
+        });
+    }
+
     @Override
-    public void update() {
+    public void update(Activity activity) {
         try {
-            twitter = MyTwitterFactory.getInstance(getContext()).getTwitter();
+            twitter = MyTwitterFactory.getInstance(activity).getTwitter();
             user = twitter.verifyCredentials();
             Paging paging = new Paging(1, PER_PAGE);
 
@@ -126,13 +161,16 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
             }
         } catch (TwitterException e) {
             e.printStackTrace();
+            if (e.exceededRateLimitation()) {
+                rateLimited(activity, e.getRateLimitStatus().getSecondsUntilReset());
+            }
         }
     }
 
     @Override
-    public void loadMore() {
+    public void loadMore(Activity activity) {
         try {
-            twitter = MyTwitterFactory.getInstance(getContext()).getTwitter();
+            twitter = MyTwitterFactory.getInstance(activity).getTwitter();
             user = twitter.verifyCredentials();
             Paging paging = new Paging(++morePage, PER_PAGE);
 
@@ -150,6 +188,9 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
             }
         } catch (TwitterException e) {
             e.printStackTrace();
+            if (e.exceededRateLimitation()) {
+                rateLimited(activity, e.getRateLimitStatus().getSecondsUntilReset());
+            }
         }
     }
 
