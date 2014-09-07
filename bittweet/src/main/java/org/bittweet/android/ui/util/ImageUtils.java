@@ -7,7 +7,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.widget.ImageView;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -108,6 +110,26 @@ public class ImageUtils {
         }
 
         return orientation;
+    }
+
+    // Set an image from the camera
+    public static Bitmap setPic(String path, int targetW, int targetH) {
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        return BitmapFactory.decodeFile(path, bmOptions);
     }
 
     // Center crop a bitmap without changing aspect ratio

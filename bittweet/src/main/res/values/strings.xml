@@ -41,8 +41,9 @@
     <string name="tweet_hint">What\'s happening right now?</string>
     <string name="in_reply_to">Replying to</string>
 
+    <string name="add_image_camera">Take Picture</string>
+    <string name="add_image_gallery">Choose from Gallery</string>
     <string name="remove_image">Remove Image</string>
-    <string name="remove_cancel">Cancel</string>
 
     <string name="avatar">Avatar</string>
     <string name="tweet_service_ongoing">Nonsense</string>

@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
@@ -43,7 +44,11 @@ import org.bittweet.android.ui.util.LinkTouchMovementMethod;
 import org.bittweet.android.ui.util.RoundedTransformation;
 import org.bittweet.android.ui.util.TweetFormatter;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.Map;
 
@@ -53,6 +58,7 @@ import static org.bittweet.android.ui.util.ImageUtils.convertPixelsToDp;
 import static org.bittweet.android.ui.util.ImageUtils.decodeSampledBitmapFromResource;
 import static org.bittweet.android.ui.util.ImageUtils.rotateBitmap;
 import static org.bittweet.android.ui.util.ImageUtils.scaleCenterCrop;
+import static org.bittweet.android.ui.util.ImageUtils.setPic;
 
 public class NewTweetActivity extends FragmentActivity {
     public static final String ARG_REPLY_TO_ID = "reply_to";
@@ -67,13 +73,15 @@ public class NewTweetActivity extends FragmentActivity {
     private String myUser;
 
     private Uri[] imageUri;
+    private String mCurrentPhotoPath;
 
     private ImageView uploadImage1;
     private ImageView uploadImage2;
     private ImageView uploadImage3;
     private ImageView uploadImage4;
 
-    private final int IMAGE_PICKER_SELECT = 999;
+    private static final int IMAGE_PICKER_SELECT = 999;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +105,7 @@ public class NewTweetActivity extends FragmentActivity {
         attachImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(photoPickerIntent, IMAGE_PICKER_SELECT);
+                galleryPopup(view);
             }
         });
 
@@ -132,6 +139,7 @@ public class NewTweetActivity extends FragmentActivity {
         });
     }
 
+    // Popup menu that allows user to remove image
     public void showPopup(ImageView view, int pos) {
         final ImageView v = view;
         final int i = pos;
@@ -143,14 +151,36 @@ public class NewTweetActivity extends FragmentActivity {
                     case R.id.remove_item:
                         removeImage(v, i);
                         return true;
-                    case R.id.cancel_item:
-                        return true;
                     default:
                         return false;
                 }
             }
         });
         popupMenu.inflate(R.menu.compose_remove_image);
+        popupMenu.show();
+    }
+
+    // Popup menu that allows user to choose to attach from camera or gallery
+    public void galleryPopup(View view) {
+        PopupMenu popupMenu = new PopupMenu(NewTweetActivity.this, view);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.pick_camera:
+                        dispatchTakePictureIntent();
+                        return true;
+                    case R.id.pick_gallery:
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(photoPickerIntent, IMAGE_PICKER_SELECT);
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        popupMenu.inflate(R.menu.compose_add_image);
         popupMenu.show();
     }
 
@@ -164,6 +194,36 @@ public class NewTweetActivity extends FragmentActivity {
         }
     }
 
+    // Starts the intent to take picture from camera
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                System.err.println("Could not create file");
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    // Adds image taken from camera to the gallery
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -172,11 +232,34 @@ public class NewTweetActivity extends FragmentActivity {
         return true;
     }
 
+    // Creates the image file to save to gallery
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM);
+        File direc = new File(storageDir.getAbsolutePath() + "/Camera/");
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                direc    /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        galleryAddPic();
+        return image;
+    }
+
     // Photo selection result
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMAGE_PICKER_SELECT && resultCode == Activity.RESULT_OK) {
-            BitmapWorkerTask task = new BitmapWorkerTask(data);
+            BitmapWorkerTask task = new BitmapWorkerTask(data, false);
+            task.execute();
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            BitmapWorkerTask task = new BitmapWorkerTask(data, true);
             task.execute();
         }
     }
@@ -187,11 +270,13 @@ public class NewTweetActivity extends FragmentActivity {
         private int pos;
         private ImageView imageView;
         private Intent mData;
+        private boolean fromCamera;
 
-        public BitmapWorkerTask(Intent data) {
+        public BitmapWorkerTask(Intent data, boolean camera) {
             for (int i = 0; i < imageUri.length; i++) {
                 if (imageUri[i] == null) {
                     pos = i;
+                    imageUri[i] = Uri.parse(mCurrentPhotoPath);
                     switch(pos) {
                         case 0:
                             imageView = uploadImage1;
@@ -211,6 +296,7 @@ public class NewTweetActivity extends FragmentActivity {
             }
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
+            this.fromCamera = camera;
             mData = data;
         }
 
@@ -218,7 +304,11 @@ public class NewTweetActivity extends FragmentActivity {
         @Override
         protected String doInBackground(Void... params) {
             Context activity = getApplicationContext();
-            return getBitmapFromCameraData(pos, mData, activity);
+            if (fromCamera) {
+                return mCurrentPhotoPath;
+            } else {
+                return getBitmapFromCameraData(pos, mData, activity);
+            }
         }
 
         // Once complete, see if ImageView is still around and set bitmap.
@@ -228,7 +318,12 @@ public class NewTweetActivity extends FragmentActivity {
                 final ImageView myView = imageViewReference.get();
                 if (myView != null) {
                     int size = (int) convertPixelsToDp(150, getApplicationContext());
-                    Bitmap downmap = decodeSampledBitmapFromResource(path, size, size);
+                    Bitmap downmap;
+                    if (fromCamera) {
+                        downmap = setPic(mCurrentPhotoPath, size, size);
+                    } else {
+                        downmap = decodeSampledBitmapFromResource(path, size, size);
+                    }
                     downmap = rotateBitmap(path, downmap);
                     downmap = scaleCenterCrop(downmap, size, size);
                     myView.setImageBitmap(downmap);
