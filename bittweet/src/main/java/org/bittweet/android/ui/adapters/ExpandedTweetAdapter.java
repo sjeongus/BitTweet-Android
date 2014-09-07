@@ -117,6 +117,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     // Set the image preview on timeline with Ion
     public void setImage(ImageView view, int width, int height, String url) {
         Ion.with(view)
+                .animateGif(false)
                 .resize(width, height)
                 .centerCrop()
                 .transform(new RoundedTransformation(20, 0))

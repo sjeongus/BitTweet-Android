@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -43,6 +44,8 @@ import org.bittweet.android.ui.util.RoundedTransformation;
 import org.bittweet.android.ui.util.TweetFormatter;
 
 import java.lang.ref.WeakReference;
+import java.util.Dictionary;
+import java.util.Map;
 
 import twitter4j.UserMentionEntity;
 
@@ -61,9 +64,14 @@ public class NewTweetActivity extends FragmentActivity {
     private EditText viewTweetEdit;
     private TextView viewCharCounter;
     private ImageButton attachImage;
-    private ImageView uploadImage;
-    private Uri imageUri;
     private String myUser;
+
+    private Uri[] imageUri;
+
+    private ImageView uploadImage1;
+    private ImageView uploadImage2;
+    private ImageView uploadImage3;
+    private ImageView uploadImage4;
 
     private final int IMAGE_PICKER_SELECT = 999;
 
@@ -78,20 +86,13 @@ public class NewTweetActivity extends FragmentActivity {
 
         ImageView avatar = (ImageView) findViewById(R.id.profilephoto);
         Ion.with(avatar).resize(250, 250).transform(new RoundedTransformation(250, 0)).animateGif(true).load(myAvatar);
-        uploadImage = (ImageView) findViewById(R.id.image);
-        uploadImage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (imageUri != null) {
-                    imageUri = null;
-                    uploadImage.setImageBitmap(null);
-                    attachImage.setEnabled(true);
-                    uploadImage.setVisibility(View.GONE);
-                    attachImage.setBackgroundResource(R.drawable.bittweet_activated_background_holo_light);
-                }
-                return true;
-            }
-        });
+
+        uploadImage1 = (ImageView) findViewById(R.id.image1);
+        uploadImage2 = (ImageView) findViewById(R.id.image2);
+        uploadImage3 = (ImageView) findViewById(R.id.image3);
+        uploadImage4 = (ImageView) findViewById(R.id.image4);
+        imageUri = new Uri[4];
+
         attachImage = (ImageButton) findViewById(R.id.attachImage);
         attachImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +101,67 @@ public class NewTweetActivity extends FragmentActivity {
                 startActivityForResult(photoPickerIntent, IMAGE_PICKER_SELECT);
             }
         });
+
+        uploadImage1.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showPopup(uploadImage1, 0);
+                return true;
+            }
+        });
+        uploadImage2.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showPopup(uploadImage2, 1);
+                return true;
+            }
+        });
+        uploadImage3.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showPopup(uploadImage3, 2);
+                return true;
+            }
+        });
+        uploadImage4.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showPopup(uploadImage4, 3);
+                return true;
+            }
+        });
+    }
+
+    public void showPopup(ImageView view, int pos) {
+        final ImageView v = view;
+        final int i = pos;
+        PopupMenu popupMenu = new PopupMenu(NewTweetActivity.this, v);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.remove_item:
+                        removeImage(v, i);
+                        return true;
+                    case R.id.cancel_item:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        popupMenu.inflate(R.menu.compose_remove_image);
+        popupMenu.show();
+    }
+
+    public void removeImage(ImageView view, int pos) {
+        if (imageUri[pos] != null) {
+            imageUri[pos] = null;
+            view.setImageBitmap(null);
+            view.setVisibility(View.GONE);
+            attachImage.setEnabled(true);
+            attachImage.setBackgroundResource(R.drawable.bittweet_activated_background_holo_light);
+        }
     }
 
     @Override
@@ -114,7 +176,7 @@ public class NewTweetActivity extends FragmentActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMAGE_PICKER_SELECT && resultCode == Activity.RESULT_OK) {
-            BitmapWorkerTask task = new BitmapWorkerTask(uploadImage, data);
+            BitmapWorkerTask task = new BitmapWorkerTask(data);
             task.execute();
         }
     }
@@ -122,9 +184,31 @@ public class NewTweetActivity extends FragmentActivity {
     // Asynchronously load bitmap into imageview
     class BitmapWorkerTask extends AsyncTask<Void, Void, String> {
         private final WeakReference<ImageView> imageViewReference;
+        private int pos;
+        private ImageView imageView;
         private Intent mData;
 
-        public BitmapWorkerTask(ImageView imageView, Intent data) {
+        public BitmapWorkerTask(Intent data) {
+            for (int i = 0; i < imageUri.length; i++) {
+                if (imageUri[i] == null) {
+                    pos = i;
+                    switch(pos) {
+                        case 0:
+                            imageView = uploadImage1;
+                            break;
+                        case 1:
+                            imageView = uploadImage2;
+                            break;
+                        case 2:
+                            imageView = uploadImage3;
+                            break;
+                        case 3:
+                            imageView = uploadImage4;
+                            break;
+                    }
+                    break;
+                }
+            }
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             mData = data;
@@ -134,33 +218,35 @@ public class NewTweetActivity extends FragmentActivity {
         @Override
         protected String doInBackground(Void... params) {
             Context activity = getApplicationContext();
-            return getBitmapFromCameraData(mData, activity);
+            return getBitmapFromCameraData(pos, mData, activity);
         }
 
         // Once complete, see if ImageView is still around and set bitmap.
         @Override
         protected void onPostExecute(String path) {
             if (path != null) {
-                final ImageView imageView = imageViewReference.get();
-                if (imageView != null) {
+                final ImageView myView = imageViewReference.get();
+                if (myView != null) {
                     int size = (int) convertPixelsToDp(150, getApplicationContext());
                     Bitmap downmap = decodeSampledBitmapFromResource(path, size, size);
                     downmap = rotateBitmap(path, downmap);
                     downmap = scaleCenterCrop(downmap, size, size);
-                    imageView.setImageBitmap(downmap);
-                    imageView.setVisibility(View.VISIBLE);
-                    attachImage.setEnabled(false);
-                    attachImage.setBackgroundColor(Color.LTGRAY);
+                    myView.setImageBitmap(downmap);
+                    myView.setVisibility(View.VISIBLE);
+                    if (imageUri[0] != null && imageUri[1] != null && imageUri[2] != null && imageUri[3] != null) {
+                        attachImage.setEnabled(false);
+                        attachImage.setBackgroundColor(Color.LTGRAY);
+                    }
                 }
             }
         }
     }
 
     // Function to get bitmap from gallery
-    public String getBitmapFromCameraData(Intent data, Context context) {
-        imageUri = data.getData();
+    public String getBitmapFromCameraData(int pos, Intent data, Context context) {
+        imageUri[pos] = data.getData();
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
-        Cursor cursor = context.getContentResolver().query(imageUri,filePathColumn, null, null, null);
+        Cursor cursor = context.getContentResolver().query(data.getData(),filePathColumn, null, null, null);
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String picturePath = cursor.getString(columnIndex);
@@ -248,12 +334,16 @@ public class NewTweetActivity extends FragmentActivity {
             Intent serviceIntent = new Intent(this, TweetService.class);
             serviceIntent.setAction(Intent.ACTION_SEND);
             serviceIntent.putExtra(Intent.EXTRA_TEXT, text);
-            if (imageUri != null) {
-                serviceIntent.putExtra(Intent.EXTRA_STREAM, imageUri.toString());
-                imageUri = null;
-            }
-            else {
-                serviceIntent.putExtra(Intent.EXTRA_STREAM, "empty");
+            if (imageUri[0] != null || imageUri[1] != null || imageUri[2] != null || imageUri[3] != null) {
+                String[] uriString = new String[4];
+                for (int i = 0; i < imageUri.length; i++) {
+                    System.err.println(imageUri.toString());
+                    if (imageUri[i] != null) {
+                        uriString[i] = imageUri[i].toString();
+                    }
+                    imageUri[i] = null;
+                }
+                serviceIntent.putExtra("IMAGE_ARRAY", uriString);
             }
 
             if(inReplyToStatus != null) {

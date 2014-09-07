@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -33,6 +35,7 @@ import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.UploadedMedia;
 import twitter4j.media.ImageUpload;
 import twitter4j.media.ImageUploadFactory;
 import twitter4j.media.MediaProvider;
@@ -72,10 +75,10 @@ public class TweetService extends Service {
 
         if(Intent.ACTION_SEND.equals(intent.getAction())) {
             String tweetText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            String imageString = "empty";
+            String imageString[] = new String[4];
             // Get the string extra to check if an image has been attached. Set empty if none
-            if (!intent.getStringExtra(Intent.EXTRA_STREAM).equals("empty")) {
-                imageString = intent.getStringExtra(Intent.EXTRA_STREAM);
+            if (intent.getStringArrayExtra("IMAGE_ARRAY") != null) {
+                imageString = intent.getStringArrayExtra("IMAGE_ARRAY");
             }
             new ProcessTweetTask(imageString).execute(tweetText, intent.getStringExtra(ARG_TWEET_ID));
         } else if(ACTION_FAV.equals(intent.getAction())) {
@@ -107,15 +110,17 @@ public class TweetService extends Service {
     // Asynchronously send a tweet
     private class ProcessTweetTask extends AsyncTask<String, Void, Boolean> {
 
-        private String uriPath;
+        private String[] uriPath;
+        private int count;
 
-        public ProcessTweetTask(String uriString) {
-            // Get uriString and check if empty
-            if (!uriString.equals( "empty")) {
-                // If a uri string was found, get the absolute real path from the uri
-                uriPath = getRealPathFromURI(Uri.parse(uriString));
-            } else {
-                uriPath = "empty";
+        public ProcessTweetTask(String[] uriString) {
+            uriPath = new String[4];
+            count = 0;
+            for (int i = 0; i < uriPath.length; i++) {
+                if (uriString[i] != null) {
+                    count++;
+                    uriPath[i] = getRealPathFromURI(Uri.parse(uriString[i]));
+                }
             }
         }
 
@@ -132,9 +137,19 @@ public class TweetService extends Service {
                     update.setInReplyToStatusId(Long.parseLong(strings[1]));
                 }
                 // Check if an image is attached, and attach to the tweet
-                if (!uriPath.equals("empty")) {
-                    File f = new File(uriPath);
-                    update.setMedia(f);
+                long[] mediaIds = new long[count];
+                int i = 0;
+                for (String uri : uriPath) {
+                    if (uri != null) {
+                        System.err.println("Set " + uri);
+                        File f = new File(uri);
+                        UploadedMedia media = twitter.uploadMedia(f);
+                        mediaIds[i] = media.getMediaId();
+                        i++;
+                    }
+                }
+                if (count > 0) {
+                    update.setMediaIds(mediaIds);
                 }
                 twitter.updateStatus(update);
             } catch (TwitterException e) {
@@ -159,7 +174,9 @@ public class TweetService extends Service {
         Cursor cursor = loader.loadInBackground();
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        return cursor.getString(column_index);
+        String path = cursor.getString(column_index);
+        cursor.close();
+        return path;
     }
 
     private class FavTweetTask extends AsyncTask<String, Void, Status> {
