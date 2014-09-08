@@ -140,7 +140,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         } else {
             streaming = false;
         }
-        adapter = new TimelineAdapter(activity);
+        adapter = new TimelineAdapter(activity, TweetsListFragment.this);
     }
 
     @Override

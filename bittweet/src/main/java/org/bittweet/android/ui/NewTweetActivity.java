@@ -276,7 +276,9 @@ public class NewTweetActivity extends FragmentActivity {
             for (int i = 0; i < imageUri.length; i++) {
                 if (imageUri[i] == null) {
                     pos = i;
-                    imageUri[i] = Uri.parse(mCurrentPhotoPath);
+                    if (mCurrentPhotoPath != null && fromCamera) {
+                        imageUri[i] = Uri.parse(mCurrentPhotoPath);
+                    }
                     switch(pos) {
                         case 0:
                             imageView = uploadImage1;
@@ -432,8 +434,8 @@ public class NewTweetActivity extends FragmentActivity {
             if (imageUri[0] != null || imageUri[1] != null || imageUri[2] != null || imageUri[3] != null) {
                 String[] uriString = new String[4];
                 for (int i = 0; i < imageUri.length; i++) {
-                    System.err.println(imageUri.toString());
                     if (imageUri[i] != null) {
+                        System.err.println(imageUri[i].toString());
                         uriString[i] = imageUri[i].toString();
                     }
                     imageUri[i] = null;

@@ -175,7 +175,7 @@ public class TweetService extends Service {
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         String path = cursor.getString(column_index);
-        cursor.close();
+        //cursor.close();
         return path;
     }
 

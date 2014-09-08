@@ -10,6 +10,7 @@ import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
+import org.bittweet.android.ui.fragments.TweetsListFragment;
 import org.bittweet.android.ui.util.RoundedTransformation;
 
 import twitter4j.MediaEntity;
@@ -18,9 +19,11 @@ import twitter4j.URLEntity;
 
 public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     private int width;
+    private TweetsListFragment mFragment;
 
-    public ExpandedTweetAdapter(Context context) {
+    public ExpandedTweetAdapter(Context context, TweetsListFragment fragment) {
         super(context);
+        this.mFragment = fragment;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
             holder.rtBy.setVisibility(View.VISIBLE);
             holder.rtBy.setText(String.format(getContext().getString(R.string.retweeted_by), retweetedByName));
 
-            if(item.isMention()) {
+            if(item.isMention() && mFragment.isMentionsTimeline()) {
                 holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.reply_background));
             } else {
                 holder.frontView.setBackgroundResource(R.drawable.bittweet_tweet_background);
@@ -59,7 +62,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
             if(status.isFavorited()) {
                 holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.favourite_accent));
                 holder.frontView.setBackgroundResource(R.drawable.bittweet_tweet_background);
-            } else if(item.isMention()) {
+            } else if(item.isMention() && mFragment.isMentionsTimeline()) {
                 holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.reply_accent));
                 holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.reply_background));
             } else {

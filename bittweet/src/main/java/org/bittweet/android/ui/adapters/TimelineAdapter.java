@@ -15,6 +15,7 @@ import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.NewTweetActivity;
+import org.bittweet.android.ui.fragments.TweetsListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,10 @@ public class TimelineAdapter extends BaseAdapter {
     private final TweetAdapter tweetAdapter;
     private List<StatusItem> statusItems;
 
-    public TimelineAdapter(Context context) {
+    public TimelineAdapter(Context context, TweetsListFragment fragment) {
         this.context = context;
         this.statusItems = new ArrayList<StatusItem>();
-        this.tweetAdapter = new ExpandedTweetAdapter(context);
+        this.tweetAdapter = new ExpandedTweetAdapter(context, fragment);
     }
 
     public void clearList() {
