@@ -1,6 +1,7 @@
 package org.bittweet.android.internal;
 
 import twitter4j.Status;
+import twitter4j.UserMentionEntity;
 
 /**
  * Created by soomin on 3/26/2014.
@@ -25,7 +26,12 @@ public class StatusItem {
     }
 
     public boolean isMention() {
-        return getStatus().getInReplyToUserId() == myUserId;
+        for (UserMentionEntity mId : getStatus().getUserMentionEntities()) {
+            if (mId.getId() == myUserId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setStatus(Status status) {
