@@ -45,7 +45,16 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
 
         holder.accent.setVisibility(View.VISIBLE);
 
-        if(isRT) {
+        if(status.isFavorited()) {
+            holder.rtBy.setVisibility(View.GONE);
+            holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.favourite_accent));
+            if (item.isMention() && !mFragment.isMentionsTimeline()) {
+                holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.reply_background));
+            } else {
+                holder.frontView.setBackgroundResource(R.drawable.bittweet_tweet_background);
+            }
+        }
+        else if(isRT) {
             holder.rtBy.setVisibility(View.VISIBLE);
             holder.rtBy.setText(String.format(getContext().getString(R.string.retweeted_by), retweetedByName));
 
@@ -59,10 +68,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
         } else {
             holder.rtBy.setVisibility(View.GONE);
 
-            if(status.isFavorited()) {
-                holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.favourite_accent));
-                holder.frontView.setBackgroundResource(R.drawable.bittweet_tweet_background);
-            } else if(item.isMention() && !mFragment.isMentionsTimeline()) {
+            if(item.isMention() && !mFragment.isMentionsTimeline()) {
                 holder.accent.setBackgroundColor(getContext().getResources().getColor(R.color.reply_accent));
                 holder.frontView.setBackgroundColor(getContext().getResources().getColor(R.color.reply_background));
             } else {
