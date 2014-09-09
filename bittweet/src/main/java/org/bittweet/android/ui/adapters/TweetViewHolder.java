@@ -17,6 +17,11 @@ public class TweetViewHolder {
     View accent;
     TextView rtBy;
     ImageView mediaExpansion;
+    View previewContainer;
+    ImageView preview1;
+    ImageView preview2;
+    ImageView preview3;
+    ImageView preview4;
     View frontView;
     View tweetContainer;
     ImageButton replyBtn;
@@ -32,6 +37,11 @@ public class TweetViewHolder {
         this.accent = container.findViewById(R.id.accent_container);
         this.rtBy = (TextView) container.findViewById(R.id.retweeted_by);
         this.mediaExpansion = (ImageView) container.findViewById(R.id.media_expansion);
+        this.previewContainer = (View) container.findViewById(R.id.preview_container);
+        this.preview1 = (ImageView) container.findViewById(R.id.preview1);
+        this.preview2 = (ImageView) container.findViewById(R.id.preview2);
+        this.preview3 = (ImageView) container.findViewById(R.id.preview3);
+        this.preview4 = (ImageView) container.findViewById(R.id.preview4);
         this.frontView = container.findViewById(R.id.front_view);
         this.tweetContainer = container.findViewById(R.id.tweet_text_container);
         this.replyBtn = (ImageButton) container.findViewById(R.id.button_reply);

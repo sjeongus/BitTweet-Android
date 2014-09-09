@@ -16,12 +16,14 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -37,9 +39,6 @@ import org.bittweet.android.ApplicationController;
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
 import org.bittweet.android.services.TweetService;
-import org.bittweet.android.ui.adapters.SimpleTweetAdapter;
-import org.bittweet.android.ui.adapters.TweetAdapter;
-import org.bittweet.android.ui.adapters.TweetViewHolder;
 import org.bittweet.android.ui.util.LinkTouchMovementMethod;
 import org.bittweet.android.ui.util.RoundedTransformation;
 import org.bittweet.android.ui.util.TweetFormatter;
@@ -49,8 +48,10 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Dictionary;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.validation.Validator;
 
 import twitter4j.UserMentionEntity;
 
@@ -69,10 +70,12 @@ public class NewTweetActivity extends FragmentActivity {
 
     private EditText viewTweetEdit;
     private TextView viewCharCounter;
+    private int textCount;
+    private boolean imageAttached;
     private ImageButton attachImage;
     private String myUser;
 
-    private Uri[] imageUri;
+    private String[] imageUri;
     private String mCurrentPhotoPath;
 
     private ImageView uploadImage1;
@@ -81,7 +84,7 @@ public class NewTweetActivity extends FragmentActivity {
     private ImageView uploadImage4;
 
     private static final int IMAGE_PICKER_SELECT = 999;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +102,8 @@ public class NewTweetActivity extends FragmentActivity {
         uploadImage2 = (ImageView) findViewById(R.id.image2);
         uploadImage3 = (ImageView) findViewById(R.id.image3);
         uploadImage4 = (ImageView) findViewById(R.id.image4);
-        imageUri = new Uri[4];
+        imageUri = new String[4];
+        textCount = 140;
 
         attachImage = (ImageButton) findViewById(R.id.attachImage);
         attachImage.setOnClickListener(new View.OnClickListener() {
@@ -191,6 +195,11 @@ public class NewTweetActivity extends FragmentActivity {
             view.setVisibility(View.GONE);
             attachImage.setEnabled(true);
             attachImage.setBackgroundResource(R.drawable.bittweet_activated_background_holo_light);
+            if (imageUri[0] == null && imageUri[1] == null && imageUri[2] == null && imageUri[3] == null) {
+                textCount += 25;
+                imageAttached = false;
+                viewCharCounter.setText(String.valueOf(checkCharactersLeft(viewTweetEdit.getText())));
+            }
         }
     }
 
@@ -248,7 +257,7 @@ public class NewTweetActivity extends FragmentActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        galleryAddPic();
+        System.err.println("Camera image is " + mCurrentPhotoPath);
         return image;
     }
 
@@ -258,7 +267,8 @@ public class NewTweetActivity extends FragmentActivity {
         if (requestCode == IMAGE_PICKER_SELECT && resultCode == Activity.RESULT_OK) {
             BitmapWorkerTask task = new BitmapWorkerTask(data, false);
             task.execute();
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            galleryAddPic();
             BitmapWorkerTask task = new BitmapWorkerTask(data, true);
             task.execute();
         }
@@ -273,12 +283,13 @@ public class NewTweetActivity extends FragmentActivity {
         private boolean fromCamera;
 
         public BitmapWorkerTask(Intent data, boolean camera) {
+            fromCamera = camera;
             for (int i = 0; i < imageUri.length; i++) {
                 if (imageUri[i] == null) {
                     pos = i;
-                    if (mCurrentPhotoPath != null && fromCamera) {
-                        imageUri[i] = Uri.parse(mCurrentPhotoPath);
-                    }
+                    /*if (mCurrentPhotoPath != null && fromCamera) {
+                        imageUri[i] = mCurrentPhotoPath;
+                    }*/
                     switch(pos) {
                         case 0:
                             imageView = uploadImage1;
@@ -309,7 +320,7 @@ public class NewTweetActivity extends FragmentActivity {
             if (fromCamera) {
                 return mCurrentPhotoPath;
             } else {
-                return getBitmapFromCameraData(pos, mData, activity);
+                return getBitmapFromCameraData(mData, activity);
             }
         }
 
@@ -317,6 +328,7 @@ public class NewTweetActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(String path) {
             if (path != null) {
+                imageUri[pos] = path;
                 final ImageView myView = imageViewReference.get();
                 if (myView != null) {
                     int size = (int) convertPixelsToDp(150, getApplicationContext());
@@ -324,6 +336,7 @@ public class NewTweetActivity extends FragmentActivity {
                     if (fromCamera) {
                         downmap = setPic(mCurrentPhotoPath, size, size);
                     } else {
+
                         downmap = decodeSampledBitmapFromResource(path, size, size);
                     }
                     downmap = rotateBitmap(path, downmap);
@@ -334,14 +347,19 @@ public class NewTweetActivity extends FragmentActivity {
                         attachImage.setEnabled(false);
                         attachImage.setBackgroundColor(Color.LTGRAY);
                     }
+                    if (!imageAttached) {
+                        textCount -= 25;
+                        imageAttached = true;
+                        viewCharCounter.setText(String.valueOf(checkCharactersLeft(viewTweetEdit.getText())));
+                    }
                 }
             }
         }
     }
 
     // Function to get bitmap from gallery
-    public String getBitmapFromCameraData(int pos, Intent data, Context context) {
-        imageUri[pos] = data.getData();
+    public String getBitmapFromCameraData(Intent data, Context context) {
+        //imageUri[pos] = getRealPathFromURI(getApplicationContext(), data.getData());
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
         Cursor cursor = context.getContentResolver().query(data.getData(),filePathColumn, null, null, null);
         cursor.moveToFirst();
@@ -355,6 +373,7 @@ public class NewTweetActivity extends FragmentActivity {
         ApplicationController controller = (ApplicationController) getApplication();
         ActionBar actionBar = getActionBar();
 
+        assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(false);
 
@@ -432,15 +451,7 @@ public class NewTweetActivity extends FragmentActivity {
             serviceIntent.setAction(Intent.ACTION_SEND);
             serviceIntent.putExtra(Intent.EXTRA_TEXT, text);
             if (imageUri[0] != null || imageUri[1] != null || imageUri[2] != null || imageUri[3] != null) {
-                String[] uriString = new String[4];
-                for (int i = 0; i < imageUri.length; i++) {
-                    if (imageUri[i] != null) {
-                        System.err.println(imageUri[i].toString());
-                        uriString[i] = imageUri[i].toString();
-                    }
-                    imageUri[i] = null;
-                }
-                serviceIntent.putExtra("IMAGE_ARRAY", uriString);
+                serviceIntent.putExtra("IMAGE_ARRAY", imageUri);
             }
 
             if(inReplyToStatus != null) {
@@ -453,7 +464,10 @@ public class NewTweetActivity extends FragmentActivity {
     }
 
     private int checkCharactersLeft(CharSequence str) {
-        return 140 - str.length();
+        //return 140 - str.length();
+        //return textCount - str.length();
+        com.twitter.Validator valid = new com.twitter.Validator();
+        return textCount - valid.getTweetLength(str.toString());
     }
 
     private class TweetTextWatcher implements TextWatcher {
@@ -465,6 +479,11 @@ public class NewTweetActivity extends FragmentActivity {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            if (checkCharactersLeft(charSequence) < 0) {
+                viewCharCounter.setTextColor(Color.RED);
+            } else {
+                viewCharCounter.setTextColor(Color.BLACK);
+            }
             viewCharCounter.setText(String.valueOf(checkCharactersLeft(charSequence)));
         }
 

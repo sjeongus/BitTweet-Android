@@ -136,6 +136,75 @@
                 android:textSize="12sp"
                 android:textColor="#666"/>
 
+            <LinearLayout
+                android:id="@+id/preview_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/rounded_corner"
+                android:layout_marginTop="8dp"
+                android:adjustViewBounds="true">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true">
+
+                    <ImageView
+                        android:id="@+id/preview1"
+                        android:layout_width="match_parent"
+                        android:src="@drawable/ic_launcher"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        android:visibility="gone"/>
+
+                    <ImageView
+                        android:id="@+id/preview3"
+                        android:layout_width="match_parent"
+                        android:src="@drawable/ic_launcher"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true">
+
+                    <ImageView
+                        android:id="@+id/preview2"
+                        android:layout_width="match_parent"
+                        android:src="@drawable/ic_launcher"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        android:visibility="gone"/>
+
+                    <ImageView
+                        android:id="@+id/preview4"
+                        android:layout_width="match_parent"
+                        android:src="@drawable/ic_launcher"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
             <ImageView
                 android:id="@+id/media_expansion"
                 android:layout_marginTop="8dp"
@@ -145,7 +214,8 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:scaleType="centerCrop"
-                android:adjustViewBounds="true" />
+                android:adjustViewBounds="true"
+                android:visibility="visible"/>
         </LinearLayout>
     </LinearLayout>
 

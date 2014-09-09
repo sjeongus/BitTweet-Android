@@ -50,6 +50,12 @@ public class MyTwitterFactory {
         String oauthKey = prefs.getString(PREF_KEY_OAUTH_TOKEN, null);
         String oauthSecret = prefs.getString(PREF_KEY_OAUTH_SECRET, null);
 
+        configurationBuilder.setDebugEnabled(true);
+
+        // Set consumer keys
+        configurationBuilder.setOAuthConsumerKey(SecretKeys.CONSUMER_KEY);
+        configurationBuilder.setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
+
         if(oauthKey != null) {
             configurationBuilder.setOAuthAccessToken(oauthKey);
         }
@@ -57,10 +63,6 @@ public class MyTwitterFactory {
         if(oauthSecret != null) {
             configurationBuilder.setOAuthAccessTokenSecret(oauthSecret);
         }
-
-        // Set consumer keys
-        configurationBuilder.setOAuthConsumerKey(SecretKeys.CONSUMER_KEY);
-        configurationBuilder.setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
 
         conf = configurationBuilder.build();
 

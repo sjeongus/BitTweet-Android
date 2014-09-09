@@ -2,15 +2,23 @@ package org.bittweet.android.ui.util;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.v4.content.CursorLoader;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -190,6 +198,19 @@ public class ImageUtils {
         return inSampleSize;
     }
 
+    // Function to get the absolute uri path from a uri
+    public static String getRealPathFromURI(Context context, Uri contentUri) {
+        System.err.println("Getting the uri " + contentUri);
+        String[] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(context, contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String path = cursor.getString(column_index);
+        cursor.close();
+        return path;
+    }
+
     // Get a downsampled bitmap from source
     public static Bitmap decodeSampledBitmapFromResource(String path,
                                                          int reqWidth, int reqHeight) {
@@ -207,10 +228,51 @@ public class ImageUtils {
         return BitmapFactory.decodeFile(path, options);
     }
 
+    public static File getResizedBitmapFile(Context context, String path, String name, int width, int height) {
+        //create a file to write bitmap data
+        File f = new File(context.getCacheDir(), name);
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Convert bitmap to byte array
+        Bitmap bitmap = decodeSampledBitmapFromResource(path, width, height);
+        bitmap = rotateBitmap(path, bitmap);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+        //write the bytes in file
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(f);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return f;
+    }
 
     public static float convertPixelsToDp(float px, Context context){
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return px / (metrics.densityDpi / 160f);
+    }
+
+    public static int[] getBitmapDimensions(String path) {
+        int[] size = new int[2];
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        size[0] = options.outWidth;
+        size[1] = options.outHeight;
+        return size;
     }
 }

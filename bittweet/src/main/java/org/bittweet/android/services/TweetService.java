@@ -1,44 +1,25 @@
 package org.bittweet.android.services;
 
-import android.app.Activity;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
-import android.provider.MediaStore;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.CursorLoader;
 
 import org.bittweet.android.ApplicationController;
-import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.internal.StatusItem;
-import org.bittweet.android.ui.TweetsListActivity;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.UploadedMedia;
-import twitter4j.media.ImageUpload;
-import twitter4j.media.ImageUploadFactory;
-import twitter4j.media.MediaProvider;
+
+import static org.bittweet.android.ui.util.ImageUtils.getBitmapDimensions;
+import static org.bittweet.android.ui.util.ImageUtils.getResizedBitmapFile;
 
 public class TweetService extends Service {
     public static final String ACTION_FAV = "org.bittweet.android.actions.favourite";
@@ -97,11 +78,11 @@ public class TweetService extends Service {
         Intent intent = new Intent();
         intent.setAction("org.bittweet.android.services.TweetService");
         if (start) {
-            twitPref.edit().putString("TWEET_SEND", "sending").commit();
+            twitPref.edit().putString("TWEET_SEND", "sending").apply();
         } else if (success) {
-            twitPref.edit().putString("TWEET_SEND", "sent").commit();
+            twitPref.edit().putString("TWEET_SEND", "sent").apply();
         } else {
-            twitPref.edit().putString("TWEET_SEND", "error").commit();
+            twitPref.edit().putString("TWEET_SEND", "error").apply();
         }
         System.err.println("Tweet sent broadcast sent!");
         sendBroadcast(intent);
@@ -119,7 +100,7 @@ public class TweetService extends Service {
             for (int i = 0; i < uriPath.length; i++) {
                 if (uriString[i] != null) {
                     count++;
-                    uriPath[i] = getRealPathFromURI(Uri.parse(uriString[i]));
+                    uriPath[i] = uriString[i];
                 }
             }
         }
@@ -136,19 +117,32 @@ public class TweetService extends Service {
                 if (strings[1] != null) {
                     update.setInReplyToStatusId(Long.parseLong(strings[1]));
                 }
-                // Check if an image is attached, and attach to the tweet
-                long[] mediaIds = new long[count];
-                int i = 0;
-                for (String uri : uriPath) {
-                    if (uri != null) {
-                        System.err.println("Set " + uri);
-                        File f = new File(uri);
-                        UploadedMedia media = twitter.uploadMedia(f);
-                        mediaIds[i] = media.getMediaId();
-                        i++;
-                    }
-                }
                 if (count > 0) {
+                    // Check if an image is attached, and attach to the tweet
+                    long[] mediaIds = new long[count];
+                    int i = 0;
+                    for (String uri : uriPath) {
+                        if (uri != null) {
+                            System.err.println("Set " + uri);
+                            //File f = new File(uri);
+                            int[] dimens = getBitmapDimensions(uri);
+                            File f;
+                            if (dimens[0] > 2048) {
+                                System.err.println("Resizing width");
+                                f = getResizedBitmapFile(getApplicationContext(), uri,
+                                        "image" + i, 2048, dimens[1] * 2048/dimens[0]);
+                            } else if (dimens[1] > 2048) {
+                                System.err.println("Resizing height");
+                                f = getResizedBitmapFile(getApplicationContext(), uri,
+                                        "image" + i, dimens[0] * 2048/dimens[1], 2048);
+                            } else {
+                                f = new File(uri);
+                            }
+                            UploadedMedia media = twitter.uploadMedia(f);
+                            mediaIds[i] = media.getMediaId();
+                            i++;
+                        }
+                    }
                     update.setMediaIds(mediaIds);
                 }
                 twitter.updateStatus(update);
@@ -165,18 +159,6 @@ public class TweetService extends Service {
             // notify at end of result
             notifier(false, result);
         }
-    }
-
-    // Function to get the absolute uri path from a uri
-    private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(getApplicationContext(), contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String path = cursor.getString(column_index);
-        //cursor.close();
-        return path;
     }
 
     private class FavTweetTask extends AsyncTask<String, Void, Status> {
