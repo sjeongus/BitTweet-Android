@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff">
+        android:background="#fff">
 
         <RelativeLayout
             android:id="@+id/imagelayout"
@@ -284,7 +284,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="none"
-                android:background="#ffffff"
+                android:background="#fff"
                 android:layout_below="@+id/imagelayout">
 
                 <LinearLayout

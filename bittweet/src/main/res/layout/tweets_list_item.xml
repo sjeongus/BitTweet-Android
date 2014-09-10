@@ -160,7 +160,7 @@
                         android:layout_weight="1"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
-                        android:visibility="gone"/>
+                        android:visibility="visible"/>
 
                     <ImageView
                         android:id="@+id/preview3"
@@ -189,7 +189,7 @@
                         android:layout_weight="1"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
-                        android:visibility="gone"/>
+                        android:visibility="visible"/>
 
                     <ImageView
                         android:id="@+id/preview4"
@@ -215,7 +215,7 @@
                 android:background="@android:color/transparent"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 

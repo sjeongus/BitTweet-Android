@@ -1,17 +1,14 @@
 package org.bittweet.android.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -29,10 +26,7 @@ import com.crashlytics.android.Crashlytics;
 
 import org.bittweet.android.BuildConfig;
 import org.bittweet.android.R;
-import org.bittweet.android.internal.GeneralTimelineContent;
 import org.bittweet.android.internal.MyTwitterFactory;
-import org.bittweet.android.internal.TimelineContent;
-import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.fragments.HomeTweetsListFragment;
 import org.bittweet.android.ui.fragments.MentionsTweetsListFragment;
 import org.bittweet.android.ui.fragments.TweetsDetailFragment;
@@ -47,7 +41,6 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 
 public class TweetsListActivity extends FragmentActivity implements TweetsListFragment.Callbacks {
     private boolean isTwoPane;
@@ -55,16 +48,12 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
     private SharedPreferences twitPref;
     private FragmentManager fragmentManager;
 
-    private static final String TAG = "TweetsListActivity";
+    //private static final String TAG = "TweetsListActivity";
     public static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
 
-    private Thread thread;
-    private Runnable profrun;
-    private String myUser;
-    private String myAvatar;
     private Activity activity;
 
     public boolean isTwitterLoggedInAlready() {
@@ -96,30 +85,10 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
             isTwoPane = true;
         }
 
-        thread = new Thread() {
-            @Override
-            public void run()
-            {
-                MyTwitterFactory twitterFact = MyTwitterFactory.getInstance(getApplicationContext());
-                Twitter twitter = twitterFact.getTwitter();
-                try {
-                    //twitter.verifyCredentials();
-                    long userId = twitterFact.getUserId();
-                    myUser = twitter.showUser(userId).getScreenName();
-                    myAvatar = twitter.showUser(userId).getOriginalProfileImageURLHttps();
-                    twitPref.edit().putString("AVATAR", myAvatar).commit();
-                    twitPref.edit().putString("USERNAME", myUser).commit();
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.start();
-
-        IntentFilter filter = new IntentFilter();
+        /*IntentFilter filter = new IntentFilter();
         filter.addAction("org.bittweet.android.services.TweetService");
         filter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(tweetReceiver, filter);
+        registerReceiver(tweetReceiver, filter);*/
 
         loadHomeTimeline();
     }
@@ -131,7 +100,6 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
             finish();
             Intent logout = new Intent(TweetsListActivity.this, TwitterLoginActivity.class);
             startActivity(logout);
-            return;
         } else if (intent.getBooleanExtra("RESTART", false)) {
             System.err.println("Got RESTART. Logging out.");
             recreate();
@@ -185,7 +153,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
                         break;
                     case 2:
                         Intent profIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                        profIntent.putExtra("USERNAME", myUser);
+                        profIntent.putExtra("USERNAME", twitPref.getString("USERNAME", ""));
                         startActivity(profIntent);
                         break;
                     case 3:
@@ -231,7 +199,12 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
         super.onPause();
 
         Crouton.cancelAllCroutons();
-        this.unregisterReceiver(tweetReceiver);
+        try {
+            this.unregisterReceiver(tweetReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -280,7 +253,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
     }
 
     private void loadMentionsTimeline() {
-        MentionsTweetsListFragment fragment = null;
+        MentionsTweetsListFragment fragment;
 
         try {
             fragment = MentionsTweetsListFragment.class.newInstance();
@@ -299,7 +272,7 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
     }
 
     private void loadHomeTimeline() {
-        HomeTweetsListFragment fragment = null;
+        HomeTweetsListFragment fragment;
 
         try {
             fragment = HomeTweetsListFragment.class.newInstance();
@@ -322,15 +295,15 @@ public class TweetsListActivity extends FragmentActivity implements TweetsListFr
             System.err.println("Broadcast received!");
             String status = twitPref.getString("TWEET_SEND", "null");
             System.err.println(status);
-            if (status == "sending") {
+            if (status.equals("sending")) {
                 Crouton.showText(activity, R.string.tweet_updating, Style.INFO);
-            } else if (status == "sent") {
+            } else if (status.equals("sent")) {
                 Crouton.showText(activity, R.string.tweet_sent, Style.CONFIRM);
-            } else if (status == "error") {
+            } else if (status.equals("error")) {
                 Crouton.showText(activity, R.string.tweet_error, Style.ALERT);
             }
 
-            twitPref.edit().putString("TWEET_SEND", "null").commit();
+            twitPref.edit().putString("TWEET_SEND", "null").apply();
         }
     };
 }

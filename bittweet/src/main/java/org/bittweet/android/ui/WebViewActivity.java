@@ -203,6 +203,9 @@ public class WebViewActivity extends Activity {
     private class HandleAuthTask extends AsyncTask<Void, Void, Void> {
         private AccessToken accessToken = null;
         private Uri mUri;
+        private long userId;
+        private String username;
+        private String avatar;
 
         public HandleAuthTask(Uri uri) {
             accessToken = null;
@@ -218,6 +221,9 @@ public class WebViewActivity extends Activity {
                 try {
                     // Get the access token
                     accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
+                    userId = twitter.getId();
+                    username = twitter.getScreenName();
+                    avatar = twitter.showUser(userId).getOriginalProfileImageURLHttps();
                 } catch (TwitterException e) {
                     e.printStackTrace();
                     System.err.println("Could not get access token");
@@ -259,7 +265,11 @@ public class WebViewActivity extends Activity {
 
             // Store login status - true
             e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
-            e.commit(); // save changes
+
+            e.putLong("USERID", userId);
+            e.putString("USERNAME", username);
+            e.putString("AVATAR", avatar);
+            e.apply(); // save changes
 
             Log.e("Twitter OAuth Token", "> " + token);
             System.err.println("Oauth token is " + token);
