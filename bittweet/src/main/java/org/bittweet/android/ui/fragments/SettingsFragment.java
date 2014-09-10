@@ -89,7 +89,7 @@ public class SettingsFragment extends PreferenceFragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle(R.string.preference_streaming)
                         .setMessage(R.string.streaming_name)
-                        .setNegativeButton(R.string.streaming_ok, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.streaming_ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // Clicking this will launch the TweetsListActivity and restart it
                                 Intent intent = new Intent(context, TweetsListActivity.class);

@@ -206,6 +206,10 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                         }
                     });
                     holder.mediaExpansion.setVisibility(View.VISIBLE);
+                    holder.preview1.setVisibility(View.GONE);
+                    holder.preview2.setVisibility(View.GONE);
+                    holder.preview3.setVisibility(View.GONE);
+                    holder.preview4.setVisibility(View.GONE);
                     break;
                 }
             }
