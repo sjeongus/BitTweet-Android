@@ -96,7 +96,8 @@ public class NewTweetActivity extends FragmentActivity {
         initializeResources();
 
         ImageView avatar = (ImageView) findViewById(R.id.profilephoto);
-        Ion.with(avatar).resize(250, 250).transform(new RoundedTransformation(250, 0)).animateGif(true).load(myAvatar);
+        Ion.with(avatar).resize(250, 250).transform(new RoundedTransformation(250, 0,
+                true, true, true, true)).animateGif(true).load(myAvatar);
 
         uploadImage1 = (ImageView) findViewById(R.id.image1);
         uploadImage2 = (ImageView) findViewById(R.id.image2);

@@ -265,6 +265,14 @@ public class ImageUtils {
         return px / (metrics.densityDpi / 160f);
     }
 
+    public static float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * (metrics.densityDpi / 160f);
+        return px;
+    }
+
+
     public static int[] getBitmapDimensions(String path) {
         int[] size = new int[2];
         // First decode with inJustDecodeBounds=true to check dimensions

@@ -138,26 +138,29 @@
 
             <LinearLayout
                 android:id="@+id/preview_container"
+                android:baselineAligned="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@drawable/rounded_corner"
                 android:layout_marginTop="8dp"
                 android:adjustViewBounds="true">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
                     android:layout_weight="1"
+                    android:orientation="vertical"
                     android:adjustViewBounds="true">
 
                     <ImageView
                         android:id="@+id/preview1"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="1.5dp"
+                        android:paddingEnd="1.5dp"
+                        android:paddingLeft="0dp"
+                        android:paddingStart="0dp"
                         android:src="@drawable/ic_launcher"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:visibility="visible"/>
@@ -165,12 +168,16 @@
                     <ImageView
                         android:id="@+id/preview3"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="3dp"
+                        android:paddingRight="1.5dp"
+                        android:paddingEnd="1.5dp"
+                        android:paddingLeft="0dp"
+                        android:paddingStart="0dp"
                         android:src="@drawable/ic_launcher"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
-                        android:visibility="gone"/>
+                        android:visibility="visible"/>
 
                 </LinearLayout>
 
@@ -184,9 +191,12 @@
                     <ImageView
                         android:id="@+id/preview2"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingLeft="1.5dp"
+                        android:paddingStart="1.5dp"
                         android:src="@drawable/ic_launcher"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
                         android:visibility="visible"/>
@@ -194,12 +204,16 @@
                     <ImageView
                         android:id="@+id/preview4"
                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingLeft="1.5dp"
+                        android:paddingStart="1.5dp"
+                        android:paddingTop="3dp"
                         android:src="@drawable/ic_launcher"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
                         android:scaleType="centerCrop"
                         android:adjustViewBounds="true"
-                        android:visibility="gone"/>
+                        android:visibility="visible"/>
 
                 </LinearLayout>
 
@@ -207,7 +221,6 @@
 
             <ImageView
                 android:id="@+id/media_expansion"
-                android:layout_marginTop="8dp"
                 android:src="@drawable/ic_launcher"
                 android:contentDescription="@string/media_expansion_desc"
                 android:layout_width="match_parent"

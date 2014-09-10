@@ -2,7 +2,6 @@ package org.bittweet.android.ui.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -17,6 +16,8 @@ import org.bittweet.android.ui.util.RoundedTransformation;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.URLEntity;
+
+import static org.bittweet.android.ui.util.ImageUtils.convertDpToPixel;
 
 public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     private int width;
@@ -79,41 +80,115 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
         }
 
         // Load media
-        MediaEntity[] mediaEntities = status.getMediaEntities();
-        //final MediaEntity[] mediaEntities = status.getExtendedMediaEntities();
+        //MediaEntity[] mediaEntities = status.getMediaEntities();
+        MediaEntity[] mediaEntities = status.getExtendedMediaEntities();
         URLEntity[] urlEntities = status.getURLEntities();
         final ImageView media = holder.mediaExpansion;
-        final TweetViewHolder myHolder = holder;
         final View preview = holder.previewContainer;
+        final ImageView preview1 = holder.preview1;
+        final ImageView preview2 = holder.preview2;
+        final ImageView preview3 = holder.preview3;
+        final ImageView preview4 = holder.preview4;
 
         if(mediaEntities.length > 0) {
-            final MediaEntity displayedMedia = mediaEntities[0];
+            if (mediaEntities.length == 1) {
+                final MediaEntity displayedMedia = mediaEntities[0];
 
-            // To get the dimensions of the image preview before it is drawn
-            media.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    media.getViewTreeObserver().removeOnPreDrawListener(this);
+                // To get the dimensions of the image preview before it is drawn
+                media.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        media.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                    // Get the width of the view and set height to 16:10 aspect ratio
-                    width = media.getWidth();
-                    setImage(media, width, width * 5/8, displayedMedia.getMediaURLHttps());
-                    return true;
-                }
-            });
-            holder.mediaExpansion.setVisibility(View.VISIBLE);
-            // To get the dimensions of the image preview before it is drawn
-            /*preview.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    media.getViewTreeObserver().removeOnPreDrawListener(this);
+                        // Get the width of the view and set height to 16:10 aspect ratio
+                        width = media.getWidth();
+                        setImage(media, width, width * 5/8,
+                                true, true, true, true, displayedMedia.getMediaURLHttps());
+                        return true;
+                    }
+                });
+                holder.mediaExpansion.setVisibility(View.VISIBLE);
+                holder.preview1.setVisibility(View.GONE);
+                holder.preview2.setVisibility(View.GONE);
+                holder.preview3.setVisibility(View.GONE);
+                holder.preview4.setVisibility(View.GONE);
+            } else if (mediaEntities.length == 2) {
+                // To get the dimensions of the image preview before it is drawn
+                final MediaEntity firstpic = mediaEntities[0];
+                final MediaEntity secondpic = mediaEntities[1];
+                preview.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        preview.getViewTreeObserver().removeOnPreDrawListener(this);
 
-                    // Get the width of the view and set height to 16:10 aspect ratio
-                    width = preview.getWidth();
-                    setMultiPic(mediaEntities, myHolder, width, width * 5/8);
-                    return true;
-                }
-            });*/
+                        // Get the width of the view and set height to 16:10 aspect ratio
+                        width = preview.getWidth();
+                        setImage(preview1, width/2, width * 5/8,
+                                true, false, true, false, firstpic.getMediaURLHttps());
+                        setImage(preview2, width/2, width * 5/8,
+                                false, true, false, true, secondpic.getMediaURLHttps());
+                        return true;
+                    }
+                });
+                holder.preview1.setVisibility(View.VISIBLE);
+                holder.preview2.setVisibility(View.VISIBLE);
+                holder.preview3.setVisibility(View.GONE);
+                holder.preview4.setVisibility(View.GONE);
+            } else if (mediaEntities.length == 3) {
+                // To get the dimensions of the image preview before it is drawn
+                final MediaEntity firstpic = mediaEntities[0];
+                final MediaEntity secondpic = mediaEntities[1];
+                final MediaEntity thirdpic = mediaEntities[2];
+                final int padding = (int) convertDpToPixel(3, getContext());
+                preview.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        preview.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                        // Get the width of the view and set height to 16:10 aspect ratio
+                        width = preview.getWidth();
+                        setImage(preview1, width/2, width/2 * 5/8,
+                                true, false, false, false, firstpic.getMediaURLHttps());
+                        setImage(preview2, width/2, width * 5/8 + padding,
+                                false, true, false, true, thirdpic.getMediaURLHttps());
+                        setImage(preview3, width/2, width/2 * 5/8,
+                                false, false, true, false, secondpic.getMediaURLHttps());
+                        return true;
+                    }
+                });
+                holder.preview1.setVisibility(View.VISIBLE);
+                holder.preview2.setVisibility(View.VISIBLE);
+                holder.preview3.setVisibility(View.VISIBLE);
+                holder.preview4.setVisibility(View.GONE);
+            } else if (mediaEntities.length == 4) {
+                // To get the dimensions of the image preview before it is drawn
+                final MediaEntity firstpic = mediaEntities[0];
+                final MediaEntity secondpic = mediaEntities[1];
+                final MediaEntity thirdpic = mediaEntities[2];
+                final MediaEntity fourthpic = mediaEntities[3];
+                preview.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        preview.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                        // Get the width of the view and set height to 16:10 aspect ratio
+                        width = preview.getWidth();
+                        setImage(preview1, width/2, width/2 * 5/8,
+                                true, false, false, false, firstpic.getMediaURLHttps());
+                        setImage(preview2, width/2, width/2 * 5/8,
+                                false, true, false, false, secondpic.getMediaURLHttps());
+                        setImage(preview3, width/2, width/2 * 5/8,
+                                false, false, true, false, thirdpic.getMediaURLHttps());
+                        setImage(preview4, width/2, width/2 * 5/8,
+                                false, false, false, true, fourthpic.getMediaURLHttps());
+                        return true;
+                    }
+                });
+                holder.preview1.setVisibility(View.VISIBLE);
+                holder.preview2.setVisibility(View.VISIBLE);
+                holder.preview3.setVisibility(View.VISIBLE);
+                holder.preview4.setVisibility(View.VISIBLE);
+            }
         } else if(urlEntities.length > 0) {
             for (final URLEntity urlEntity : urlEntities) {
                 if (urlEntity.getExpandedURL().matches("^https?://(?:[a-z\\-]+\\.)+[a-z]{2,6}(?:/[^/#?]+)+\\.(?:jpe?g|gif|png)$")) {
@@ -125,7 +200,8 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
 
                             // Get the width of the view and set height to 16:10 aspect ratio
                             width = media.getWidth();
-                            setImage(media, width, width * 5/8, urlEntity.getExpandedURL());
+                            setImage(media, width, width * 5/8,
+                                    true, true, true, true, urlEntity.getExpandedURL());
                             return true;
                         }
                     });
@@ -143,32 +219,13 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     }
 
     // Set the image preview on timeline with Ion
-    public void setImage(ImageView view, int width, int height, String url) {
+    public void setImage(ImageView view, int width, int height,
+                         boolean TL, boolean TR, boolean BL, boolean BR, String url) {
         Ion.with(view)
                 .animateGif(false)
                 .resize(width, height)
                 .centerCrop()
-                .transform(new RoundedTransformation(20, 0))
+                .transform(new RoundedTransformation(20, 0, TL, TR, BL, BR))
                 .load(url);
-    }
-
-    public void setMultiPic(final MediaEntity[] entities, TweetViewHolder holder, int mWidth, int mHeight) {
-        final int num = entities.length;
-        final MediaEntity[] images = entities;
-        final ImageView preview1 = holder.preview1;
-        final ImageView preview2 = holder.preview2;
-        final ImageView preview3 = holder.preview3;
-        final ImageView preview4 = holder.preview4;
-        if (num == 1) {
-            preview1.setVisibility(View.VISIBLE);
-            preview2.setVisibility(View.GONE);
-            preview3.setVisibility(View.GONE);
-            preview4.setVisibility(View.GONE);
-            Ion.with(preview1)
-                    .animateGif(false)
-                    .resize(mWidth, mHeight)
-                    .transform(new RoundedTransformation(20, 0))
-                    .load(entities[0].getMediaURLHttps());
-        }
     }
 }

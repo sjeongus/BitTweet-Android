@@ -166,7 +166,8 @@ public class ProfileActivity extends FragmentActivity {
 
             Ion.with(avatar)
                     .resize(250, 250)
-                    .transform(new RoundedTransformation(250, 0))
+                    .transform(new RoundedTransformation(250, 0,
+                            true, true, true, true))
                     .load(user.getOriginalProfileImageURLHttps());
 
             Ion.with(header).load(user.getProfileBannerURL());

@@ -70,7 +70,8 @@ public class SimpleTweetAdapter implements TweetAdapter {
         // Get and set avatar asynchronously
         Ion.with(holder.avatarImage)
                 .resize(150, 150)
-                .transform(new RoundedTransformation(250, 0))
+                .transform(new RoundedTransformation(250, 0,
+                        true, true, true, true))
                 .animateGif(true)
                 .load(status.getUser().getOriginalProfileImageURLHttps());
 
