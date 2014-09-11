@@ -190,6 +190,11 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                 holder.preview4.setVisibility(View.VISIBLE);
             }
         } else if(urlEntities.length > 0) {
+            holder.mediaExpansion.setVisibility(View.GONE);
+            holder.preview1.setVisibility(View.GONE);
+            holder.preview2.setVisibility(View.GONE);
+            holder.preview3.setVisibility(View.GONE);
+            holder.preview4.setVisibility(View.GONE);
             for (final URLEntity urlEntity : urlEntities) {
                 if (urlEntity.getExpandedURL().matches("^https?://(?:[a-z\\-]+\\.)+[a-z]{2,6}(?:/[^/#?]+)+\\.(?:jpe?g|gif|png)$")) {
                     // To get the dimensions of the image preview before it is drawn
@@ -206,10 +211,6 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                         }
                     });
                     holder.mediaExpansion.setVisibility(View.VISIBLE);
-                    holder.preview1.setVisibility(View.GONE);
-                    holder.preview2.setVisibility(View.GONE);
-                    holder.preview3.setVisibility(View.GONE);
-                    holder.preview4.setVisibility(View.GONE);
                     break;
                 }
             }

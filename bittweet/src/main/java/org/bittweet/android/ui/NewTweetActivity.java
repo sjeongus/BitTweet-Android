@@ -423,6 +423,8 @@ public class NewTweetActivity extends FragmentActivity {
 
         viewTweetEdit.setText(newMentionPrefix);
         viewTweetEdit.setSelection(newMentionPrefix.length());
+        viewCharCounter.setText(String.valueOf(140 - newMentionPrefix.length()));
+        viewCharCounter.setTextColor(Color.BLACK);
     }
 
     @Override
