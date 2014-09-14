@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.CookieManager;
@@ -50,6 +52,7 @@ public class WebViewActivity extends FragmentActivity {
     private WebView webView;
     private CookieManager cookieManager;
     private boolean login = false;
+    private Uri uri;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,7 @@ public class WebViewActivity extends FragmentActivity {
             webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
             webView.setWebChromeClient(new WebChromeClient());
             if (getIntent().getBooleanExtra("URL", false)) {
+                uri = getIntent().getData();
                 webView.loadUrl(getIntent().getDataString());
                 webView.setWebViewClient(new WebViewClient() {
                     @Override
@@ -108,12 +112,24 @@ public class WebViewActivity extends FragmentActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.webview_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 //NavUtils.navigateUpFromSameTask(this);
                 finish();
                 return true;
+            case R.id.open_browser:
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(uri);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

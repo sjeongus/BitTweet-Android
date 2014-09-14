@@ -71,6 +71,11 @@ package="org.bittweet.android" >
         android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
         android:parentActivityName="org.bittweet.android.ui.TweetsListActivity" >
     </activity>
+    <activity android:name=".ui.ImageViewerActivity"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
+        android:parentActivityName="org.bittweet.android.ui.TweetsListActivity"
+        android:theme="@style/Theme.BitTweetImageView">
+    </activity>
 
     <meta-data
         android:name="com.crashlytics.ApiKey"

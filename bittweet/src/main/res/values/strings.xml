@@ -79,7 +79,16 @@
     <string name="profile_following_count">Following</string>
     <string name="profile_favorites_count">Favorites</string>
 
+    <string name="follow_user">Follow</string>
+    <string name="unfollow_user">Unfollow</string>
+    <string name="follow_error">Could not follow user. Please try again.</string>
+    <string name="unfollow_error">Could not unfollow user. Please try again.</string>
+    <string name="follow_success">Followed user!</string>
+    <string name="unfollow_success">Unfollowed user.</string>
+
     <string name="tweet_updating">Updating status&#8230;</string>
     <string name="tweet_sent">Tweet sent!</string>
     <string name="tweet_error">Tweet failed to send</string>
+
+    <string name="open_browser">Open in Browser</string>
 </resources>

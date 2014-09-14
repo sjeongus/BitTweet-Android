@@ -23,8 +23,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 19
-        versionCode 6
-        versionName "0.0.4+rokyubu"
+        versionCode 7
+        versionName "0.0.5+nanana"
 
         renderscriptTargetApi 19
         renderscriptSupportMode true
