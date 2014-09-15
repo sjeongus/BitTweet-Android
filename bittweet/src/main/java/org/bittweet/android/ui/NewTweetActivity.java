@@ -333,7 +333,6 @@ public class NewTweetActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(String path) {
             if (path != null) {
-                imageUri[pos] = path;
                 final ImageView myView = imageViewReference.get();
                 if (myView != null) {
                     int size = (int) convertPixelsToDp(150, getApplicationContext());
@@ -347,6 +346,7 @@ public class NewTweetActivity extends FragmentActivity {
                         } else {
                             sharedPath = path;
                         }
+                        imageUri[pos] = sharedPath;
                         downmap = decodeSampledBitmapFromResource(sharedPath, size, size);
                     }
                     downmap = rotateBitmap(path, downmap);
