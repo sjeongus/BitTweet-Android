@@ -53,7 +53,7 @@ public class ImageViewerActivity extends FragmentActivity {
         @Override
         public View instantiateItem(ViewGroup container, int position) {
             TouchImageView img = new TouchImageView(container.getContext());
-            Ion.with(img).animateGif(true).load(media[position]);
+            Ion.with(img).error(R.drawable.image_error).animateGif(true).load(media[position]);
             container.addView(img, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             img.setOnClickListener(new View.OnClickListener() {
                 @Override

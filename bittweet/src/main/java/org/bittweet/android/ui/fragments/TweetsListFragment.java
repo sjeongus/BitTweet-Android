@@ -135,11 +135,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         twitPrefs = getActivity().getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
         // Check if the device is connected to WiFi, and set streaming based on setting
-        if (ConnectionDetector.isOnWifi(getActivity())) {
-            streaming = prefs.getBoolean("pref_key_streaming", false);
-        } else {
-            streaming = false;
-        }
+        streaming = ConnectionDetector.isOnWifi(getActivity()) && prefs.getBoolean("pref_key_streaming", false);
         adapter = new TimelineAdapter(activity, TweetsListFragment.this);
     }
 
@@ -179,17 +175,17 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         // Check if first time app is being run. If so, refresh.
         //if (twitPrefs.getBoolean("FIRST_RUN", false)) {
             updateAdapter();
-            twitPrefs.edit().putBoolean("FIRST_RUN", false).commit();
+            twitPrefs.edit().putBoolean("FIRST_RUN", false).apply();
         //}
 
         // Check if streaming is enabled. If not, set up pull to refresh
-        if (!streaming && twitPrefs.getInt("Rate_Limited", 0) > 0) {
+        if (!streaming) {
             ActionBarPullToRefresh.from(activity)
                     .allChildrenArePullable()
                     .listener(this)
                     .setup(pullToRefreshLayout);
         // If streaming is detached and enabled, attach the stream to adapter
-        } else if(!isDetached() && streaming) {
+        } else if(!isDetached()) {
             // Streaming
             // Check if user is currently rate limited. If so, start stream after rate limit end
             int seconds = twitPrefs.getInt("Rate_Limited", 0);

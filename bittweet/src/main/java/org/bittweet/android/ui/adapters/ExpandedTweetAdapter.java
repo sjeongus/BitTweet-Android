@@ -372,11 +372,11 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     public void setImage(ImageView view, int width, int height,
                          boolean TL, boolean TR, boolean BL, boolean BR, String url) {
         Ion.with(view)
+                .error(R.drawable.image_error)
                 .animateGif(false)
                 .resize(width, height)
                 .centerCrop()
                 .transform(new RoundedTransformation(20, 0, TL, TR, BL, BR))
-                .placeholder(R.drawable.placeholder)
                 .load(url);
     }
 }

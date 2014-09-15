@@ -23,8 +23,8 @@
         <item>@drawable/ic_nav_profile</item>
     </array>
 
-    <string name="login_text">Build 6: Ro-Kyu-Bu! Pretty sure we can go to jail for this.</string>
-    <string name="login_disclaim">カズタ＠赤色のエプロン(pixiv 735960). This will not be in the final release.</string>
+    <string name="login_text">Don\'t forget the pudding!</string>
+    <string name="login_disclaim">綾鷹＠全力で穂乃果イベ(pixiv 1131370). This will not be in the final release.</string>
     <string name="login_button">Sign in via Twitter ≫</string>
     <string name="login_title">Sign in via Twitter</string>
 
