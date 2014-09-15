@@ -376,6 +376,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                 .resize(width, height)
                 .centerCrop()
                 .transform(new RoundedTransformation(20, 0, TL, TR, BL, BR))
+                .placeholder(R.drawable.placeholder)
                 .load(url);
     }
 }
