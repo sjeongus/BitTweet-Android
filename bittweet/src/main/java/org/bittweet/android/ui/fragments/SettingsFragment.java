@@ -95,8 +95,7 @@ public class SettingsFragment extends PreferenceFragment {
                                 Intent intent = new Intent(context, TweetsListActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 intent.putExtra("RESTART", true);
-                                startActivity(intent);
-                                return;
+                                context.startActivity(intent);
                             }
                         });
                 // Create the AlertDialog object
@@ -117,8 +116,8 @@ public class SettingsFragment extends PreferenceFragment {
                         // TODO: Clear out user timeline and other info. Persists after logging out
                         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         SharedPreferences.Editor editor = settings.edit();
-                        editor.clear().commit();
-                        twitter.edit().clear().commit();
+                        editor.clear().apply();
+                        twitter.edit().clear().apply();
                         mTwitter = MyTwitterFactory.getInstance(context).getTwitter();
                         mTwitter.setOAuthAccessToken(null);
 
@@ -127,8 +126,7 @@ public class SettingsFragment extends PreferenceFragment {
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         intent.putExtra("LOGOUT", true);
                         System.err.println("LOGOUT passed. Logging out!");
-                        startActivity(intent);
-                        return;
+                        context.startActivity(intent);
                     }
                 })
                 .setNegativeButton(R.string.logout_cancel, new DialogInterface.OnClickListener() {

@@ -47,6 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +58,7 @@ import twitter4j.UserMentionEntity;
 
 import static org.bittweet.android.ui.util.ImageUtils.convertPixelsToDp;
 import static org.bittweet.android.ui.util.ImageUtils.decodeSampledBitmapFromResource;
+import static org.bittweet.android.ui.util.ImageUtils.getRealPathFromURI;
 import static org.bittweet.android.ui.util.ImageUtils.rotateBitmap;
 import static org.bittweet.android.ui.util.ImageUtils.scaleCenterCrop;
 import static org.bittweet.android.ui.util.ImageUtils.setPic;
@@ -91,9 +93,10 @@ public class NewTweetActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_tweet);
         SharedPreferences twitPref = getSharedPreferences("MyTwitter", MODE_PRIVATE);
-        myUser = twitPref.getString("USERNAME", "null");
-        String myAvatar = twitPref.getString("AVATAR", "null");
-        initializeResources();
+        myUser = twitPref.getString("USERNAME", "");
+        String myAvatar = twitPref.getString("AVATAR", "");
+        imageUri = new String[4];
+        textCount = 140;
 
         ImageView avatar = (ImageView) findViewById(R.id.profilephoto);
         Ion.with(avatar).resize(250, 250).transform(new RoundedTransformation(250, 0,
@@ -103,10 +106,11 @@ public class NewTweetActivity extends FragmentActivity {
         uploadImage2 = (ImageView) findViewById(R.id.image2);
         uploadImage3 = (ImageView) findViewById(R.id.image3);
         uploadImage4 = (ImageView) findViewById(R.id.image4);
-        imageUri = new String[4];
-        textCount = 140;
 
         attachImage = (ImageButton) findViewById(R.id.attachImage);
+
+        initializeResources();
+
         attachImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -266,12 +270,10 @@ public class NewTweetActivity extends FragmentActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMAGE_PICKER_SELECT && resultCode == Activity.RESULT_OK) {
-            BitmapWorkerTask task = new BitmapWorkerTask(data, false);
-            task.execute();
+            new BitmapWorkerTask(data, false, false).execute();
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             galleryAddPic();
-            BitmapWorkerTask task = new BitmapWorkerTask(data, true);
-            task.execute();
+            new BitmapWorkerTask(data, true, false).execute();
         }
     }
 
@@ -282,15 +284,12 @@ public class NewTweetActivity extends FragmentActivity {
         private ImageView imageView;
         private Intent mData;
         private boolean fromCamera;
+        private boolean isShared;
 
-        public BitmapWorkerTask(Intent data, boolean camera) {
-            fromCamera = camera;
+        public BitmapWorkerTask(Intent data, boolean camera, boolean shared) {
             for (int i = 0; i < imageUri.length; i++) {
                 if (imageUri[i] == null) {
                     pos = i;
-                    /*if (mCurrentPhotoPath != null && fromCamera) {
-                        imageUri[i] = mCurrentPhotoPath;
-                    }*/
                     switch(pos) {
                         case 0:
                             imageView = uploadImage1;
@@ -311,6 +310,7 @@ public class NewTweetActivity extends FragmentActivity {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<ImageView>(imageView);
             this.fromCamera = camera;
+            this.isShared = shared;
             mData = data;
         }
 
@@ -320,8 +320,11 @@ public class NewTweetActivity extends FragmentActivity {
             Context activity = getApplicationContext();
             if (fromCamera) {
                 return mCurrentPhotoPath;
-            } else {
+            } else if (!isShared) {
                 return getBitmapFromCameraData(mData, activity);
+            } else {
+                //System.err.println(mData.getParcelableExtra(Intent.EXTRA_STREAM).toString());
+                return mData.getParcelableExtra(Intent.EXTRA_STREAM).toString();
             }
         }
 
@@ -337,8 +340,13 @@ public class NewTweetActivity extends FragmentActivity {
                     if (fromCamera) {
                         downmap = setPic(mCurrentPhotoPath, size, size);
                     } else {
-
-                        downmap = decodeSampledBitmapFromResource(path, size, size);
+                        String sharedPath;
+                        if (isShared) {
+                            sharedPath = getRealPathFromURI(getApplicationContext(), Uri.parse(path));
+                        } else {
+                            sharedPath = path;
+                        }
+                        downmap = decodeSampledBitmapFromResource(sharedPath, size, size);
                     }
                     downmap = rotateBitmap(path, downmap);
                     downmap = scaleCenterCrop(downmap, size, size);
@@ -360,7 +368,6 @@ public class NewTweetActivity extends FragmentActivity {
 
     // Function to get bitmap from gallery
     public String getBitmapFromCameraData(Intent data, Context context) {
-        //imageUri[pos] = getRealPathFromURI(getApplicationContext(), data.getData());
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
         Cursor cursor = context.getContentResolver().query(data.getData(),filePathColumn, null, null, null);
         cursor.moveToFirst();
@@ -384,15 +391,29 @@ public class NewTweetActivity extends FragmentActivity {
         viewTweetEdit.addTextChangedListener(new TweetTextWatcher());
         viewTweetEdit.requestFocus();
 
-        if(getIntent() != null && INTENT_REPLY.equals(getIntent().getAction())) {
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if(INTENT_REPLY.equals(getIntent().getAction())) {
             inReplyToStatus = controller.getStatus(getIntent().getStringExtra(ARG_REPLY_TO_ID));
             initializeReplyToStatus();
-        }
-
-        if (getIntent() != null && INTENT_FEEDBACK.equals(getIntent().getAction())) {
+        } else if (INTENT_FEEDBACK.equals(getIntent().getAction())) {
             String feedback = getIntent().getStringExtra(Intent.EXTRA_TEXT);
             viewTweetEdit.setText(feedback);
             viewTweetEdit.setSelection(feedback.length());
+            viewCharCounter.setText(String.valueOf(140 - feedback.length()));
+        } else if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                handleSendText(intent); // Handle text being sent
+            } else if (type.startsWith("image/")) {
+                handleSendImage(intent); // Handle single image being sent
+            }
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+            if (type.startsWith("image/")) {
+                handleSendMultipleImages(intent); // Handle multiple images being sent
+            }
         }
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -423,8 +444,31 @@ public class NewTweetActivity extends FragmentActivity {
 
         viewTweetEdit.setText(newMentionPrefix);
         viewTweetEdit.setSelection(newMentionPrefix.length());
-        viewCharCounter.setText(String.valueOf(140 - newMentionPrefix.length()));
-        viewCharCounter.setTextColor(Color.BLACK);
+    }
+
+    void handleSendText(Intent intent) {
+        String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (sharedText != null) {
+            // Update UI to reflect text being shared
+            viewTweetEdit.setText(sharedText);
+            viewTweetEdit.setSelection(sharedText.length());
+        }
+    }
+
+    void handleSendImage(Intent intent) {
+        Uri sharedImage = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (sharedImage != null) {
+            // Update UI to reflect image being shared
+            new BitmapWorkerTask(intent, false, true).execute();
+        }
+    }
+
+    void handleSendMultipleImages(Intent intent) {
+        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        if (imageUris != null && imageUris.size() <= 4) {
+            // Update UI to reflect multiple images being shared
+
+        }
     }
 
     @Override
@@ -467,8 +511,6 @@ public class NewTweetActivity extends FragmentActivity {
     }
 
     private int checkCharactersLeft(CharSequence str) {
-        //return 140 - str.length();
-        //return textCount - str.length();
         com.twitter.Validator valid = new com.twitter.Validator();
         return textCount - valid.getTweetLength(str.toString());
     }
