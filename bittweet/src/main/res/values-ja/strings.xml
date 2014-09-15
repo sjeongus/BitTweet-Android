@@ -23,8 +23,8 @@
         <item>@drawable/ic_nav_profile</item>
     </array>
 
-    <string name="login_text">Build 6: Ro-Kyu-Bu! Pretty sure we can go to jail for this.</string>
-    <string name="login_disclaim">カズタ＠赤色のエプロン(pixiv 735960). This will not be in the final release.</string>
+    <string name="login_text">Don\'t forget the pudding!</string>
+    <string name="login_disclaim">綾鷹＠全力で穂乃果イベ(pixiv 1131370). This will not be in the final release.</string>
     <string name="login_button">Twitterでログイン ≫</string>
     <string name="login_title">Twitterでログイン</string>
 
@@ -39,6 +39,11 @@
     <string name="tweet">新規ツイート</string>
     <string name="action_tweet">つぶやく</string>
     <string name="tweet_hint">What\'s happening right now?</string>
+    <string name="in_reply_to">Replying to</string>
+
+    <string name="add_image_camera">Take Picture</string>
+    <string name="add_image_gallery">Choose from Gallery</string>
+    <string name="remove_image">Remove Image</string>
 
     <string name="avatar">Avatar</string>
     <string name="tweet_service_ongoing">Nonsense</string>
@@ -74,7 +79,16 @@
     <string name="profile_following_count">フォロー</string>
     <string name="profile_favorites_count">お気に入り</string>
 
+    <string name="follow_user">Follow</string>
+    <string name="unfollow_user">Unfollow</string>
+    <string name="follow_error">Could not follow user. Please try again.</string>
+    <string name="unfollow_error">Could not unfollow user. Please try again.</string>
+    <string name="follow_success">Followed user!</string>
+    <string name="unfollow_success">Unfollowed user.</string>
+
     <string name="tweet_updating">Updating status&#8230;</string>
     <string name="tweet_sent">Tweet sent!</string>
     <string name="tweet_error">Tweet failed to send</string>
+
+    <string name="open_browser">Open in Browser</string>
 </resources>
