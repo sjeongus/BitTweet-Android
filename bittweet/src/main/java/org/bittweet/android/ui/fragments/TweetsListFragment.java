@@ -183,7 +183,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         //}
 
         // Check if streaming is enabled. If not, set up pull to refresh
-        if (!streaming) {
+        if (!streaming && twitPrefs.getInt("Rate_Limited", 0) > 0) {
             ActionBarPullToRefresh.from(activity)
                     .allChildrenArePullable()
                     .listener(this)
@@ -204,7 +204,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
                 }, seconds * 1000);
             // If not rate limited, update adapter and start stream
             } else {
-                updateAdapter();
+                //updateAdapter();
                 ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
             }
         }

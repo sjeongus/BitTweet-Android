@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.R;
@@ -111,7 +113,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                         mediaUrl[i] = media.getMediaURLHttps();
                         i++;
                     }
-                    Bitmap bitmap = Ion.with(media).getBitmap();
+                    Bitmap bitmap = Bitmap.createBitmap(media.getWidth(), media.getHeight(), Bitmap.Config.ARGB_8888);
                     ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(media, bitmap, 0, 0);
                     Intent intent = new Intent(context, ImageViewerActivity.class);
                     intent.putExtra("MEDIA", mediaUrl);
@@ -128,7 +130,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                         mediaUrl[i] = media.getMediaURLHttps();
                         i++;
                     }
-                    Bitmap bitmap = Ion.with(preview1).getBitmap();
+                    Bitmap bitmap = Bitmap.createBitmap(preview1.getWidth(), preview1.getHeight(), Bitmap.Config.ARGB_8888);
                     ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(preview1, bitmap, 0, 0);
                     Intent intent = new Intent(context, ImageViewerActivity.class);
                     intent.putExtra("MEDIA", mediaUrl);
@@ -145,7 +147,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                         mediaUrl[i] = media.getMediaURLHttps();
                         i++;
                     }
-                    Bitmap bitmap = Ion.with(preview2).getBitmap();
+                    Bitmap bitmap = Bitmap.createBitmap(preview2.getWidth(), preview2.getHeight(), Bitmap.Config.ARGB_8888);
                     ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(preview2, bitmap, 0, 0);
                     Intent intent = new Intent(context, ImageViewerActivity.class);
                     intent.putExtra("MEDIA", mediaUrl);
@@ -162,7 +164,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                         mediaUrl[i] = media.getMediaURLHttps();
                         i++;
                     }
-                    Bitmap bitmap = Ion.with(preview3).getBitmap();
+                    Bitmap bitmap = Bitmap.createBitmap(preview3.getWidth(), preview3.getHeight(), Bitmap.Config.ARGB_8888);
                     ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(preview3, bitmap, 0, 0);
                     Intent intent = new Intent(context, ImageViewerActivity.class);
                     intent.putExtra("MEDIA", mediaUrl);
@@ -179,7 +181,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                         mediaUrl[i] = media.getMediaURLHttps();
                         i++;
                     }
-                    Bitmap bitmap = Ion.with(preview4).getBitmap();
+                    Bitmap bitmap = Bitmap.createBitmap(preview4.getWidth(), preview4.getHeight(), Bitmap.Config.ARGB_8888);
                     ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(preview4, bitmap, 0, 0);
                     Intent intent = new Intent(context, ImageViewerActivity.class);
                     intent.putExtra("MEDIA", mediaUrl);
@@ -315,7 +317,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                             String[] mediaUrl = new String[1];
                             int i = 0;
                             mediaUrl[0] = finalUrl[0].getExpandedURL();
-                            Bitmap bitmap = Ion.with(media).getBitmap();
+                            Bitmap bitmap = Bitmap.createBitmap(media.getWidth(), media.getHeight(), Bitmap.Config.ARGB_8888);
                             ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(media, bitmap, 0, 0);
                             Intent intent = new Intent(context, ImageViewerActivity.class);
                             intent.putExtra("MEDIA", mediaUrl);
@@ -340,17 +342,14 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                             return true;
                         }
                     });
-                    final Bitmap bitmap = Ion.with(media).getBitmap();
-                    if (bitmap != null) {
-                        holder.mediaExpansion.setVisibility(View.VISIBLE);
-                    }
+                    holder.mediaExpansion.setVisibility(View.VISIBLE);
                     holder.mediaExpansion.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             String[] mediaUrl = new String[1];
                             int i = 0;
                             mediaUrl[0] = url;
-                            //Bitmap bitmap = Ion.with(media).getBitmap();
+                            Bitmap bitmap = Bitmap.createBitmap(media.getWidth(), media.getHeight(), Bitmap.Config.ARGB_8888);
                             ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(media, bitmap, 0, 0);
                             Intent intent = new Intent(context, ImageViewerActivity.class);
                             intent.putExtra("MEDIA", mediaUrl);

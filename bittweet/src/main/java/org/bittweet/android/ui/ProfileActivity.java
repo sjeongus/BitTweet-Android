@@ -205,7 +205,7 @@ public class ProfileActivity extends FragmentActivity {
                     String[] mediaUrl = new String[1];
                     int i = 0;
                     mediaUrl[0] = user.getOriginalProfileImageURLHttps();
-                    Bitmap bitmap = Ion.with(avatar).getBitmap();
+                    Bitmap bitmap = Bitmap.createBitmap(avatar.getWidth(), avatar.getHeight(), Bitmap.Config.ARGB_8888);
                     ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(avatar, bitmap, 0, 0);
                     Intent intent = new Intent(context, ImageViewerActivity.class);
                     intent.putExtra("MEDIA", mediaUrl);
@@ -224,11 +224,25 @@ public class ProfileActivity extends FragmentActivity {
             followingCount.setText(myFollowing);
             favoriteCount.setText(myFavorites);
 
-            userInfo.setMovementMethod(new LinkTouchMovementMethod(false));
-            userInfo.setText(TweetFormatter.formatDescriptionText(ProfileActivity.this, user));
-            userUrl.setMovementMethod(new LinkTouchMovementMethod(false));
-            userUrl.setText(TweetFormatter.formatUrlText(ProfileActivity.this, user.getURLEntity()));
-            userLocation.setText(user.getLocation());
+            if (user.getDescription().equals("")) {
+                userInfo.setVisibility(View.GONE);
+            } else {
+                userInfo.setMovementMethod(new LinkTouchMovementMethod(false));
+                userInfo.setText(TweetFormatter.formatDescriptionText(ProfileActivity.this, user));
+            }
+
+            if (user.getURLEntity().getExpandedURL().equals("")) {
+                userUrl.setVisibility(View.GONE);
+            } else {
+                userUrl.setMovementMethod(new LinkTouchMovementMethod(false));
+                userUrl.setText(TweetFormatter.formatUrlText(ProfileActivity.this, user.getURLEntity()));
+            }
+
+            if (user.getLocation().equals("")) {
+                userLocation.setVisibility(View.GONE);
+            } else {
+                userLocation.setText(user.getLocation());
+            }
         }
     }
 

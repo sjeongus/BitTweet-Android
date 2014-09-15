@@ -1,8 +1,11 @@
 package org.bittweet.android.ui;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -23,6 +26,7 @@ public class ImageViewerActivity extends FragmentActivity {
      */
 
     private String[] media;
+    private Activity activity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,8 @@ public class ImageViewerActivity extends FragmentActivity {
 
         media = getIntent().getStringArrayExtra("MEDIA");
         int position = getIntent().getIntExtra("POSITION", 0);
+
+        activity = ImageViewerActivity.this;
 
         ExtendedViewPager mViewPager = (ExtendedViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new TouchImageAdapter());
@@ -49,6 +55,12 @@ public class ImageViewerActivity extends FragmentActivity {
             TouchImageView img = new TouchImageView(container.getContext());
             Ion.with(img).animateGif(true).load(media[position]);
             container.addView(img, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.finish();
+                }
+            });
             return img;
         }
 
