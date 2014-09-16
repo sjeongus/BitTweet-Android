@@ -30,22 +30,10 @@ public class TwitterStreamRouter {
     }
 
     private void initializeStream() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    MyTwitterFactory myTwitterFactory = MyTwitterFactory.getInstance(context);
-                    myTwitterFactory.getTwitter().verifyCredentials();
-                    stream = myTwitterFactory.getTwitterStream();
-                    listener = new MyStreamListener();
-                    stream.addListener(listener);
-                    stream.user();
-                } catch (TwitterException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
+        stream = MyTwitterFactory.getInstance(context).getTwitterStream();
+        listener = new MyStreamListener();
+        stream.addListener(listener);
+        stream.user();
     }
 
     public void registerConsumer(TwitterStreamConsumer consumer) {

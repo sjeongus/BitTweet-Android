@@ -69,9 +69,11 @@ public class WebViewActivity extends FragmentActivity {
         CookieSyncManager.createInstance(getApplicationContext());
         cookieManager = CookieManager.getInstance();
 
-        twitter = MyTwitterFactory.getInstance(this).getTwitter();
+        twitter = MyTwitterFactory.getInstance(getApplicationContext()).getTwitter();
         webView = (WebView) findViewById(R.id.webview);
         sharedPreferences = getSharedPreferences("MyTwitter", MODE_PRIVATE);
+
+        webView.getSettings().setJavaScriptEnabled(true);
 
         if (getIntent().getBooleanExtra("LOGIN", false)) {
             System.err.println("LOGIN received. Starting oauth");
@@ -82,7 +84,6 @@ public class WebViewActivity extends FragmentActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             webView.getSettings().setBuiltInZoomControls(true);
             webView.getSettings().setDisplayZoomControls(false);
-            webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
             webView.setWebChromeClient(new WebChromeClient());
             if (getIntent().getBooleanExtra("URL", false)) {
