@@ -136,6 +136,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         twitPrefs = getActivity().getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
         // Check if the device is connected to WiFi, and set streaming based on setting
         streaming = ConnectionDetector.isOnWifi(getActivity()) && prefs.getBoolean("pref_key_streaming", false);
+        System.err.println("Is streaming on? " + streaming);
         adapter = new TimelineAdapter(activity, TweetsListFragment.this);
     }
 
