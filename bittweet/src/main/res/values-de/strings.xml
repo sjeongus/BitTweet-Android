@@ -8,7 +8,7 @@
     <string name="drawer_close">Close drawer</string>
     <string name="home_timeline">Home</string>
     <string name="mentions_timeline">\@Erwähnungen</string>
-    <string name="media_expansion_desc">Angehängte Medien</string>
+    <string name="media_expansion_desc">Attached media</string>
 
     <string-array name="nav_drawer_items">
         <item>Timeline</item>
@@ -23,8 +23,8 @@
         <item>@drawable/ic_nav_profile</item>
     </array>
 
-    <string name="login_text">Build 6: Ro-Kyu-Bu! Pretty sure we can go to jail for this.</string>
-    <string name="login_disclaim">カズタ＠赤色のエプロン(pixiv 735960). This will not be in the final release.</string>
+    <string name="login_text">Don\'t forget the pudding!</string>
+    <string name="login_disclaim">綾鷹＠全力で穂乃果イベ(pixiv 1131370). This will not be in the final release.</string>
     <string name="login_button">Bei Twitter einloggen »</string>
     <string name="login_title">Bei Twitter einloggen</string>
 
@@ -39,14 +39,15 @@
     <string name="tweet">Tweet verfassen</string>
     <string name="action_tweet">Absenden</string>
     <string name="tweet_hint">Was passiert gerade?</string>
+    <string name="in_reply_to">Antwort auf</string>
+
+    <string name="add_image_camera">Take Picture</string>
+    <string name="add_image_gallery">Choose from Gallery</string>
+    <string name="remove_image">Remove Image</string>
+
     <string name="avatar">Avatar</string>
     <string name="tweet_service_ongoing">Nonsense</string>
     <string name="its_you">you</string>
-    <string name="in_reply_to">Antwort auf</string>
-
-    <string name="add_image_camera">Foto aufnehmen</string>
-    <string name="add_image_gallery">Aus Galerie wählen</string>
-    <string name="remove_image">Bild entfernen</string>
 
     <string name="setting_category_account">Account-Einstellungen</string>
     <string name="setting_category_client">Client-Einstellungen</string>
@@ -87,7 +88,16 @@
     <string name="profile_following_count">Folge ich</string>
     <string name="profile_favorites_count">Favoriten</string>
 
+    <string name="follow_user">Follow</string>
+    <string name="unfollow_user">Unfollow</string>
+    <string name="follow_error">Could not follow user. Please try again.</string>
+    <string name="unfollow_error">Could not unfollow user. Please try again.</string>
+    <string name="follow_success">Followed user!</string>
+    <string name="unfollow_success">Unfollowed user.</string>
+
     <string name="tweet_updating">Status wird aktualisiert&#8230;</string>
     <string name="tweet_sent">Tweet gesendet!</string>
     <string name="tweet_error">Tweet konnte nicht gesendet werden</string>
+
+    <string name="open_browser">Open in Browser</string>
 </resources>

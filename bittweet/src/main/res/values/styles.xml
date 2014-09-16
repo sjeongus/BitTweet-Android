@@ -32,9 +32,15 @@
         <item name="android:fastScrollThumbDrawable">@drawable/bittweet_fastscroll_thumb_holo</item>
     </style>
 
-    <style name="Theme.BitTweetLogin" parent="@style/Theme.BitTweet">
+    <style name="Theme.BitTweetLogin" parent="@style/Theme.BitTweet"></style>
 
+    <style name="Theme.BitTweetImageView" parent="android:Theme.Holo.Light.NoActionBar" >
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
     </style>
+
+
 
     <style name="Theme.BitTweet.DrawerListView">
         <item name="android:layout_width">240dp</item>

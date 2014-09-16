@@ -1,17 +1,26 @@
 package org.bittweet.android.ui.adapters;
 
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import org.bittweet.android.R;
 import org.bittweet.android.internal.StatusItem;
+import org.bittweet.android.ui.ImageViewerActivity;
 import org.bittweet.android.ui.fragments.TweetsListFragment;
 import org.bittweet.android.ui.util.RoundedTransformation;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import twitter4j.MediaEntity;
 import twitter4j.Status;
@@ -22,9 +31,11 @@ import static org.bittweet.android.ui.util.ImageUtils.convertDpToPixel;
 public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     private int width;
     private TweetsListFragment mFragment;
+    private Context context;
 
     public ExpandedTweetAdapter(Context context, TweetsListFragment fragment) {
         super(context);
+        this.context = context;
         this.mFragment = fragment;
     }
 
@@ -83,6 +94,8 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
         //MediaEntity[] mediaEntities = status.getMediaEntities();
         MediaEntity[] mediaEntities = status.getExtendedMediaEntities();
         URLEntity[] urlEntities = status.getURLEntities();
+        final MediaEntity[] finalMedia = mediaEntities;
+        final URLEntity[] finalUrl = urlEntities;
         final ImageView media = holder.mediaExpansion;
         final View preview = holder.previewContainer;
         final ImageView preview1 = holder.preview1;
@@ -91,6 +104,91 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
         final ImageView preview4 = holder.preview4;
 
         if(mediaEntities.length > 0) {
+            holder.mediaExpansion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String[] mediaUrl = new String[finalMedia.length];
+                    int i = 0;
+                    for (MediaEntity media : finalMedia) {
+                        mediaUrl[i] = media.getMediaURLHttps();
+                        i++;
+                    }
+                    Bitmap bitmap = Bitmap.createBitmap(media.getWidth(), media.getHeight(), Bitmap.Config.ARGB_8888);
+                    ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(media, bitmap, 0, 0);
+                    Intent intent = new Intent(context, ImageViewerActivity.class);
+                    intent.putExtra("MEDIA", mediaUrl);
+                    intent.putExtra("POSITION", 0);
+                    context.startActivity(intent, animate.toBundle());
+                }
+            });
+            holder.preview1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String[] mediaUrl = new String[finalMedia.length];
+                    int i = 0;
+                    for (MediaEntity media : finalMedia) {
+                        mediaUrl[i] = media.getMediaURLHttps();
+                        i++;
+                    }
+                    Bitmap bitmap = Bitmap.createBitmap(preview1.getWidth(), preview1.getHeight(), Bitmap.Config.ARGB_8888);
+                    ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(preview1, bitmap, 0, 0);
+                    Intent intent = new Intent(context, ImageViewerActivity.class);
+                    intent.putExtra("MEDIA", mediaUrl);
+                    intent.putExtra("POSITION", 0);
+                    context.startActivity(intent, animate.toBundle());
+                }
+            });
+            holder.preview2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String[] mediaUrl = new String[finalMedia.length];
+                    int i = 0;
+                    for (MediaEntity media : finalMedia) {
+                        mediaUrl[i] = media.getMediaURLHttps();
+                        i++;
+                    }
+                    Bitmap bitmap = Bitmap.createBitmap(preview2.getWidth(), preview2.getHeight(), Bitmap.Config.ARGB_8888);
+                    ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(preview2, bitmap, 0, 0);
+                    Intent intent = new Intent(context, ImageViewerActivity.class);
+                    intent.putExtra("MEDIA", mediaUrl);
+                    intent.putExtra("POSITION", 1);
+                    context.startActivity(intent, animate.toBundle());
+                }
+            });
+            holder.preview3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String[] mediaUrl = new String[finalMedia.length];
+                    int i = 0;
+                    for (MediaEntity media : finalMedia) {
+                        mediaUrl[i] = media.getMediaURLHttps();
+                        i++;
+                    }
+                    Bitmap bitmap = Bitmap.createBitmap(preview3.getWidth(), preview3.getHeight(), Bitmap.Config.ARGB_8888);
+                    ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(preview3, bitmap, 0, 0);
+                    Intent intent = new Intent(context, ImageViewerActivity.class);
+                    intent.putExtra("MEDIA", mediaUrl);
+                    intent.putExtra("POSITION", 2);
+                    context.startActivity(intent, animate.toBundle());
+                }
+            });
+            holder.preview4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String[] mediaUrl = new String[finalMedia.length];
+                    int i = 0;
+                    for (MediaEntity media : finalMedia) {
+                        mediaUrl[i] = media.getMediaURLHttps();
+                        i++;
+                    }
+                    Bitmap bitmap = Bitmap.createBitmap(preview4.getWidth(), preview4.getHeight(), Bitmap.Config.ARGB_8888);
+                    ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(preview4, bitmap, 0, 0);
+                    Intent intent = new Intent(context, ImageViewerActivity.class);
+                    intent.putExtra("MEDIA", mediaUrl);
+                    intent.putExtra("POSITION", 3);
+                    context.startActivity(intent, animate.toBundle());
+                }
+            });
             if (mediaEntities.length == 1) {
                 final MediaEntity displayedMedia = mediaEntities[0];
 
@@ -195,7 +293,9 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
             holder.preview2.setVisibility(View.GONE);
             holder.preview3.setVisibility(View.GONE);
             holder.preview4.setVisibility(View.GONE);
+            final Pattern pixivID = Pattern.compile("^http://www\\.pixiv\\.net/(member_illust|index)\\.php\\?(?=.*mode=(medium|big))(?=.*illust_id=([0-9]+)).*$", Pattern.CASE_INSENSITIVE);
             for (final URLEntity urlEntity : urlEntities) {
+                Matcher pixivMatcher = pixivID.matcher(urlEntity.getExpandedURL());
                 if (urlEntity.getExpandedURL().matches("^https?://(?:[a-z\\-]+\\.)+[a-z]{2,6}(?:/[^/#?]+)+\\.(?:jpe?g|gif|png)$")) {
                     // To get the dimensions of the image preview before it is drawn
                     media.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -211,7 +311,52 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
                         }
                     });
                     holder.mediaExpansion.setVisibility(View.VISIBLE);
+                    holder.mediaExpansion.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String[] mediaUrl = new String[1];
+                            int i = 0;
+                            mediaUrl[0] = finalUrl[0].getExpandedURL();
+                            Bitmap bitmap = Bitmap.createBitmap(media.getWidth(), media.getHeight(), Bitmap.Config.ARGB_8888);
+                            ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(media, bitmap, 0, 0);
+                            Intent intent = new Intent(context, ImageViewerActivity.class);
+                            intent.putExtra("MEDIA", mediaUrl);
+                            intent.putExtra("POSITION", 0);
+                            context.startActivity(intent, animate.toBundle());
+                        }
+                    });
                     break;
+                } else if (pixivMatcher.find()) {
+                    String id = pixivMatcher.group(3);
+                    System.err.println("Pixiv id is " + id);
+                    final String url = "http://embed.pixiv.net/decorate.php?illust_id=" + id;
+                    media.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            media.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                            // Get the width of the view and set height to 16:10 aspect ratio
+                            width = media.getWidth();
+                            setImage(media, width, width * 5/8,
+                                    true, true, true, true, url);
+                            return true;
+                        }
+                    });
+                    holder.mediaExpansion.setVisibility(View.VISIBLE);
+                    holder.mediaExpansion.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String[] mediaUrl = new String[1];
+                            int i = 0;
+                            mediaUrl[0] = url;
+                            Bitmap bitmap = Bitmap.createBitmap(media.getWidth(), media.getHeight(), Bitmap.Config.ARGB_8888);
+                            ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(media, bitmap, 0, 0);
+                            Intent intent = new Intent(context, ImageViewerActivity.class);
+                            intent.putExtra("MEDIA", mediaUrl);
+                            intent.putExtra("POSITION", 0);
+                            context.startActivity(intent, animate.toBundle());
+                        }
+                    });
                 }
             }
         } else {
@@ -227,6 +372,7 @@ public class ExpandedTweetAdapter extends SimpleTweetAdapter {
     public void setImage(ImageView view, int width, int height,
                          boolean TL, boolean TR, boolean BL, boolean BR, String url) {
         Ion.with(view)
+                .error(R.drawable.image_error)
                 .animateGif(false)
                 .resize(width, height)
                 .centerCrop()

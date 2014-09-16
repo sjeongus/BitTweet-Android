@@ -21,9 +21,9 @@ public class ApplicationController extends Application {
         super.onCreate();
 
         statusMap = new HashMap<String, StatusItem>();
-        homeTimelineContent = new HomeTimelineContent(this, statusMap);
-        mentionsTimelineContent = new MentionsTimelineContent(this, statusMap);
-        twitterStreamRouter = new TwitterStreamRouter(this);
+        homeTimelineContent = new HomeTimelineContent(getApplicationContext(), statusMap);
+        mentionsTimelineContent = new MentionsTimelineContent(getApplicationContext(), statusMap);
+        twitterStreamRouter = new TwitterStreamRouter(getApplicationContext());
     }
 
     public TimelineContent getHomeTimelineContent() {

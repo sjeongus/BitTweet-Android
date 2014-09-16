@@ -8,12 +8,15 @@ import org.bittweet.android.ui.TwitterLoginActivity;
 
 import java.io.File;
 
+import twitter4j.HttpRequest;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.Authorization;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import twitter4j.media.ImageUpload;
@@ -50,8 +53,6 @@ public class MyTwitterFactory {
         String oauthKey = prefs.getString(PREF_KEY_OAUTH_TOKEN, null);
         String oauthSecret = prefs.getString(PREF_KEY_OAUTH_SECRET, null);
 
-        configurationBuilder.setDebugEnabled(true);
-
         // Set consumer keys
         configurationBuilder.setOAuthConsumerKey(SecretKeys.CONSUMER_KEY);
         configurationBuilder.setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
@@ -72,9 +73,9 @@ public class MyTwitterFactory {
     }
 
     public static MyTwitterFactory getInstance(Context context) {
-        if (singletonInstance == null) {
+        //if (singletonInstance == null) {
             singletonInstance = new MyTwitterFactory(context);
-        }
+        //}
 
         return singletonInstance;
     }

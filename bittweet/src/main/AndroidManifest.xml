@@ -41,6 +41,24 @@ package="org.bittweet.android" >
         android:parentActivityName="org.bittweet.android.ui.TweetsListActivity"
         android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
         android:windowSoftInputMode="stateAlwaysVisible|adjustResize" >
+        <intent-filter
+            android:label="@string/app_name" >
+            <action android:name="android.intent.action.SEND" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:mimeType="image/*" />
+        </intent-filter>
+        <intent-filter
+            android:label="@string/app_name">
+            <action android:name="android.intent.action.SEND" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:mimeType="text/plain" />
+        </intent-filter>
+        <intent-filter
+            android:label="@string/app_name">
+            <action android:name="android.intent.action.SEND_MULTIPLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:mimeType="image/*" />
+        </intent-filter>
     </activity>
     <activity android:name=".ui.SettingsActivity" android:label="Settings"
         android:screenOrientation="nosensor">
@@ -70,6 +88,11 @@ package="org.bittweet.android" >
         android:label="@string/title_activity_profile"
         android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
         android:parentActivityName="org.bittweet.android.ui.TweetsListActivity" >
+    </activity>
+    <activity android:name=".ui.ImageViewerActivity"
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
+        android:parentActivityName="org.bittweet.android.ui.TweetsListActivity"
+        android:theme="@style/Theme.BitTweetImageView">
     </activity>
 
     <meta-data

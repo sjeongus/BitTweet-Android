@@ -1,15 +1,17 @@
 package org.bittweet.android.ui;
 
+import android.app.ActionBar;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,14 +26,13 @@ import org.bittweet.android.ui.util.LinkTouchMovementMethod;
 import org.bittweet.android.ui.util.RoundedTransformation;
 import org.bittweet.android.ui.util.TweetFormatter;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import twitter4j.Relationship;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
-/**
- * Created by soomin on 8/30/2014.
- */
 public class ProfileActivity extends FragmentActivity {
 
     // TextViews
@@ -53,10 +54,11 @@ public class ProfileActivity extends FragmentActivity {
     private ImageView header;
 
     private LinearLayout countainer;
+    private Menu myMenu;
 
     private Context context;
+
     private Twitter twitter;
-    private User myUser;
     private User user;
     private Relationship relationShip;
 
@@ -65,7 +67,10 @@ public class ProfileActivity extends FragmentActivity {
         super.onCreate(onSavedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        context = getApplicationContext();
+        ActionBar actionBar = getActionBar();
+        actionBar.setIcon(R.drawable.ic_nav_profile);
+
+        context = ProfileActivity.this;
 
         whoText = (TextView) findViewById(R.id.whotext);
         userName = (TextView) findViewById(R.id.username);
@@ -90,6 +95,15 @@ public class ProfileActivity extends FragmentActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.profile_menu, menu);
+        myMenu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
@@ -108,6 +122,12 @@ public class ProfileActivity extends FragmentActivity {
                     // navigate up to the logical parent activity.
                     NavUtils.navigateUpTo(this, upIntent);
                 }
+                return true;
+            case R.id.action_follow:
+                new FriendshipTask(true).execute();
+                return true;
+            case R.id.action_unfollow:
+                new FriendshipTask(false).execute();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -154,6 +174,13 @@ public class ProfileActivity extends FragmentActivity {
             if (userId == myUserId) {
                 whoText.setText(R.string.profile_status_me);
             } else {
+                if (myMenu != null) {
+                    if (!relationShip.isSourceFollowingTarget()) {
+                        myMenu.findItem(R.id.action_follow).setVisible(true);
+                    } else {
+                        myMenu.findItem(R.id.action_unfollow).setVisible(true);
+                    }
+                }
                 setTitle("@" + username);
                 if (relationShip.isSourceFollowingTarget() && relationShip.isSourceFollowedByTarget()) {
                     whoText.setText(R.string.profile_status_mutual);
@@ -172,6 +199,21 @@ public class ProfileActivity extends FragmentActivity {
 
             Ion.with(header).load(user.getProfileBannerURL());
 
+            avatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String[] mediaUrl = new String[1];
+                    int i = 0;
+                    mediaUrl[0] = user.getOriginalProfileImageURLHttps();
+                    Bitmap bitmap = Bitmap.createBitmap(avatar.getWidth(), avatar.getHeight(), Bitmap.Config.ARGB_8888);
+                    ActivityOptions animate = ActivityOptions.makeThumbnailScaleUpAnimation(avatar, bitmap, 0, 0);
+                    Intent intent = new Intent(context, ImageViewerActivity.class);
+                    intent.putExtra("MEDIA", mediaUrl);
+                    intent.putExtra("POSITION", 0);
+                    context.startActivity(intent, animate.toBundle());
+                }
+            });
+
             String myTweets = Integer.toString(user.getStatusesCount());
             String myFollowers = Integer.toString(user.getFollowersCount());
             String myFollowing = Integer.toString(user.getFriendsCount());
@@ -182,11 +224,76 @@ public class ProfileActivity extends FragmentActivity {
             followingCount.setText(myFollowing);
             favoriteCount.setText(myFavorites);
 
-            userInfo.setMovementMethod(new LinkTouchMovementMethod(false));
-            userInfo.setText(TweetFormatter.formatDescriptionText(ProfileActivity.this, user));
-            userUrl.setMovementMethod(new LinkTouchMovementMethod(false));
-            userUrl.setText(TweetFormatter.formatUrlText(ProfileActivity.this, user.getURLEntity()));
-            userLocation.setText(user.getLocation());
+            if (user.getDescription().equals("")) {
+                userInfo.setVisibility(View.GONE);
+            } else {
+                userInfo.setMovementMethod(new LinkTouchMovementMethod(false));
+                userInfo.setText(TweetFormatter.formatDescriptionText(ProfileActivity.this, user));
+            }
+
+            if (user.getURLEntity().getExpandedURL().equals("")) {
+                userUrl.setVisibility(View.GONE);
+            } else {
+                userUrl.setMovementMethod(new LinkTouchMovementMethod(false));
+                userUrl.setText(TweetFormatter.formatUrlText(ProfileActivity.this, user.getURLEntity()));
+            }
+
+            if (user.getLocation().equals("")) {
+                userLocation.setVisibility(View.GONE);
+            } else {
+                userLocation.setText(user.getLocation());
+            }
         }
+    }
+
+    public class FriendshipTask extends AsyncTask<Void, Void, Boolean> {
+        private boolean follow;
+
+        public FriendshipTask(boolean follow) {
+            this.follow = follow;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... args) {
+            long id = user.getId();
+            try {
+                if (follow) {
+                    twitter.createFriendship(id);
+                } else {
+                    twitter.destroyFriendship(id);
+                }
+            } catch (TwitterException e) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (follow && !result) {
+                Crouton.showText(ProfileActivity.this, R.string.follow_error, Style.ALERT);
+            } else if (!result) {
+                Crouton.showText(ProfileActivity.this, R.string.unfollow_error, Style.ALERT);
+            } else if (follow) {
+                Crouton.showText(ProfileActivity.this, R.string.follow_success, Style.CONFIRM);
+                if (myMenu != null) {
+                    myMenu.findItem(R.id.action_follow).setVisible(false);
+                    myMenu.findItem(R.id.action_unfollow).setVisible(true);
+                }
+            } else {
+                Crouton.showText(ProfileActivity.this, R.string.unfollow_success, Style.CONFIRM);
+                if (myMenu != null) {
+                    myMenu.findItem(R.id.action_follow).setVisible(true);
+                    myMenu.findItem(R.id.action_unfollow).setVisible(false);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Crouton.cancelAllCroutons();
     }
 }
