@@ -39,20 +39,28 @@
     <string name="tweet">新規ツイート</string>
     <string name="action_tweet">つぶやく</string>
     <string name="tweet_hint">What\'s happening right now?</string>
+    <string name="avatar">Avatar</string>
+    <string name="tweet_service_ongoing">Nonsense</string>
+    <string name="its_you">you</string>
     <string name="in_reply_to">Replying to</string>
 
     <string name="add_image_camera">Take Picture</string>
     <string name="add_image_gallery">Choose from Gallery</string>
     <string name="remove_image">Remove Image</string>
 
-    <string name="avatar">Avatar</string>
-    <string name="tweet_service_ongoing">Nonsense</string>
-    <string name="its_you">you</string>
+    <string name="setting_category_account">Account Settings</string>
+    <string name="setting_category_client">Client Settings</string>
+    <string name="setting_category_feedback">Feedback</string>
+    <string name="setting_category_credits">Credits</string>
 
     <string name="setting_logout">ログアウト</string>
     <string name="setting_streaming">Wi-Fiでストリーム</string>
     <string name="setting_feedback_twitter">Twitterで意見を送信</string>
     <string name="setting_feedback_twitter_desc">Tweet us feedback about the app.</string>
+    <string name="setting_credits">Credits</string>
+    <string name="setting_credits_dev">Developers</string>
+    <string name="setting_credits_art">Artists</string>
+    <string name="setting_credits_loc">Translators</string>
 
     <string name="preference_streaming">Stream Settings Changed</string>
     <string name="streaming_name">The app will now restart to apply changes.</string>
