@@ -3,15 +3,12 @@ package org.bittweet.android.ui.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -57,6 +54,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         return false;
     }
 
+    // TODO: Clear user timeline on logout
     public void clearTimeline() {
         //listView.setAdapter(null);
         //adapter.clearList();
@@ -69,6 +67,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        System.out.println("Item was clicked!");
         callbacks.onItemSelected(timelineContent.getStatusItemAt(position).getId());
     }
 
@@ -135,12 +134,13 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         activity = getActivity();
         prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         twitPrefs = getActivity().getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
+        // Check if the device is connected to WiFi, and set streaming based on setting
         if (ConnectionDetector.isOnWifi(getActivity())) {
             streaming = prefs.getBoolean("pref_key_streaming", false);
         } else {
             streaming = false;
         }
-        adapter = new TimelineAdapter(activity);
+        adapter = new TimelineAdapter(activity, TweetsListFragment.this);
     }
 
     @Override
@@ -160,6 +160,13 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
         listView.addFooterView(loadMoreBtn);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
+        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println("Item was clicked!");
+                callbacks.onItemSelected(timelineContent.getStatusItemAt(position).getId());
+            }
+        });*/
         listView.setChoiceMode(activateOnItemClick ? ListView.CHOICE_MODE_SINGLE : ListView.CHOICE_MODE_NONE);
 
         loadMoreBtn.setOnClickListener(new View.OnClickListener() {
@@ -169,29 +176,33 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
             }
         });
 
-        if (twitPrefs.getBoolean("FIRST_RUN", false)) {
+        // Check if first time app is being run. If so, refresh.
+        //if (twitPrefs.getBoolean("FIRST_RUN", false)) {
             updateAdapter();
             twitPrefs.edit().putBoolean("FIRST_RUN", false).commit();
-        }
+        //}
 
+        // Check if streaming is enabled. If not, set up pull to refresh
         if (!streaming) {
             ActionBarPullToRefresh.from(activity)
                     .allChildrenArePullable()
                     .listener(this)
                     .setup(pullToRefreshLayout);
-        } else if(!isDetached() && ConnectionDetector.isOnWifi(getActivity()) && streaming) {
+        // If streaming is detached and enabled, attach the stream to adapter
+        } else if(!isDetached() && streaming) {
             // Streaming
+            // Check if user is currently rate limited. If so, start stream after rate limit end
             int seconds = twitPrefs.getInt("Rate_Limited", 0);
             if (seconds > 0) {
                 handler = new Handler();
                 handler.postDelayed(streamrun = new Runnable() {
                     @Override
                     public void run() {
-                        // Do something after 5s = 5000ms
                         updateAdapter();
                         ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
                     }
                 }, seconds * 1000);
+            // If not rate limited, update adapter and start stream
             } else {
                 updateAdapter();
                 ((GeneralTimelineContent) timelineContent).attachStreamToAdapter(adapter);
@@ -210,6 +221,7 @@ public class TweetsListFragment extends Fragment implements OnRefreshListener, A
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
 
+        // TODO: Recover scrolled postion
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_SCROLL)) {
             listView.scrollTo(0, savedInstanceState.getInt(STATE_SCROLL));
         }

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="Theme.BitTweet" parent="@style/Theme.AppCompat.Light">
+    <style name="Theme.BitTweet" parent="android:Theme.Holo.Light">
         <item name="actionBarItemBackground">@drawable/selectable_background_bittweet</item>
         <item name="popupMenuStyle">@style/PopupMenu.Bittweet</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Bittweet</item>

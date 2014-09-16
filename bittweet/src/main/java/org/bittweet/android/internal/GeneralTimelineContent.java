@@ -110,11 +110,13 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
 
     protected abstract List<Status> getMore(Paging paging) throws TwitterException;
 
+    // Generate Crouton to notify user of rate limit status
     protected void rateLimited(Activity activity, int seconds) {
         final Activity act = activity;
         Resources res = activity.getResources();
         int time;
         final String text;
+        // Format string based on remaining time
         if (seconds > 60) {
             time = (int) seconds / 60;
             if (time == 1) {
@@ -130,8 +132,10 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
                 text = String.format(res.getString(R.string.rate_limit_message_sec), time);
             }
         }
+        // Set rate limited time remaining in seconds and put in shared preferences for usage
         SharedPreferences twitPref = activity.getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
         twitPref.edit().putInt("Rate_Limited", seconds).commit();
+        // Create Crouton on the UI thread
         activity.runOnUiThread(new Runnable() {
             public void run() {
                 Crouton.makeText(act, text, Style.ALERT).show();
@@ -142,6 +146,8 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
     @Override
     public void update(Activity activity) {
         try {
+            // Create a Twitter instance with the calling activity
+            // Prevents ensureAuth exceptions
             twitter = MyTwitterFactory.getInstance(activity).getTwitter();
             user = twitter.verifyCredentials();
             Paging paging = new Paging(1, PER_PAGE);
@@ -161,6 +167,7 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
             }
         } catch (TwitterException e) {
             e.printStackTrace();
+            // If a rate limited exception is caught, call Crouton generating function
             if (e.exceededRateLimitation()) {
                 rateLimited(activity, e.getRateLimitStatus().getSecondsUntilReset());
             }
@@ -170,6 +177,8 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
     @Override
     public void loadMore(Activity activity) {
         try {
+            // Create a Twitter instance with the calling activity
+            // Prevents ensureAuth exceptions
             twitter = MyTwitterFactory.getInstance(activity).getTwitter();
             user = twitter.verifyCredentials();
             Paging paging = new Paging(++morePage, PER_PAGE);
@@ -189,23 +198,27 @@ public abstract class GeneralTimelineContent implements TimelineContent, Twitter
         } catch (TwitterException e) {
             e.printStackTrace();
             if (e.exceededRateLimitation()) {
+                // If a rate limited exception is caught, call Crouton generating function
                 rateLimited(activity, e.getRateLimitStatus().getSecondsUntilReset());
             }
         }
     }
 
+    // Attaching streaming to adapter enables streaming
     public void attachStreamToAdapter(final TimelineAdapter adapter) {
         this.adapter = adapter;
         TwitterStreamRouter router = ((ApplicationController) context).getTwitterStreamRouter();
         router.registerConsumer(this);
     }
 
+    // Detaching streaming from adapter disables streaming
     public void detachStream() {
         TwitterStreamRouter router = ((ApplicationController) context).getTwitterStreamRouter();
         router.unregisterConsumer(this);
     }
 
     @Override
+    // Notify adapter that a change has been made to data contents
     public void notifyDataSetChanged() {
         if(getAdapter() != null) {
             getAdapter().notifyDataSetChanged();

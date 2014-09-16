@@ -16,6 +16,9 @@ import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.media.ImageUpload;
+import twitter4j.media.ImageUploadFactory;
+import twitter4j.media.MediaProvider;
 
 /**
  * Created by soomin on 3/1/14.
@@ -38,12 +41,20 @@ public class MyTwitterFactory {
 
         installHttpResponseCache();
 
+        // Initialize a configuration builder to store oauth keys
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder.setDebugEnabled(true);
 
+        // Retrieve oauth key and secret from shared preferences
         SharedPreferences prefs = context.getSharedPreferences("MyTwitter", Context.MODE_PRIVATE);
         String oauthKey = prefs.getString(PREF_KEY_OAUTH_TOKEN, null);
         String oauthSecret = prefs.getString(PREF_KEY_OAUTH_SECRET, null);
+
+        configurationBuilder.setDebugEnabled(true);
+
+        // Set consumer keys
+        configurationBuilder.setOAuthConsumerKey(SecretKeys.CONSUMER_KEY);
+        configurationBuilder.setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
 
         if(oauthKey != null) {
             configurationBuilder.setOAuthAccessToken(oauthKey);
@@ -53,11 +64,9 @@ public class MyTwitterFactory {
             configurationBuilder.setOAuthAccessTokenSecret(oauthSecret);
         }
 
-        configurationBuilder.setOAuthConsumerKey(SecretKeys.CONSUMER_KEY);
-        configurationBuilder.setOAuthConsumerSecret(SecretKeys.CONSUMER_SECRET);
-
         conf = configurationBuilder.build();
 
+        // Use configuration to initialize twitter and stream
         twitter = new TwitterFactory(conf).getInstance();
         twitterStream = new TwitterStreamFactory(conf).getInstance();
     }

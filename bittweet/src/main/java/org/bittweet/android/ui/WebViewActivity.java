@@ -1,16 +1,13 @@
 package org.bittweet.android.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.CookieManager;
@@ -29,10 +26,7 @@ import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
-/**
- * Created by soomin on 8/31/2014.
- */
-public class WebViewActivity extends Activity {
+public class WebViewActivity extends FragmentActivity {
 
     // Preference Constants
     static String PREFERENCE_NAME = "twitter_oauth";
@@ -42,9 +36,7 @@ public class WebViewActivity extends Activity {
     static final String TWITTER_CALLBACK_URL = "http://www.chromatiqa.org/bittweet/";
 
     // Twitter oauth urls
-    static final String URL_TWITTER_AUTH = "auth_url";
     static final String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
-    static final String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
 
     // Logging
     private static final String TAG = "TwitterLoginActivity";
@@ -96,11 +88,6 @@ public class WebViewActivity extends Activity {
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         WebViewActivity.this.setTitle(view.getTitle());
-                    }
-
-                    public void onProgressChanged(WebView view, int progress) {
-                        // update the progressBar
-                        WebViewActivity.this.setProgress(progress * 100);
                     }
                 });
             }
@@ -184,16 +171,11 @@ public class WebViewActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
                 Uri uri = Uri.parse(url);
                 System.err.println("Uri is " + uri);
-
-                if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL) && login) {
+                if (uri.toString().startsWith(TWITTER_CALLBACK_URL) && login) {
                     new HandleAuthTask(uri).execute();
                 }
-                //intent.setData(uri);
-                //onNewIntent(intent);
-
                 return super.shouldOverrideUrlLoading(view, url);
             }
         }); webView.loadUrl(url);
@@ -203,6 +185,9 @@ public class WebViewActivity extends Activity {
     private class HandleAuthTask extends AsyncTask<Void, Void, Void> {
         private AccessToken accessToken = null;
         private Uri mUri;
+        private long userId;
+        private String username;
+        private String avatar;
 
         public HandleAuthTask(Uri uri) {
             accessToken = null;
@@ -218,6 +203,9 @@ public class WebViewActivity extends Activity {
                 try {
                     // Get the access token
                     accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
+                    userId = twitter.getId();
+                    username = twitter.getScreenName();
+                    avatar = twitter.showUser(userId).getOriginalProfileImageURLHttps();
                 } catch (TwitterException e) {
                     e.printStackTrace();
                     System.err.println("Could not get access token");
@@ -259,7 +247,11 @@ public class WebViewActivity extends Activity {
 
             // Store login status - true
             e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
-            e.commit(); // save changes
+
+            e.putLong("USERID", userId);
+            e.putString("USERNAME", username);
+            e.putString("AVATAR", avatar);
+            e.apply(); // save changes
 
             Log.e("Twitter OAuth Token", "> " + token);
             System.err.println("Oauth token is " + token);

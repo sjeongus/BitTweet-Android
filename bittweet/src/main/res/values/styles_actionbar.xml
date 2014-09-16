@@ -18,27 +18,27 @@
 -->
 
 <resources>
-    <style name="ActionBar.Solid.Bittweet" parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+    <style name="ActionBar.Solid.Bittweet" parent="android:Widget.Holo.Light.ActionBar.Solid">
         <item name="background">@drawable/ab_solid_bittweet</item>
         <item name="backgroundStacked">@drawable/ab_stacked_solid_bittweet</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_bittweet</item>
         <item name="progressBarStyle">@style/ProgressBar.Bittweet</item>
     </style>
 
-    <style name="ActionBar.Transparent.Bittweet" parent="@style/Widget.AppCompat.Light.ActionBar">
+    <style name="ActionBar.Transparent.Bittweet" parent="android:Widget.Holo.Light.ActionBar">
         <item name="background">@drawable/ab_transparent_bittweet</item>
         <item name="progressBarStyle">@style/ProgressBar.Bittweet</item>
     </style>
 	
-    <style name="PopupMenu.Bittweet" parent="@style/Widget.AppCompat.Light.PopupMenu">	
+    <style name="PopupMenu.Bittweet" parent="android:Widget.Holo.Light.PopupMenu">
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_bittweet</item>	
     </style>
 	
-    <style name="DropDownListView.Bittweet" parent="@style/Widget.AppCompat.Light.ListView.DropDown">
+    <style name="DropDownListView.Bittweet" parent="android:Widget.Holo.Light.ListView.DropDown">
         <item name="android:listSelector">@drawable/selectable_background_bittweet</item>
     </style>
 
-    <style name="ActionBarTabStyle.Bittweet" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
+    <style name="ActionBarTabStyle.Bittweet" parent="android:Widget.Holo.Light.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator_ab_bittweet</item>
     </style>
 	
@@ -48,16 +48,16 @@
         <item name="android:dropDownSelector">@drawable/selectable_background_bittweet</item>
     </style>
     
-    <style name="ProgressBar.Bittweet" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+    <style name="ProgressBar.Bittweet" parent="android:Widget.Holo.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_bittweet</item>
     </style>
     
-    <style name="ActionButton.CloseMode.Bittweet" parent="@style/Widget.AppCompat.Light.ActionButton.CloseMode">
+    <style name="ActionButton.CloseMode.Bittweet" parent="android:Widget.Holo.Light.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_bittweet</item>
     </style>
     
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->
-    <style name="Theme.Bittweet.Widget" parent="@style/Theme.AppCompat">
+    <style name="Theme.Bittweet.Widget" parent="android:Theme.Holo">
         <item name="popupMenuStyle">@style/PopupMenu.Bittweet</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Bittweet</item>
     </style>

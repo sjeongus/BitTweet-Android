@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class ConnectionDetector {
+    // Detect whether connected to Internet
     public static boolean isOnline(Context context) {
         if(context == null) {
             return false;
@@ -15,6 +16,7 @@ public class ConnectionDetector {
         return activeNetwork != null;
     }
 
+    // Detect whether connected to WiFi
     public static boolean isOnWifi(Context context) {
         if(context == null) {
             return false;

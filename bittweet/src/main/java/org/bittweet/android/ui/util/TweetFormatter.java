@@ -23,6 +23,7 @@ import org.bittweet.android.ui.WebViewActivity;
 
 import twitter4j.Status;
 import twitter4j.URLEntity;
+import twitter4j.User;
 import twitter4j.UserMentionEntity;
 
 public class TweetFormatter {
@@ -43,6 +44,43 @@ public class TweetFormatter {
         return SpannableString.valueOf(builder);
     }
 
+    public static SpannableString formatReplyText(Context context, Status status) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+
+        builder.append(status.getText());
+
+        int movedBy = 0;
+
+        // Make normal URLs and media URLs clickable
+        movedBy = linkify(context, builder, status.getURLEntities(), movedBy);
+        linkify(context, builder, status.getMediaEntities(), movedBy);
+
+        return SpannableString.valueOf(builder);
+    }
+
+    public static SpannableString formatDescriptionText(Context context, User user) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+
+        builder.append(user.getDescription());
+
+        int movedBy = 0;
+
+        // Make normal URLs and media URLs clickable
+        movedBy = linkify(context, builder, user.getDescriptionURLEntities(), movedBy);
+
+        return SpannableString.valueOf(builder);
+    }
+
+    public static SpannableString formatUrlText(Context context, URLEntity urlEntity) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(urlEntity.getURL());
+        URLEntity[] entities = { urlEntity };
+        int movedBy = 0;
+        // Make normal URLs and media URLs clickable
+        movedBy = linkify(context, builder, entities, movedBy);
+        return SpannableString.valueOf(builder);
+    }
+
     private static void linkifyUsers(Context context, SpannableStringBuilder builder, UserMentionEntity[] userMentionEntities) {
         ClickableSpan linkTemp;
 
@@ -56,7 +94,7 @@ public class TweetFormatter {
         ClickableSpan linkTemp;
 
         for(URLEntity url : urlEntities) {
-            linkTemp = new LinkSpan(context, url.getURL());
+            linkTemp = new LinkSpan(context, url.getExpandedURL());
             builder.replace(url.getStart() + movedBy, url.getEnd() + movedBy, url.getDisplayURL());
             builder.setSpan(linkTemp, url.getStart() + movedBy, url.getStart() + url.getDisplayURL().length() + movedBy, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -68,6 +106,7 @@ public class TweetFormatter {
         return movedBy;
     }
 
+    // Abstract class that acts as template for UrlSpan and UserSpan
     public static abstract class TouchableSpan extends ClickableSpan {
         private boolean mIsPressed;
 
@@ -95,13 +134,8 @@ public class TweetFormatter {
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(context, WebViewActivity.class);
-            System.err.println("WebView intent " + intent.toString());
-            System.err.println("Sending to WebView: " + url);
-            intent.setData(Uri.parse(url));
-            intent.putExtra("URL", true);
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            context.startActivity(intent);
+            // Handle URL
+            new UrlHandler(context, url);
         }
 
         @Override
@@ -129,6 +163,7 @@ public class TweetFormatter {
 
         @Override
         public void onClick(View view) {
+            // Start up profile activity when clicking on a link
             System.out.println("Clicked on @" + username);
             Intent intent = new Intent(context, ProfileActivity.class);
             intent.putExtra("USERNAME", username);

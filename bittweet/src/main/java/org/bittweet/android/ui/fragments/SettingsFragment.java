@@ -45,6 +45,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         context = getActivity();
         System.err.println(context);
+        // The logout preference. Pops up confirm dialog when pressed
         logout = findPreference("pref_key_logout");
         logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -54,6 +55,7 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        // Get device and BitTweet build version names
         String device = getDeviceName();
         String versionName = "n/a";
 
@@ -65,6 +67,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         final String info = "@fuyutsukikaru #bittweet (" + device + ": " + versionName +")";
 
+        // Feedback preference that opens tweet compose to send feedback
         tweetfeedback = findPreference("pref_key_feedback_twitter");
         tweetfeedback.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -77,6 +80,7 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        // Switch preference to enable or disable streaming
         streaming = (SwitchPreference) findPreference("pref_key_streaming");
         streaming.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 
@@ -85,8 +89,9 @@ public class SettingsFragment extends PreferenceFragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle(R.string.preference_streaming)
                         .setMessage(R.string.streaming_name)
-                        .setNegativeButton(R.string.streaming_ok, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.streaming_ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                // Clicking this will launch the TweetsListActivity and restart it
                                 Intent intent = new Intent(context, TweetsListActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 intent.putExtra("RESTART", true);
@@ -99,21 +104,25 @@ public class SettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
-
     }
+
+    // Function that creates the logout confirm dialog.
     public void logoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.logout_title)
                 .setMessage(R.string.logout_confirm)
                 .setPositiveButton(R.string.logout_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        // Clear all preferences
+                        // TODO: Clear out user timeline and other info. Persists after logging out
                         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
                         SharedPreferences.Editor editor = settings.edit();
                         editor.clear().commit();
                         twitter.edit().clear().commit();
                         mTwitter = MyTwitterFactory.getInstance(context).getTwitter();
                         mTwitter.setOAuthAccessToken(null);
-                        //getActivity().finish();
+
+                        // Launches TweetsListActivity class with LOGOUT intent
                         Intent intent = new Intent(context, TweetsListActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         intent.putExtra("LOGOUT", true);
@@ -131,6 +140,7 @@ public class SettingsFragment extends PreferenceFragment {
         builder.show();
     }
 
+    // Function to retrieve the device name
     public String getDeviceName() {
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
@@ -141,6 +151,7 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
 
+    // Capitalize string
     private String capitalize(String s) {
         if (s == null || s.length() == 0) {
             return "";
