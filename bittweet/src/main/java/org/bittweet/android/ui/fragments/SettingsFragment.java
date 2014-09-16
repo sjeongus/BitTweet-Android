@@ -18,6 +18,7 @@ import org.bittweet.android.R;
 import org.bittweet.android.internal.MyTwitterFactory;
 import org.bittweet.android.services.TweetService;
 import org.bittweet.android.ui.NewTweetActivity;
+import org.bittweet.android.ui.ProfileActivity;
 import org.bittweet.android.ui.TweetsListActivity;
 import org.bittweet.android.ui.TwitterLoginActivity;
 
@@ -33,6 +34,16 @@ public class SettingsFragment extends PreferenceFragment {
     private SharedPreferences twitter;
     private Twitter mTwitter;
     private Context context;
+
+    private Preference devFuyu;
+    private Preference devGargron;
+    private Preference devSouthrop;
+    private Preference artBitmap;
+    private Preference artHacaplus;
+    private Preference locHalcy;
+    private Preference locAzumaya;
+    private Preference locShino;
+    private Preference locFluffy;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,6 +112,105 @@ public class SettingsFragment extends PreferenceFragment {
                         });
                 // Create the AlertDialog object
                 builder.show();
+                return true;
+            }
+        });
+
+        devFuyu = findPreference("pref_key_credits_dev_fuyu");
+        devFuyu.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "fuyutsukikaru");
+                startActivity(profIntent);
+                return true;
+            }
+        });
+
+        devGargron = findPreference("pref_key_credits_dev_gargron");
+        devGargron.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "gargron");
+                startActivity(profIntent);
+                return true;
+            }
+        });
+
+        devSouthrop = findPreference("pref_key_credits_dev_southrop");
+        devSouthrop.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "kotoriburd");
+                startActivity(profIntent);
+                return true;
+            }
+        });
+
+        artBitmap = findPreference("pref_key_credits_art_bitmap");
+        artBitmap.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "goodtweetsinc");
+                startActivity(profIntent);
+                return true;
+            }
+        });
+
+        artHacaplus = findPreference("pref_key_credits_art_hacaplus");
+        artHacaplus.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "hacaplus");
+                startActivity(profIntent);
+                return true;
+            }
+        });
+
+        locHalcy = findPreference("pref_key_credits_loc_halcy");
+        locHalcy.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "halcy");
+                startActivity(profIntent);
+                return true;
+            }
+        });
+
+        locAzumaya = findPreference("pref_key_credits_loc_azumaya");
+        locAzumaya.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "johtoken");
+                startActivity(profIntent);
+                return true;
+            }
+        });
+
+        locShino = findPreference("pref_key_credits_loc_shino");
+        locShino.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "kafushino");
+                startActivity(profIntent);
+                return true;
+            }
+        });
+
+        locFluffy = findPreference("pref_key_credits_loc_fluffy");
+        locFluffy.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent profIntent = new Intent(context, ProfileActivity.class);
+                profIntent.putExtra("USERNAME", "fluffypanzer");
+                startActivity(profIntent);
                 return true;
             }
         });

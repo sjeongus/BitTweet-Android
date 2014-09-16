@@ -8,7 +8,7 @@
     <string name="drawer_close">Close drawer</string>
     <string name="home_timeline">Home</string>
     <string name="mentions_timeline">\@Erwähnungen</string>
-    <string name="media_expansion_desc">Attached media</string>
+    <string name="media_expansion_desc">Angehängte Medien</string>
 
     <string-array name="nav_drawer_items">
         <item>Timeline</item>
@@ -29,7 +29,7 @@
     <string name="login_title">Bei Twitter einloggen</string>
 
     <string name="logout_title">Abmelden</string>
-    <string name="logout_confirm">Are you sure you want to log out?</string>
+    <string name="logout_confirm">Bist du sicher, dass du dich abmelden willst?</string>
     <string name="logout_ok">Ja</string>
     <string name="logout_cancel">Nein</string>
 
@@ -38,28 +38,42 @@
     <string name="action_attach_image">Medien anhängen</string>
     <string name="tweet">Tweet verfassen</string>
     <string name="action_tweet">Absenden</string>
-    <string name="tweet_hint">What\'s happening right now?</string>
+    <string name="tweet_hint">Was passiert gerade?</string>
     <string name="avatar">Avatar</string>
     <string name="tweet_service_ongoing">Nonsense</string>
     <string name="its_you">you</string>
+    <string name="in_reply_to">Antwort auf</string>
+
+    <string name="add_image_camera">Foto aufnehmen</string>
+    <string name="add_image_gallery">Aus Galerie wählen</string>
+    <string name="remove_image">Bild entfernen</string>
+
+    <string name="setting_category_account">Account-Einstellungen</string>
+    <string name="setting_category_client">Client-Einstellungen</string>
+    <string name="setting_category_feedback">Feedback</string>
+    <string name="setting_category_credits">Impressum</string>
 
     <string name="setting_logout">Abmelden</string>
     <string name="setting_streaming">Bei WiFi-Verbindung Streaming benutzen</string>
     <string name="setting_feedback_twitter">Feedback senden via Twitter</string>
-    <string name="setting_feedback_twitter_desc">Tweet us feedback about the app.</string>
+    <string name="setting_feedback_twitter_desc">Tweete Feedback an uns</string>
+    <string name="setting_credits">Impressum</string>
+    <string name="setting_credits_dev">Entwickler</string>
+    <string name="setting_credits_art">Künstler</string>
+    <string name="setting_credits_loc">Übersetzer</string>
 
-    <string name="preference_streaming">Stream Settings Changed</string>
-    <string name="streaming_name">The app will now restart to apply changes.</string>
+    <string name="preference_streaming">Streaming-Einstellungen geändert</string>
+    <string name="streaming_name">Das App wird zum Anwenden der Änderungen neu gestartet.</string>
     <string name="streaming_ok">Ja</string>
 
-    <string name="connection_title">No Internet Connection</string>
-    <string name="connection_message">You must be connected to the Internet!</string>
+    <string name="connection_title">Keine Internetverbindung</string>
+    <string name="connection_message">Du musst mit dem Internet verbunden sein!</string>
     <string name="connection_cancel">Abbrechen</string>
 
-    <string name="rate_limit_message_min">Rate limit exceeded! Try again in %1$d minutes!</string>
-    <string name="rate_limit_message_min1">Rate limit exceeded! Try again in %1$d minute!</string>
-    <string name="rate_limit_message_sec">Rate limit exceeded! Try again in %1$d seconds!</string>
-    <string name="rate_limit_message_sec1">Rate limit exceeded! Try again in %1$d second!</string>
+    <string name="rate_limit_message_min">Anfragelimit überschritten! Versuchs in %1$d Minuten noch mal!</string>
+    <string name="rate_limit_message_min1">Anfragelimit überschritten! Versuchs in %1$d Minute noch mal!</string>
+    <string name="rate_limit_message_sec">Anfragelimit überschritten! Versuchs in %1$d Sekunden noch mal!</string>
+    <string name="rate_limit_message_sec1">Anfragelimit überschritten! Versuchs in %1$d Sekunde noch mal!</string>
 
     <string name="title_activity_profile">Profile</string>
     <string name="profile_status_me">Das bist Du!</string>
@@ -73,7 +87,7 @@
     <string name="profile_following_count">Folge ich</string>
     <string name="profile_favorites_count">Favoriten</string>
 
-    <string name="tweet_updating">Updating status&#8230;</string>
-    <string name="tweet_sent">Tweet sent!</string>
-    <string name="tweet_error">Tweet failed to send</string>
+    <string name="tweet_updating">Status wird aktualisiert&#8230;</string>
+    <string name="tweet_sent">Tweet gesendet!</string>
+    <string name="tweet_error">Tweet konnte nicht gesendet werden</string>
 </resources>

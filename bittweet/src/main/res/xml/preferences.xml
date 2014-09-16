@@ -2,35 +2,107 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory
-        android:title="Account Settings"
+        android:title="@string/setting_category_account"
         android:key="pref_key_account_settings" >
 
         <Preference
-            android:key="pref_key_logout"
-            android:title="@string/setting_logout" />
+            android:title="@string/setting_logout"
+            android:key="pref_key_logout" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Client"
+        android:title="@string/setting_category_client"
         android:key="pref_key_client_settings" >
 
         <SwitchPreference
-            android:key="pref_key_streaming"
             android:title="@string/setting_streaming"
+            android:key="pref_key_streaming"
             android:defaultValue="false" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Feedback"
+        android:title="@string/setting_category_feedback"
         android:key="pref_key_feedback" >
 
         <Preference
-            android:key="pref_key_feedback_twitter"
             android:title="@string/setting_feedback_twitter"
+            android:key="pref_key_feedback_twitter"
             android:summary="@string/setting_feedback_twitter_desc" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/setting_category_credits"
+        android:key="pref_key_credits" >
+
+        <PreferenceScreen
+            android:title="@string/setting_credits">
+            android:key="pref_key_credits_screen"
+
+            <PreferenceCategory
+                android:title="@string/setting_credits_dev"
+                android:key="pref_key_credits_dev" >
+
+                <Preference
+                    android:title="Fuyutsukikaru @fuyutsukikaru"
+                    android:summary="Project Lead &amp; Developer"
+                    android:key="pref_key_credits_dev_fuyu" />
+
+                <Preference
+                    android:title="Gargron @Gargron"
+                    android:summary="Developer"
+                    android:key="pref_key_credits_dev_gargron" />
+
+                <Preference
+                    android:title="Southrop @kotoriburd"
+                    android:summary="Developer"
+                    android:key="pref_key_credits_dev_southrop" />
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                android:title="@string/setting_credits_art"
+                android:key="pref_key_credits_art" >
+
+                <Preference
+                    android:title="Bitmap @goodtweetsinc"
+                    android:summary="Icon Designer"
+                    android:key="pref_key_credits_art_bitmap" />
+
+                <Preference
+                    android:title="Hacaplus @hacaplus"
+                    android:summary="The guy who photoshopped the Ro-Kyu-Bu picture"
+                    android:key="pref_key_credits_art_hacaplus" />
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                android:title="@string/setting_credits_loc"
+                android:key="pref_key_credits_loc" >
+
+                <Preference
+                    android:title="halcy @halcy"
+                    android:summary="German Translator"
+                    android:key="pref_key_credits_loc_halcy" />
+
+                <Preference
+                    android:title="Aru Azumaya @johtoken"
+                    android:summary="Japanese Translator"
+                    android:key="pref_key_credits_loc_azumaya" />
+
+                <Preference
+                    android:title="Shino @kafushino"
+                    android:summary="Chinese (Traditional) Translator"
+                    android:key="pref_key_credits_loc_shino" />
+
+                <Preference
+                    android:title="Fluffy UMA @FluffyPanzer"
+                    android:summary="Spanish (Latin American) Translator"
+                    android:key="pref_key_credits_loc_fluffy" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+
 
 </PreferenceScreen>
