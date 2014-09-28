@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply plugin: 'crashlytics'
 
 repositories {
@@ -31,7 +31,7 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
+            runProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -58,4 +58,5 @@ dependencies {
     compile 'com.crashlytics.android:crashlytics:1.+'
     compile 'com.koushikdutta.ion:ion:1.+'
     compile 'com.twitter:twitter-text:1.9.8'
+    compile 'com.google.android.gms:play-services:5.+'
 }

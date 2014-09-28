@@ -338,7 +338,9 @@ public class NewTweetActivity extends FragmentActivity {
                     int size = (int) convertPixelsToDp(150, getApplicationContext());
                     Bitmap downmap;
                     if (fromCamera) {
+                        imageUri[pos] = path;
                         downmap = setPic(mCurrentPhotoPath, size, size);
+                        downmap = rotateBitmap(path, downmap);
                     } else {
                         String sharedPath;
                         if (isShared) {
@@ -348,8 +350,8 @@ public class NewTweetActivity extends FragmentActivity {
                         }
                         imageUri[pos] = sharedPath;
                         downmap = decodeSampledBitmapFromResource(sharedPath, size, size);
+                        downmap = rotateBitmap(sharedPath, downmap);
                     }
-                    downmap = rotateBitmap(path, downmap);
                     downmap = scaleCenterCrop(downmap, size, size);
                     myView.setImageBitmap(downmap);
                     myView.setVisibility(View.VISIBLE);

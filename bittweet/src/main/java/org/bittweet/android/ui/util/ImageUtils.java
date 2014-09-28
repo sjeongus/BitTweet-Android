@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.util.DisplayMetrics;
-import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,42 +24,41 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-/**
- * Created by soomin on 9/5/2014.
- */
 public class ImageUtils {
     public static Bitmap rotateBitmap(String src, Bitmap bitmap) {
         try {
-            int orientation = getExifOrientation(src);
+            //int orientation = getExifOrientation(src);
+            ExifInterface ei = new ExifInterface(src);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
-            if (orientation == 1) {
+            if (orientation == ExifInterface.ORIENTATION_NORMAL) {
                 return bitmap;
             }
 
             Matrix matrix = new Matrix();
             switch (orientation) {
-                case 2:
+                case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
                     matrix.setScale(-1, 1);
                     break;
-                case 3:
+                case ExifInterface.ORIENTATION_ROTATE_180:
                     matrix.setRotate(180);
                     break;
-                case 4:
+                case ExifInterface.ORIENTATION_FLIP_VERTICAL:
                     matrix.setRotate(180);
                     matrix.postScale(-1, 1);
                     break;
-                case 5:
+                case ExifInterface.ORIENTATION_TRANSPOSE:
                     matrix.setRotate(90);
                     matrix.postScale(-1, 1);
                     break;
-                case 6:
+                case ExifInterface.ORIENTATION_ROTATE_90:
                     matrix.setRotate(90);
                     break;
-                case 7:
+                case ExifInterface.ORIENTATION_TRANSVERSE:
                     matrix.setRotate(-90);
                     matrix.postScale(-1, 1);
                     break;
-                case 8:
+                case ExifInterface.ORIENTATION_ROTATE_270:
                     matrix.setRotate(-90);
                     break;
                 default:
@@ -83,7 +81,7 @@ public class ImageUtils {
         return bitmap;
     }
 
-    private static int getExifOrientation(String src) throws IOException {
+    /*private static int getExifOrientation(String src) throws IOException {
         int orientation = 1;
 
         try {
@@ -91,14 +89,14 @@ public class ImageUtils {
                     .forName("android.media.ExifInterface");
             Constructor<?> exifConstructor = exifClass
                     .getConstructor(new Class[] { String.class });
-            Object exifInstance = exifConstructor.newInstance(new Object[]{src});
+            Object exifInstance = exifConstructor.newInstance(src);
             Method getAttributeInt = exifClass.getMethod("getAttributeInt",
                     new Class[] { String.class, int.class });
             Field tagOrientationField = exifClass
                     .getField("TAG_ORIENTATION");
             String tagOrientation = (String) tagOrientationField.get(null);
             orientation = (Integer) getAttributeInt.invoke(exifInstance,
-                    new Object[] { tagOrientation, 1 });
+                    tagOrientation, 1);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
@@ -118,7 +116,7 @@ public class ImageUtils {
         }
 
         return orientation;
-    }
+    }*/
 
     // Set an image from the camera
     public static Bitmap setPic(String path, int targetW, int targetH) {
@@ -242,10 +240,11 @@ public class ImageUtils {
         bitmap = rotateBitmap(path, bitmap);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+        bitmap.recycle();
         byte[] bitmapdata = bos.toByteArray();
 
         //write the bytes in file
-        FileOutputStream fos = null;
+        FileOutputStream fos;
         try {
             fos = new FileOutputStream(f);
             fos.write(bitmapdata);
@@ -268,17 +267,16 @@ public class ImageUtils {
     public static float convertDpToPixel(float dp, Context context){
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * (metrics.densityDpi / 160f);
-        return px;
+        return dp * (metrics.densityDpi / 160f);
     }
 
 
     public static int[] getBitmapDimensions(String path) {
         int[] size = new int[2];
         // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        BitmapFactory.decodeFile(path, options);
         size[0] = options.outWidth;
         size[1] = options.outHeight;
         return size;
